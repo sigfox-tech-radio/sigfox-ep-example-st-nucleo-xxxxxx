@@ -36,23 +36,26 @@
 
 #include "lr11xx_mapping.h"
 
-#ifdef USE_SIGFOX_EP_FLAGS_H
+#ifndef SIGFOX_EP_DISABLE_FLAGS_FILE
 #include "sigfox_ep_flags.h"
 #endif
 #include "gpio.h"
 
 /*** LR11XX MAPPING global variables ***/
 
-const GPIO_pin_t LR11XX_GPIO_NSS = 		(GPIO_pin_t) {GPIO_PORT_A, 8, 0};
+const GPIO_pin_t LR11XX_GPIO_SPI_SCK =  { GPIO_PORT_A, 5, 0 };
+const GPIO_pin_t LR11XX_GPIO_SPI_MISO = { GPIO_PORT_A, 6, 0 };
+const GPIO_pin_t LR11XX_GPIO_SPI_MOSI = { GPIO_PORT_A, 7, 0 };
+const GPIO_pin_t LR11XX_GPIO_SPI_NSS =  { GPIO_PORT_A, 8, 0 };
 
-const GPIO_pin_t LR11XX_GPIO_NRESET = 	(GPIO_pin_t) {GPIO_PORT_A, 0, 0};
+const GPIO_pin_t LR11XX_GPIO_NRESET =   { GPIO_PORT_A, 0, 0 };
 
-const GPIO_pin_t LR11XX_GPIO_IRQ = 		(GPIO_pin_t) {GPIO_PORT_B, 4, 0};
+const GPIO_pin_t LR11XX_GPIO_IRQ =      { GPIO_PORT_B, 4, 0 };
 
-const GPIO_pin_t LR11XX_GPIO_BUSY =		(GPIO_pin_t) {GPIO_PORT_B, 3, 0};
+const GPIO_pin_t LR11XX_GPIO_BUSY =     { GPIO_PORT_B, 3, 0 };
 
-const GPIO_pin_t LR11XX_GPIO_SCAN =		(GPIO_pin_t) {GPIO_PORT_B, 5, 0};
+const GPIO_pin_t LR11XX_GPIO_SCAN =     { GPIO_PORT_B, 5, 0 };
 
-const GPIO_pin_t LR11XX_GPIO_LED_TX = 	(GPIO_pin_t) {GPIO_PORT_C, 1, 0};
+const GPIO_pin_t LR11XX_GPIO_LED_TX =   { GPIO_PORT_C, 1, 0 };
 
-const GPIO_pin_t LR11XX_GPIO_LED_RX = 	(GPIO_pin_t) {GPIO_PORT_C, 0, 0};
+const GPIO_pin_t LR11XX_GPIO_LED_RX =   { GPIO_PORT_C, 0, 0 };

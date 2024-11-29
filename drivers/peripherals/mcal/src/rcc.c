@@ -45,120 +45,120 @@
 
 /*** RCC local macros ***/
 
-#define RCC_TIMEOUT_COUNT	1000000
+#define RCC_TIMEOUT_COUNT   1000000
 
 /*** RCC local global variables ***/
 
 static const uint32_t RCC_LL_MSI_RANGE[RCC_MSI_RANGE_LAST] = {
-	LL_RCC_MSIRANGE_0,
-	LL_RCC_MSIRANGE_1,
-	LL_RCC_MSIRANGE_2,
-	LL_RCC_MSIRANGE_3,
-	LL_RCC_MSIRANGE_4,
-	LL_RCC_MSIRANGE_5,
-	LL_RCC_MSIRANGE_6,
+    LL_RCC_MSIRANGE_0,
+    LL_RCC_MSIRANGE_1,
+    LL_RCC_MSIRANGE_2,
+    LL_RCC_MSIRANGE_3,
+    LL_RCC_MSIRANGE_4,
+    LL_RCC_MSIRANGE_5,
+    LL_RCC_MSIRANGE_6,
 };
 
 /*** RCC functions ***/
 
 /*******************************************************************/
 MCAL_status_t __attribute__((optimize("-O0"))) RCC_init(void) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	uint32_t loop_count = 0;
-	// Reset backup domain.
-	LL_RCC_ForceBackupDomainReset();
-	for (loop_count=0 ; loop_count<100 ; loop_count++);
-	LL_RCC_ReleaseBackupDomainReset();
-	// Start low speed oscillator.
-	LL_RCC_LSE_Enable();
-	// Wait for LSE to be ready.
-	loop_count = 0;
-	while (LL_RCC_LSE_IsReady() == 0) {
-		loop_count++;
-		if (loop_count > RCC_TIMEOUT_COUNT) {
-			status = MCAL_ERROR;
-			goto errors;
-		}
-	}
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint32_t loop_count = 0;
+    // Reset backup domain.
+    LL_RCC_ForceBackupDomainReset();
+    for (loop_count = 0; loop_count < 100; loop_count++);
+    LL_RCC_ReleaseBackupDomainReset();
+    // Start low speed oscillator.
+    LL_RCC_LSE_Enable();
+    // Wait for LSE to be ready.
+    loop_count = 0;
+    while (LL_RCC_LSE_IsReady() == 0) {
+        loop_count++;
+        if (loop_count > RCC_TIMEOUT_COUNT) {
+            status = MCAL_ERROR;
+            goto errors;
+        }
+    }
 errors:
-	return status;
+    return status;
 }
 
 /*******************************************************************/
 MCAL_status_t RCC_switch_to_hsi(void) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	uint32_t loop_count = 0;
-	// Check current clock source.
-	if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_HSI) goto errors;
-	// Enable HSI.
-	LL_RCC_HSI_Enable();
-	// Wait for HSI to be stable.
-	while (LL_RCC_HSI_IsReady() == 0) {
-		// Wait for HSIRDYF='1' or timeout.
-		loop_count++;
-		if (loop_count > RCC_TIMEOUT_COUNT) {
-			status = MCAL_ERROR;
-			goto errors;
-		}
-	}
-	// Set flash latency.
-	LL_FLASH_SetLatency(1);
-	// Switch SYSCLK.
-	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
-	// Wait for clock switch.
-	loop_count = 0;
-	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI) {
-		// Wait for SWS='01' or timeout.
-		loop_count++;
-		if (loop_count > RCC_TIMEOUT_COUNT) {
-			status = MCAL_ERROR;
-			goto errors;
-		}
-	}
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint32_t loop_count = 0;
+    // Check current clock source.
+    if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_HSI) goto errors;
+    // Enable HSI.
+    LL_RCC_HSI_Enable();
+    // Wait for HSI to be stable.
+    while (LL_RCC_HSI_IsReady() == 0) {
+        // Wait for HSIRDYF='1' or timeout.
+        loop_count++;
+        if (loop_count > RCC_TIMEOUT_COUNT) {
+            status = MCAL_ERROR;
+            goto errors;
+        }
+    }
+    // Set flash latency.
+    LL_FLASH_SetLatency(1);
+    // Switch SYSCLK.
+    LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
+    // Wait for clock switch.
+    loop_count = 0;
+    while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI) {
+        // Wait for SWS='01' or timeout.
+        loop_count++;
+        if (loop_count > RCC_TIMEOUT_COUNT) {
+            status = MCAL_ERROR;
+            goto errors;
+        }
+    }
 errors:
-	return status;
+    return status;
 }
 
 /*******************************************************************/
 MCAL_status_t RCC_switch_to_msi(RCC_msi_range_t msi_range) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	uint32_t loop_count = 0;
-	// Check current clock source.
-	if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_MSI) goto errors;
-	// Check parameter.
-	if (msi_range >= RCC_MSI_RANGE_LAST) {
-		status = MCAL_ERROR;
-		goto errors;
-	}
-	// Set frequency.
-	LL_RCC_MSI_SetRange(RCC_LL_MSI_RANGE[msi_range]);
-	// Enable MSI.
-	LL_RCC_MSI_Enable();
-	// Wait for MSI to be stable.
-	while (((RCC -> CR) & (0b1 << 9)) == 0) {
-		// Wait for MSIRDYF='1' or timeout.
-		loop_count++;
-		if (loop_count > RCC_TIMEOUT_COUNT) {
-			status = MCAL_ERROR;
-			goto errors;
-		}
-	}
-	// Switch SYSCLK.
-	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI);
-	// Wait for clock switch.
-	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_MSI) {
-		// Wait for SWS='00' or timeout.
-		loop_count++;
-		if (loop_count > RCC_TIMEOUT_COUNT) {
-			status = MCAL_ERROR;
-			goto errors;
-		}
-	}
-	// Set flash latency.
-	LL_FLASH_SetLatency(0);
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint32_t loop_count = 0;
+    // Check current clock source.
+    if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_MSI) goto errors;
+    // Check parameter.
+    if (msi_range >= RCC_MSI_RANGE_LAST) {
+        status = MCAL_ERROR;
+        goto errors;
+    }
+    // Set frequency.
+    LL_RCC_MSI_SetRange(RCC_LL_MSI_RANGE[msi_range]);
+    // Enable MSI.
+    LL_RCC_MSI_Enable();
+    // Wait for MSI to be stable.
+    while (((RCC->CR) & (0b1 << 9)) == 0) {
+        // Wait for MSIRDYF='1' or timeout.
+        loop_count++;
+        if (loop_count > RCC_TIMEOUT_COUNT) {
+            status = MCAL_ERROR;
+            goto errors;
+        }
+    }
+    // Switch SYSCLK.
+    LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI);
+    // Wait for clock switch.
+    while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_MSI) {
+        // Wait for SWS='00' or timeout.
+        loop_count++;
+        if (loop_count > RCC_TIMEOUT_COUNT) {
+            status = MCAL_ERROR;
+            goto errors;
+        }
+    }
+    // Set flash latency.
+    LL_FLASH_SetLatency(0);
 errors:
-	return status;
+    return status;
 }

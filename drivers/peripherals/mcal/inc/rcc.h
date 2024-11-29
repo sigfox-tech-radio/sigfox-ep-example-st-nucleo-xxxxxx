@@ -47,14 +47,14 @@
  * \brief RCC MSI oscillator frequency ranges.
  *******************************************************************/
 typedef enum {
-	RCC_MSI_RANGE_0_65KHZ = 0,
-	RCC_MSI_RANGE_1_131KHZ,
-	RCC_MSI_RANGE_2_262KHZ,
-	RCC_MSI_RANGE_3_524KKZ,
-	RCC_MSI_RANGE_4_1MHZ,
-	RCC_MSI_RANGE_5_2MHZ,
-	RCC_MSI_RANGE_6_4MHZ,
-	RCC_MSI_RANGE_LAST
+    RCC_MSI_RANGE_0_65KHZ = 0,
+    RCC_MSI_RANGE_1_131KHZ,
+    RCC_MSI_RANGE_2_262KHZ,
+    RCC_MSI_RANGE_3_524KKZ,
+    RCC_MSI_RANGE_4_1MHZ,
+    RCC_MSI_RANGE_5_2MHZ,
+    RCC_MSI_RANGE_6_4MHZ,
+    RCC_MSI_RANGE_LAST
 } RCC_msi_range_t;
 
 /*** RCC functions ***/
@@ -62,27 +62,27 @@ typedef enum {
 /*!******************************************************************
  * \fn void RCC_init(void)
  * \brief Init MCU clock tree.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status..
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status..
  *******************************************************************/
 MCAL_status_t RCC_init(void);
 
 /*!******************************************************************
  * \fn RCC_status_t RCC_switch_to_hsi(void)
  * \brief Switch system clock to 16MHz HSI.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t RCC_switch_to_hsi(void);
 
 /*!******************************************************************
  * \fn RCC_status_t RCC_switch_to_msi(RCC_msi_range_t msi_range)
  * \brief Switch system clock to MSI.
- * \param[in]  	msi_range: MSI frequency to set.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   msi_range: MSI frequency to set.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t RCC_switch_to_msi(RCC_msi_range_t msi_range);
 

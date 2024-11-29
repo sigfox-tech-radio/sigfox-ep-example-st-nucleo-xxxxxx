@@ -41,15 +41,18 @@
 
 /*** LR11XX MAPPING macros ***/
 
-#define LR11XX_GPIO_IRQ_EXTI_PORT		EXTI_PORT_B
-#define LR11XX_GPIO_IRQ_EXTI_LINE		EXTI_LINE_GPIO_4
+#define LR11XX_GPIO_IRQ_EXTI_PORT       EXTI_PORT_B
+#define LR11XX_GPIO_IRQ_EXTI_LINE       EXTI_LINE_GPIO_4
 
-#define LR11XX_HAL_RESET_DELAY_MS		2
-#define LR11XX_HAL_WAKEUP_DELAY_MS		2
+#define LR11XX_HAL_RESET_DELAY_MS       2
+#define LR11XX_HAL_WAKEUP_DELAY_MS      2
 
 /*** LR11XX MAPPING global variables ***/
 
-extern const GPIO_pin_t LR11XX_GPIO_NSS;
+extern const GPIO_pin_t LR11XX_GPIO_SPI_SCK;
+extern const GPIO_pin_t LR11XX_GPIO_SPI_MISO;
+extern const GPIO_pin_t LR11XX_GPIO_SPI_MOSI;
+extern const GPIO_pin_t LR11XX_GPIO_SPI_NSS;
 
 extern const GPIO_pin_t LR11XX_GPIO_NRESET;
 

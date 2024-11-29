@@ -36,7 +36,7 @@
 
 #include "board/s2lp_hw_api.h"
 
-#ifdef USE_SIGFOX_EP_FLAGS_H
+#ifndef SIGFOX_EP_DISABLE_FLAGS_FILE
 #include "sigfox_ep_flags.h"
 #endif
 // Sigfox EP library.
@@ -54,22 +54,27 @@
 
 /*** S2LP HW API local macros ***/
 
-#define S2LP_HW_API_OSCILLATOR_FREQUENCY_HZ		50000000
-#define S2LP_HW_API_OPEN_DELAY_MS				100
-#define S2LP_SHUTDOWN_DELAY_MS					100
+#define S2LP_HW_API_OSCILLATOR_FREQUENCY_HZ     50000000
+#define S2LP_HW_API_OPEN_DELAY_MS               100
+#define S2LP_SHUTDOWN_DELAY_MS                  100
 
 /*** S2LP HW API local global variables ***/
 
-#if (defined TIMER_REQUIRED) && (defined LATENCY_COMPENSATION)
+static const SPI_gpio_t S2LP_HW_API_SPI_GPIO = {
+    &S2LP_GPIO_SPI_SCK,
+    &S2LP_GPIO_SPI_MISO,
+    &S2LP_GPIO_SPI_MOSI
+};
+#if (defined SIGFOX_EP_TIMER_REQUIRED) && (defined SIGFOX_EP_LATENCY_COMPENSATION)
 // Latency values.
 static sfx_u32 S2LP_HW_API_LATENCY_MS[S2LP_HW_API_LATENCY_LAST] = {
-	S2LP_SHUTDOWN_DELAY_MS, // Exit shutdown.
-	0, // Enter shutdown.
-	0, // TX init TX.
-	0, // TX de-init.
-#ifdef BIDIRECTIONAL
-	0, // RX init.
-	0  // RX de-init.
+    S2LP_SHUTDOWN_DELAY_MS, // Exit shutdown.
+    0, // Enter shutdown.
+    0, // TX init TX.
+    0, // TX de-init.
+#ifdef SIGFOX_EP_BIDIRECTIONAL
+    0, // RX init.
+    0  // RX de-init.
 #endif
 };
 #endif
@@ -77,169 +82,173 @@ static sfx_u32 S2LP_HW_API_LATENCY_MS[S2LP_HW_API_LATENCY_LAST] = {
 /*** S2LP HW API local functions ***/
 
 /*******************************************************************/
-#define _check_mcal_status(void) { if (mcal_status != MCAL_SUCCESS) EXIT_ERROR(S2LP_HW_API_ERROR); }
+#define _check_mcal_status(void) { if (mcal_status != MCAL_SUCCESS) SIGFOX_EXIT_ERROR(S2LP_HW_API_ERROR); }
 
 /*** S2LP HW API functions ***/
 
 /*******************************************************************/
-S2LP_HW_API_status_t S2LP_HW_API_open(S2LP_HW_API_config_t* hw_api_config) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+S2LP_HW_API_status_t S2LP_HW_API_open(S2LP_HW_API_config_t *hw_api_config) {
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Configure hardware interface.
-	mcal_status = GPIO_configure(&S2LP_GPIO_NSS, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-	_check_mcal_status();
-	mcal_status = GPIO_configure(&S2LP_GPIO_SDN, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-	_check_mcal_status();
-	mcal_status = GPIO_configure(&S2LP_GPIO_IRQ, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-	_check_mcal_status();
-	// Init SPI peripheral.
-	mcal_status = SPI_init();
-	_check_mcal_status();
-	// Init IRQ line.
-	mcal_status = EXTI_configure(S2LP_GPIO_IRQ_EXTI_PORT, S2LP_GPIO_IRQ_EXTI_LINE, EXTI_TRIGGER_FALLING, (hw_api_config -> gpio_irq_callback));
-	_check_mcal_status();
-	mcal_status = EXTI_enable_irq(S2LP_GPIO_IRQ_EXTI_LINE, NVIC_IRQ_PRIORITY_EXTI_RADIO);
-	_check_mcal_status();
-	// Init delay to ensure SDN is kept high during a minimum time.
-	mcal_status = LPTIM_delay_milliseconds(S2LP_HW_API_OPEN_DELAY_MS, LPTIM_DELAY_MODE_SLEEP);
-	_check_mcal_status();
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Configure hardware interface.
+    mcal_status = GPIO_configure(&S2LP_GPIO_SDN, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    _check_mcal_status();
+    mcal_status = GPIO_write(&S2LP_GPIO_SDN, 1);
+    _check_mcal_status();
+    mcal_status = GPIO_configure(&S2LP_GPIO_IRQ, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    _check_mcal_status();
+    // Init SPI peripheral.
+    mcal_status = SPI_init((SPI_gpio_t*) &S2LP_HW_API_SPI_GPIO);
+    _check_mcal_status();
+    mcal_status = GPIO_configure(&S2LP_GPIO_SPI_NSS, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    _check_mcal_status();
+    mcal_status = GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
+    _check_mcal_status();
+    // Init IRQ line.
+    mcal_status = EXTI_configure(S2LP_GPIO_IRQ_EXTI_PORT, S2LP_GPIO_IRQ_EXTI_LINE, EXTI_TRIGGER_FALLING, (hw_api_config->gpio_irq_callback));
+    _check_mcal_status();
+    mcal_status = EXTI_enable_irq(S2LP_GPIO_IRQ_EXTI_LINE, NVIC_IRQ_PRIORITY_EXTI_RADIO);
+    _check_mcal_status();
+    // Init delay to ensure SDN is kept high during a minimum time.
+    mcal_status = LPTIM_delay_milliseconds(S2LP_HW_API_OPEN_DELAY_MS, LPTIM_DELAY_MODE_SLEEP);
+    _check_mcal_status();
 errors:
-	RETURN();
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_close(void) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Disable EXTI line.
-	mcal_status = EXTI_de_configure(S2LP_GPIO_IRQ_EXTI_LINE);
-	_check_mcal_status();
-	// Release SPI peripheral.
-	mcal_status = SPI_de_init();
-	_check_mcal_status();
-	// Put GPIOs in high impedance.
-	mcal_status = GPIO_configure(&S2LP_GPIO_NSS, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-	_check_mcal_status();
-	mcal_status = GPIO_configure(&S2LP_GPIO_SDN, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-	_check_mcal_status();
-	mcal_status = GPIO_configure(&S2LP_GPIO_IRQ, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-	_check_mcal_status();
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Disable EXTI line.
+    mcal_status = EXTI_de_configure(S2LP_GPIO_IRQ_EXTI_LINE);
+    _check_mcal_status();
+    // Release SPI peripheral.
+    mcal_status = SPI_de_init((SPI_gpio_t*) &S2LP_HW_API_SPI_GPIO);
+    _check_mcal_status();
+    // Put GPIOs in high impedance.
+    mcal_status = GPIO_configure(&S2LP_GPIO_SPI_NSS, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    _check_mcal_status();
+    mcal_status = GPIO_configure(&S2LP_GPIO_SDN, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    _check_mcal_status();
+    mcal_status = GPIO_configure(&S2LP_GPIO_IRQ, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    _check_mcal_status();
 errors:
-	RETURN();
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_init(S2LP_radio_parameters_t *radio_parameters) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	// Ignore unused parameters.
-	MCAL_UNUSED(radio_parameters);
-	// Nothing to do on this shield.
-	RETURN();
+    // Ignore unused parameters.
+    MCAL_UNUSED(radio_parameters);
+    // Nothing to do on this shield.
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_de_init(void) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	// Nothing to do on this shield.
-	RETURN();
+    // Nothing to do on this shield.
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_enter_shutdown(void) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Enter shutdown.
-	mcal_status = GPIO_write(&S2LP_GPIO_SDN, 1);
-	_check_mcal_status();
+    mcal_status = GPIO_write(&S2LP_GPIO_SDN, 1);
+    _check_mcal_status();
 errors:
-	RETURN();
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_exit_shutdown(void) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Exit shutdown.
-	mcal_status = GPIO_write(&S2LP_GPIO_SDN, 0);
-	_check_mcal_status();
-	// Startup delay.
-	mcal_status = LPTIM_delay_milliseconds(S2LP_SHUTDOWN_DELAY_MS, LPTIM_DELAY_MODE_SLEEP);
-	_check_mcal_status();
+    mcal_status = GPIO_write(&S2LP_GPIO_SDN, 0);
+    _check_mcal_status();
+    // Startup delay.
+    mcal_status = LPTIM_delay_milliseconds(S2LP_SHUTDOWN_DELAY_MS, LPTIM_DELAY_MODE_SLEEP);
+    _check_mcal_status();
 errors:
-	RETURN();
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_get_oscillator(S2LP_HW_API_oscillator_type_t *xo_type, sfx_u32 *xo_frequency_hz) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	// Update parameters.
-	(*xo_type) = S2LP_HW_API_OSCILLATOR_TYPE_QUARTZ;
-	(*xo_frequency_hz) = S2LP_HW_API_OSCILLATOR_FREQUENCY_HZ;
-	RETURN();
+    // Update parameters.
+    (*xo_type) = S2LP_HW_API_OSCILLATOR_TYPE_QUARTZ;
+    (*xo_frequency_hz) = S2LP_HW_API_OSCILLATOR_FREQUENCY_HZ;
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_get_gpio(S2LP_HW_API_signal_t signal, S2LP_HW_API_gpio_t *s2lp_gpio) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	// Check signal.
-	switch (signal) {
-	case S2LP_HW_API_SIGNAL_NIRQ:
-		// IRQ on GPIO3.
-		(*s2lp_gpio) = S2LP_HW_API_GPIO_3;
-		break;
-	default:
-#ifdef ERROR_CODES
-		status = S2LP_HW_API_ERROR;
+    // Check signal.
+    switch (signal) {
+    case S2LP_HW_API_SIGNAL_NIRQ:
+        // IRQ on GPIO3.
+        (*s2lp_gpio) = S2LP_HW_API_GPIO_3;
+        break;
+    default:
+#ifdef SIGFOX_EP_ERROR_CODES
+        status = S2LP_HW_API_ERROR;
 #endif
-		break;
-	}
-	RETURN();
+        break;
+    }
+    SIGFOX_RETURN();
 }
 
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_get_tx_power(sfx_s8 expected_tx_power_dbm, sfx_s8 *s2lp_tx_power_dbm) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	// No gain to compensate on this shield.
-	(*s2lp_tx_power_dbm) = expected_tx_power_dbm;
-	RETURN();
+    // No gain to compensate on this shield.
+    (*s2lp_tx_power_dbm) = expected_tx_power_dbm;
+    SIGFOX_RETURN();
 }
 
-#if (defined TIMER_REQUIRED) && (defined LATENCY_COMPENSATION)
+#if (defined SIGFOX_EP_TIMER_REQUIRED) && (defined SIGFOX_EP_LATENCY_COMPENSATION)
 /*******************************************************************/
 S2LP_HW_API_status_t S2LP_HW_API_get_latency(S2LP_HW_API_latency_t latency_type, sfx_u32 *latency_ms) {
-	// Local variables.
-#ifdef ERROR_CODES
-	S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    S2LP_HW_API_status_t status = S2LP_HW_API_SUCCESS;
 #endif
-	// Update latency.
-	(*latency_ms) = S2LP_HW_API_LATENCY_MS[latency_type];
-    RETURN();
+    // Update latency.
+    (*latency_ms) = S2LP_HW_API_LATENCY_MS[latency_type];
+    SIGFOX_RETURN();
 }
 #endif

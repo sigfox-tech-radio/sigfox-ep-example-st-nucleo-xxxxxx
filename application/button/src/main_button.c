@@ -43,7 +43,7 @@
 #include "rcc.h"
 #include "stdint.h"
 
-#ifdef USE_SIGFOX_EP_FLAGS_H
+#ifndef SIGFOX_EP_DISABLE_FLAGS_FILE
 #include "sigfox_ep_flags.h"
 #endif
 #include "sigfox_ep_api.h"
@@ -53,11 +53,11 @@
 
 /*** APP local macros ***/
 
-#define APP_ERROR_STACK_DEPTH	10
-#ifdef UL_PAYLOAD_SIZE
-#define APP_UL_PAYLOAD_SIZE		UL_PAYLOAD_SIZE
+#define APP_ERROR_STACK_DEPTH   10
+#ifdef SIGFOX_EP_UL_PAYLOAD_SIZE
+#define APP_UL_PAYLOAD_SIZE     SIGFOX_EP_UL_PAYLOAD_SIZE
 #else
-#define APP_UL_PAYLOAD_SIZE		9
+#define APP_UL_PAYLOAD_SIZE     9
 #endif
 
 /*** APP local structures ***/
@@ -65,26 +65,26 @@
 // Applicative error codes.
 typedef enum {
     APP_SUCCESS = 0,
-	APP_ERROR_MCAL,
+    APP_ERROR_MCAL,
     APP_ERROR_SIGFOX_EP_LIBRARY,
     APP_ERROR_LAST
 } APP_status_t;
 
 /*******************************************************************/
 typedef union {
-	struct {
-		unsigned button_press : 1;
-		unsigned sigfox_process : 1;
-		unsigned sigfox_message_completion : 1;
-	} field;
-	uint8_t all;
+    struct {
+        unsigned button_press :1;
+        unsigned sigfox_process :1;
+        unsigned sigfox_message_completion :1;
+    } field;
+    uint8_t all;
 } APP_flags_t;
 
 /*******************************************************************/
 typedef struct {
-	volatile APP_flags_t flags;
-	APP_status_t error_stack[APP_ERROR_STACK_DEPTH];
-	uint8_t error_stack_index;
+    volatile APP_flags_t flags;
+    APP_status_t error_stack[APP_ERROR_STACK_DEPTH];
+    uint8_t error_stack_index;
 } APP_context_t;
 
 /*** APP local global variables ***/
@@ -96,201 +96,202 @@ static APP_context_t app_ctx;
 /*******************************************************************/
 #define _check_mcal_status(void) { if (mcal_status != MCAL_SUCCESS) { _APP_stack_error(APP_ERROR_MCAL); } }
 
-#ifdef ERROR_CODES
+#ifdef SIGFOX_EP_ERROR_CODES
 /*******************************************************************/
 #define _check_sigfox_ep_api_status(void) { if (sigfox_ep_api_status != SIGFOX_EP_API_SUCCESS) _APP_stack_error(APP_ERROR_SIGFOX_EP_LIBRARY); }
 #endif
 
 /*******************************************************************/
 static void _APP_button_press_callback(void) {
-	// Set flag.
-	app_ctx.flags.field.button_press = 1;
+    // Set flag.
+    app_ctx.flags.field.button_press = 1;
 }
 
-#ifdef ASYNCHRONOUS
+#ifdef SIGFOX_EP_ASYNCHRONOUS
 /*******************************************************************/
 static void _APP_sigfox_process_callback(void) {
-	// Set flag.
-	app_ctx.flags.field.sigfox_process = 1;
+    // Set flag.
+    app_ctx.flags.field.sigfox_process = 1;
 }
 #endif
 
-#ifdef ASYNCHRONOUS
+#ifdef SIGFOX_EP_ASYNCHRONOUS
 /*******************************************************************/
 static void _APP_sigfox_message_completion_callback(void) {
-	// Set flag.
-	app_ctx.flags.field.sigfox_message_completion = 1;
+    // Set flag.
+    app_ctx.flags.field.sigfox_message_completion = 1;
 }
 #endif
 
 /*******************************************************************/
 static void _APP_stack_error(APP_status_t code) {
-	// Store code.
-	app_ctx.error_stack[app_ctx.error_stack_index] = code;
-	app_ctx.error_stack_index = (app_ctx.error_stack_index + 1) % APP_ERROR_STACK_DEPTH;
+    // Store code.
+    app_ctx.error_stack[app_ctx.error_stack_index] = code;
+    app_ctx.error_stack_index = (app_ctx.error_stack_index + 1) % APP_ERROR_STACK_DEPTH;
 }
 
 /*******************************************************************/
 static void _APP_init_context(void) {
-	// Local variables.
-	uint8_t idx = 0;
-	// Clear all flags.
-	app_ctx.flags.all = 0;
-	// Init stack.
-	for (idx=0 ; idx<APP_ERROR_STACK_DEPTH ; idx++) app_ctx.error_stack[idx] = APP_SUCCESS;
-	app_ctx.error_stack_index = 0;
+    // Local variables.
+    uint8_t idx = 0;
+    // Clear all flags.
+    app_ctx.flags.all = 0;
+    // Init stack.
+    for (idx = 0; idx < APP_ERROR_STACK_DEPTH; idx++)
+        app_ctx.error_stack[idx] = APP_SUCCESS;
+    app_ctx.error_stack_index = 0;
 }
 
 /*******************************************************************/
 static void _APP_init_board(void) {
-	// Local variables.
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Init power module and clock tree.
-	PWR_init();
-	RCC_init();
-	// Switch to 16MHz internal clock.
-	mcal_status = RCC_switch_to_hsi();
-	_check_mcal_status();
-	// Init GPIOs.
-	GPIO_init();
-	EXTI_init();
-	// Init delay timer.
-	mcal_status = LPTIM_init();
-	_check_mcal_status();
-	// Init components.
-	mcal_status = BUTTON_init(&_APP_button_press_callback);
-	_check_mcal_status();
+    // Local variables.
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Init power module and clock tree.
+    PWR_init();
+    RCC_init();
+    // Switch to 16MHz internal clock.
+    mcal_status = RCC_switch_to_hsi();
+    _check_mcal_status();
+    // Init GPIOs.
+    GPIO_init();
+    EXTI_init();
+    // Init delay timer.
+    mcal_status = LPTIM_init();
+    _check_mcal_status();
+    // Init components.
+    mcal_status = BUTTON_init(&_APP_button_press_callback);
+    _check_mcal_status();
 }
 
 /*******************************************************************/
 static void _APP_open_sigfox_library(void) {
-	// Local variables.
-#ifdef ERROR_CODES
-	SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
 #endif
-	SIGFOX_EP_API_config_t lib_config;
-	// Configure library.
-	lib_config.rc = &SIGFOX_RC1;
-#ifndef MESSAGE_COUNTER_ROLLOVER
-	lib_config.message_counter_rollover = SIGFOX_MESSAGE_COUNTER_ROLLOVER_4096;
+    SIGFOX_EP_API_config_t lib_config;
+    // Configure library.
+    lib_config.rc = &SIGFOX_RC1;
+#ifndef SIGFOX_EP_MESSAGE_COUNTER_ROLLOVER
+    lib_config.message_counter_rollover = SIGFOX_MESSAGE_COUNTER_ROLLOVER_4096;
 #endif
-#ifdef ASYNCHRONOUS
-	lib_config.process_cb = &_APP_sigfox_process_callback;
+#ifdef SIGFOX_EP_ASYNCHRONOUS
+    lib_config.process_cb = &_APP_sigfox_process_callback;
 #endif
-	// Open library.
-#ifdef ERROR_CODES
-	sigfox_ep_api_status = SIGFOX_EP_API_open(&lib_config);
-	_check_sigfox_ep_api_status();
+    // Open library.
+#ifdef SIGFOX_EP_ERROR_CODES
+    sigfox_ep_api_status = SIGFOX_EP_API_open(&lib_config);
+    _check_sigfox_ep_api_status();
 #else
-	SIGFOX_EP_API_open(&lib_config);
+    SIGFOX_EP_API_open(&lib_config);
 #endif
 }
 
 /*******************************************************************/
 static void _APP_send_sigfox_message(void) {
-#ifdef ERROR_CODES
-	SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
+#ifdef SIGFOX_EP_ERROR_CODES
+    SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
 #endif
-#ifdef APPLICATION_MESSAGES
-	SIGFOX_EP_API_application_message_t application_message;
+#ifdef SIGFOX_EP_APPLICATION_MESSAGES
+    SIGFOX_EP_API_application_message_t application_message;
 #else
-	SIGFOX_EP_API_control_message_t application_message;
+    SIGFOX_EP_API_control_message_t application_message;
 #endif
-#ifdef APPLICATION_MESSAGES
-#if !(defined UL_PAYLOAD_SIZE) || (UL_PAYLOAD_SIZE > 0)
-	uint8_t idx = 0;
-	sfx_u8 app_ul_payload[APP_UL_PAYLOAD_SIZE];
-	// Build payload.
-	for (idx=0 ; idx<APP_UL_PAYLOAD_SIZE ; idx++) app_ul_payload[idx] = (sfx_u8) idx;
+#ifdef SIGFOX_EP_APPLICATION_MESSAGES
+#if !(defined SIGFOX_EP_UL_PAYLOAD_SIZE) || (SIGFOX_EP_UL_PAYLOAD_SIZE > 0)
+    uint8_t idx = 0;
+    sfx_u8 app_ul_payload[APP_UL_PAYLOAD_SIZE];
+    // Build payload.
+    for (idx=0 ; idx<APP_UL_PAYLOAD_SIZE ; idx++) app_ul_payload[idx] = (sfx_u8) idx;
 #endif
 #endif
-	// Configure message.
-#ifndef UL_BIT_RATE_BPS
-	application_message.common_parameters.ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+    // Configure message.
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
+    application_message.common_parameters.ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
 #endif
 #ifndef TX_POWER_DBM_EIRP
-	application_message.common_parameters.tx_power_dbm_eirp = 14;
+    application_message.common_parameters.tx_power_dbm_eirp = 14;
 #endif
-#ifndef SINGLE_FRAME
-	application_message.common_parameters.number_of_frames = 3;
-#ifndef T_IFU_MS
-	application_message.common_parameters.t_ifu_ms = 1000;
+#ifndef SIGFOX_EP_SINGLE_FRAME
+    application_message.common_parameters.number_of_frames = 3;
+#ifndef SIGFOX_EP_T_IFU_MS
+    application_message.common_parameters.t_ifu_ms = 1000;
 #endif
 #endif
-#ifdef PUBLIC_KEY_CAPABLE
-	application_message.common_parameters.ep_key_type = SIGFOX_EP_KEY_PRIVATE;
+#ifdef SIGFOX_EP_PUBLIC_KEY_CAPABLE
+    application_message.common_parameters.ep_key_type = SIGFOX_EP_KEY_PRIVATE;
 #endif
-#ifdef APPLICATION_MESSAGES
-#ifdef UL_PAYLOAD_SIZE
-#if (UL_PAYLOAD_SIZE == 0)
-	application_message.type = SIGFOX_APPLICATION_MESSAGE_TYPE_EMPTY;
+#ifdef SIGFOX_EP_APPLICATION_MESSAGES
+#ifdef SIGFOX_EP_UL_PAYLOAD_SIZE
+#if (SIGFOX_EP_UL_PAYLOAD_SIZE == 0)
+    application_message.type = SIGFOX_APPLICATION_MESSAGE_TYPE_EMPTY;
 #else
-	application_message.type = SIGFOX_APPLICATION_MESSAGE_TYPE_BYTE_ARRAY;
-#endif
-#else
-	application_message.type = SIGFOX_APPLICATION_MESSAGE_TYPE_EMPTY;
+    application_message.type = SIGFOX_APPLICATION_MESSAGE_TYPE_BYTE_ARRAY;
 #endif
 #else
-	application_message.type = SIGFOX_CONTROL_MESSAGE_TYPE_KEEP_ALIVE;
+    application_message.type = SIGFOX_APPLICATION_MESSAGE_TYPE_EMPTY;
 #endif
-#ifdef ASYNCHRONOUS
-	application_message.uplink_cplt_cb = SFX_NULL;
-#ifdef BIDIRECTIONAL
-	application_message.downlink_cplt_cb = SFX_NULL;
-#endif
-	application_message.message_cplt_cb = &_APP_sigfox_message_completion_callback;
-#endif
-#ifdef APPLICATION_MESSAGES
-#if !(defined UL_PAYLOAD_SIZE) || (UL_PAYLOAD_SIZE > 0)
-	application_message.ul_payload = (sfx_u8*) app_ul_payload;
-#endif
-#ifndef UL_PAYLOAD_SIZE
-	application_message.ul_payload_size_bytes = APP_UL_PAYLOAD_SIZE;
-#endif
-#ifdef BIDIRECTIONAL
-	application_message.bidirectional_flag = SFX_FALSE;
-#ifndef T_CONF_MS
-	application_message.t_conf_ms = 2000;
-#endif
-#endif
-#endif
-	// Send message.
-#ifdef ERROR_CODES
-#ifdef APPLICATION_MESSAGES
-	sigfox_ep_api_status = SIGFOX_EP_API_send_application_message(&application_message);
 #else
-	sigfox_ep_api_status = SIGFOX_EP_API_send_control_message(&application_message);
+    application_message.type = SIGFOX_CONTROL_MESSAGE_TYPE_KEEP_ALIVE;
 #endif
-	_check_sigfox_ep_api_status();
+#ifdef SIGFOX_EP_ASYNCHRONOUS
+    application_message.uplink_cplt_cb = SIGFOX_NULL;
+#ifdef SIGFOX_EP_BIDIRECTIONAL
+    application_message.downlink_cplt_cb = SIGFOX_NULL;
+#endif
+    application_message.message_cplt_cb = &_APP_sigfox_message_completion_callback;
+#endif
+#ifdef SIGFOX_EP_APPLICATION_MESSAGES
+#if !(defined SIGFOX_EP_UL_PAYLOAD_SIZE) || (SIGFOX_EP_UL_PAYLOAD_SIZE > 0)
+    application_message.ul_payload = (sfx_u8*) app_ul_payload;
+#endif
+#ifndef SIGFOX_EP_UL_PAYLOAD_SIZE
+    application_message.ul_payload_size_bytes = APP_UL_PAYLOAD_SIZE;
+#endif
+#ifdef SIGFOX_EP_BIDIRECTIONAL
+    application_message.bidirectional_flag = SIGFOX_FALSE;
+#ifndef SIGFOX_EP_T_CONF_MS
+    application_message.t_conf_ms = 2000;
+#endif
+#endif
+#endif
+    // Send message.
+#ifdef SIGFOX_EP_ERROR_CODES
+#ifdef SIGFOX_EP_APPLICATION_MESSAGES
+    sigfox_ep_api_status = SIGFOX_EP_API_send_application_message(&application_message);
 #else
-#ifdef APPLICATION_MESSAGES
-	SIGFOX_EP_API_send_application_message(&application_message);
+    sigfox_ep_api_status = SIGFOX_EP_API_send_control_message(&application_message);
+#endif
+    _check_sigfox_ep_api_status();
 #else
-	SIGFOX_EP_API_send_control_message(&application_message);
+#ifdef SIGFOX_EP_APPLICATION_MESSAGES
+    SIGFOX_EP_API_send_application_message(&application_message);
+#else
+    SIGFOX_EP_API_send_control_message(&application_message);
 #endif
 #endif
 }
 
 /*******************************************************************/
 static void _APP_close_sigfox_library(void) {
-	// Local variables.
-#ifdef ERROR_CODES
-	SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
+    // Local variables.
+#ifdef SIGFOX_EP_ERROR_CODES
+    SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
 #endif
-	// Close library.
-#ifdef ERROR_CODES
-	sigfox_ep_api_status = SIGFOX_EP_API_close();
-	_check_sigfox_ep_api_status();
+    // Close library.
+#ifdef SIGFOX_EP_ERROR_CODES
+    sigfox_ep_api_status = SIGFOX_EP_API_close();
+    _check_sigfox_ep_api_status();
 #else
-	SIGFOX_EP_API_close();
+    SIGFOX_EP_API_close();
 #endif
 }
 
-#ifdef ASYNCHRONOUS
+#ifdef SIGFOX_EP_ASYNCHRONOUS
 /*******************************************************************/
 static uint8_t _APP_is_sigfox_library_running(void) {
-	// Local variables.
-	return (((SIGFOX_EP_API_get_state() == SIGFOX_EP_API_STATE_CLOSED) || (SIGFOX_EP_API_get_state() == SIGFOX_EP_API_STATE_READY)) ? 0 : 1);
+    // Local variables.
+    return (((SIGFOX_EP_API_get_state() == SIGFOX_EP_API_STATE_CLOSED) || (SIGFOX_EP_API_get_state() == SIGFOX_EP_API_STATE_READY)) ? 0 : 1);
 }
 #endif
 
@@ -298,64 +299,64 @@ static uint8_t _APP_is_sigfox_library_running(void) {
 
 /*******************************************************************/
 int main(void) {
-	// Local variables.
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Init board and context.
-	_APP_init_context();
-	_APP_init_board();
-	// Enable button interrupt.
-	mcal_status = BUTTON_enable_irq();
-	_check_mcal_status();
-	// Main loop.
-	while (1) {
-		// Check if all events have been processed.
-		if (app_ctx.flags.all == 0) {
-#ifdef ASYNCHRONOUS
-			// Enter sleep or stop mode depending on Sigfox library state.
-			if (_APP_is_sigfox_library_running() == 0) {
-				PWR_enter_stop_mode();
-			}
-			else {
-				PWR_enter_sleep_mode();
-			}
+    // Local variables.
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Init board and context.
+    _APP_init_context();
+    _APP_init_board();
+    // Enable button interrupt.
+    mcal_status = BUTTON_enable_irq();
+    _check_mcal_status();
+    // Main loop.
+    while (1) {
+        // Check if all events have been processed.
+        if (app_ctx.flags.all == 0) {
+#ifdef SIGFOX_EP_ASYNCHRONOUS
+        // Enter sleep or stop mode depending on Sigfox library state.
+        if (_APP_is_sigfox_library_running() == 0) {
+            PWR_enter_stop_mode();
+        }
+        else {
+            PWR_enter_sleep_mode();
+        }
 #else
-			// Enter stop mode.
-			PWR_enter_stop_mode();
+            // Enter stop mode.
+            PWR_enter_stop_mode();
 #endif
-		}
-		// Check button press.
-		if (app_ctx.flags.field.button_press != 0) {
-			// Disable interrupt during processing.
-			mcal_status = BUTTON_disable_irq();
-			_check_mcal_status();
-			// Clear flag.
-			app_ctx.flags.field.button_press = 0;
-			// Send message.
-			_APP_open_sigfox_library();
-			_APP_send_sigfox_message();
-#ifndef ASYNCHRONOUS
-			app_ctx.flags.field.sigfox_message_completion = 1;
+        }
+        // Check button press.
+        if (app_ctx.flags.field.button_press != 0) {
+            // Disable interrupt during processing.
+            mcal_status = BUTTON_disable_irq();
+            _check_mcal_status();
+            // Clear flag.
+            app_ctx.flags.field.button_press = 0;
+            // Send message.
+            _APP_open_sigfox_library();
+            _APP_send_sigfox_message();
+#ifndef SIGFOX_EP_ASYNCHRONOUS
+            app_ctx.flags.field.sigfox_message_completion = 1;
 #endif
-		}
-		// Check Sigfox completion flag.
-		if (app_ctx.flags.field.sigfox_message_completion != 0) {
-			// Clear flag.
-			app_ctx.flags.field.sigfox_message_completion = 0;
-			// Close library.
-			_APP_close_sigfox_library();
-			// Re-enable interrupt.
-			mcal_status = BUTTON_enable_irq();
-			_check_mcal_status();
-		}
-#ifdef ASYNCHRONOUS
-		// Check Sigfox process flag.
-		if (app_ctx.flags.field.sigfox_process != 0) {
-			// Clear flag.
-			app_ctx.flags.field.sigfox_process = 0;
-			// Call process function.
-			SIGFOX_EP_API_process();
-		}
+        }
+        // Check Sigfox completion flag.
+        if (app_ctx.flags.field.sigfox_message_completion != 0) {
+            // Clear flag.
+            app_ctx.flags.field.sigfox_message_completion = 0;
+            // Close library.
+            _APP_close_sigfox_library();
+            // Re-enable interrupt.
+            mcal_status = BUTTON_enable_irq();
+            _check_mcal_status();
+        }
+#ifdef SIGFOX_EP_ASYNCHRONOUS
+        // Check Sigfox process flag.
+        if (app_ctx.flags.field.sigfox_process != 0) {
+            // Clear flag.
+            app_ctx.flags.field.sigfox_process = 0;
+            // Call process function.
+            SIGFOX_EP_API_process();
+        }
 #endif
-	}
-	return 0;
+    }
+    return 0;
 }

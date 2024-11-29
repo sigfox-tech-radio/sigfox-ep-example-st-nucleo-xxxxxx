@@ -46,8 +46,8 @@
 
 /*** NVM local macros ***/
 
-#define NVM_START_ADDRESS	0x08080000
-#define NVM_TIMEOUT_COUNT	1000000
+#define NVM_START_ADDRESS   0x08080000
+#define NVM_TIMEOUT_COUNT   1000000
 
 /*** NVM local functions ***/
 
@@ -56,107 +56,107 @@
 
 /*******************************************************************/
 static MCAL_status_t _NVM_check_busy(void) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	uint32_t loop_count = 0;
-	// Check no write/erase operation is running.
-	while ((__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY)) != 0) {
-		// Wait till BSY='1' or timeout.
-		loop_count++;
-		if (loop_count > NVM_TIMEOUT_COUNT) {
-			status = MCAL_ERROR;
-			goto errors;
-		}
-	}
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint32_t loop_count = 0;
+    // Check no write/erase operation is running.
+    while ((__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY)) != 0) {
+        // Wait till BSY='1' or timeout.
+        loop_count++;
+        if (loop_count > NVM_TIMEOUT_COUNT) {
+            status = MCAL_ERROR;
+            goto errors;
+        }
+    }
 errors:
-	return status;
+    return status;
 }
 
 /*******************************************************************/
 static MCAL_status_t __attribute__((optimize("-O0"))) _NVM_unlock(void) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	HAL_StatusTypeDef hal_status = HAL_OK;
-	// Check memory is ready.
-	status = _NVM_check_busy();
-	if (status != MCAL_SUCCESS) goto errors;
-	// Unlock sequence.
-	hal_status = HAL_FLASH_Unlock();
-	_check_hal_status();
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    HAL_StatusTypeDef hal_status = HAL_OK;
+    // Check memory is ready.
+    status = _NVM_check_busy();
+    if (status != MCAL_SUCCESS) goto errors;
+    // Unlock sequence.
+    hal_status = HAL_FLASH_Unlock();
+    _check_hal_status();
 errors:
-	return status;
+    return status;
 }
 
 /*******************************************************************/
 static MCAL_status_t __attribute__((optimize("-O0"))) _NVM_lock(void) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	HAL_StatusTypeDef hal_status = HAL_OK;
-	// Check memory is ready.
-	status = _NVM_check_busy();
-	if (status != MCAL_SUCCESS) goto errors;
-	// Lock sequence.
-	hal_status = HAL_FLASH_Lock();
-	_check_hal_status();
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    HAL_StatusTypeDef hal_status = HAL_OK;
+    // Check memory is ready.
+    status = _NVM_check_busy();
+    if (status != MCAL_SUCCESS) goto errors;
+    // Lock sequence.
+    hal_status = HAL_FLASH_Lock();
+    _check_hal_status();
 errors:
-	return status;
+    return status;
 }
 
 /*** NVM functions ***/
 
 /*******************************************************************/
-MCAL_status_t __attribute__((optimize("-O0"))) NVM_read_byte(NVM_address_t address, uint8_t* data) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	uint32_t absolute_address = (NVM_START_ADDRESS + address);
-	// Check parameters.
-	if ((address >= NVM_SIZE_BYTES) || (data == NULL)) {
-		status = MCAL_ERROR;
-		goto errors;
-	}
-	// Enable peripheral.
-	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_MIF);
-	// Check there is no pending operation.
-	status = _NVM_check_busy();
-	if (status != MCAL_SUCCESS) goto errors;
-	// Read data.
-	(*data) = *((uint8_t*) (absolute_address));
+MCAL_status_t __attribute__((optimize("-O0"))) NVM_read_byte(NVM_address_t address, uint8_t *data) {
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint32_t absolute_address = (NVM_START_ADDRESS + address);
+    // Check parameters.
+    if ((address >= NVM_SIZE_BYTES) || (data == NULL)) {
+        status = MCAL_ERROR;
+        goto errors;
+    }
+    // Enable peripheral.
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_MIF);
+    // Check there is no pending operation.
+    status = _NVM_check_busy();
+    if (status != MCAL_SUCCESS) goto errors;
+    // Read data.
+    (*data) = *((uint8_t*) (absolute_address));
 errors:
-	// Disable peripheral.
-	LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_MIF);
-	return status;
+    // Disable peripheral.
+    LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_MIF);
+    return status;
 }
 
 /*******************************************************************/
 MCAL_status_t __attribute__((optimize("-O0"))) NVM_write_byte(NVM_address_t address, uint8_t data) {
-	// Local variables.
-	MCAL_status_t status = MCAL_SUCCESS;
-	uint32_t absolute_address = (NVM_START_ADDRESS + address);
-	// Check parameters.
-	if (address >= NVM_SIZE_BYTES) {
-		status = MCAL_ERROR;
-		goto errors;
-	}
-	// Enable peripheral.
-	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_MIF);
-	// Unlock memory.
-	status = _NVM_unlock();
-	if (status != MCAL_SUCCESS) goto errors;
-	// Write data.
-	(*((uint8_t*) (absolute_address))) = data;
-	// Wait the end of operation.
-	status = _NVM_check_busy();
-	if (status != MCAL_SUCCESS) goto errors;
-	// Lock memory.
-	status = _NVM_lock();
-	if (status != MCAL_SUCCESS) goto errors;
-	// Disable peripheral.
-	LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_MIF);
-	return status;
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint32_t absolute_address = (NVM_START_ADDRESS + address);
+    // Check parameters.
+    if (address >= NVM_SIZE_BYTES) {
+        status = MCAL_ERROR;
+        goto errors;
+    }
+    // Enable peripheral.
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_MIF);
+    // Unlock memory.
+    status = _NVM_unlock();
+    if (status != MCAL_SUCCESS) goto errors;
+    // Write data.
+    (*((uint8_t*) (absolute_address))) = data;
+    // Wait the end of operation.
+    status = _NVM_check_busy();
+    if (status != MCAL_SUCCESS) goto errors;
+    // Lock memory.
+    status = _NVM_lock();
+    if (status != MCAL_SUCCESS) goto errors;
+    // Disable peripheral.
+    LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_MIF);
+    return status;
 errors:
-	// Lock memory.
-	_NVM_lock();
-	// Disable peripheral.
-	LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_MIF);
-	return status;
+    // Lock memory.
+    _NVM_lock();
+    // Disable peripheral.
+    LL_AHB1_GRP1_DisableClock(LL_AHB1_GRP1_PERIPH_MIF);
+    return status;
 }

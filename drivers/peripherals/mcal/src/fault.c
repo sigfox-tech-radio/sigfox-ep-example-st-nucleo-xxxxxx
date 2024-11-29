@@ -40,7 +40,7 @@
 
 /*******************************************************************/
 void __attribute__((optimize("-O0"))) HardFault_Handler(void) {
-	GPIOA -> MODER &= ~(0b11 << 10);
-	GPIOA -> MODER |= (0b01 << 10);
-	GPIOA -> ODR |= (0b1 << 5);
+    GPIOA->MODER &= ~(0b11 << 10);
+    GPIOA->MODER |= (0b01 << 10);
+    GPIOA->ODR |= (0b1 << 5);
 }

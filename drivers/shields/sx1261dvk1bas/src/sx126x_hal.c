@@ -46,7 +46,7 @@
 
 /*** SX126X HAL local macros ***/
 
-#define SX126X_HAL_TIMEOUT_COUNT	1000000
+#define SX126X_HAL_TIMEOUT_COUNT    1000000
 
 /*** SX126X HAL local functions ***/
 
@@ -55,108 +55,108 @@
 
 /*******************************************************************/
 sx126x_hal_status_t _sx126x_hal_wait_busy(void) {
-	// Local variables.
-	sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	uint8_t gpio_busy = 0;
-	uint32_t loop_count = 0;
-	// Wait for chip to be ready.
-	do {
-		// Read pin.
-		mcal_status = GPIO_read(&SX126X_GPIO_BUSY, &gpio_busy);
-		_check_mcal_status();
-		// Manage timeout.
-		loop_count++;
-		if (loop_count > SX126X_HAL_TIMEOUT_COUNT) {
-			status = SX126X_HAL_STATUS_ERROR;
-			goto errors;
-		}
-	}
-	while (gpio_busy != 0);
+    // Local variables.
+    sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    uint8_t gpio_busy = 0;
+    uint32_t loop_count = 0;
+    // Wait for chip to be ready.
+    do {
+        // Read pin.
+        mcal_status = GPIO_read(&SX126X_GPIO_BUSY, &gpio_busy);
+        _check_mcal_status();
+        // Manage timeout.
+        loop_count++;
+        if (loop_count > SX126X_HAL_TIMEOUT_COUNT) {
+            status = SX126X_HAL_STATUS_ERROR;
+            goto errors;
+        }
+    }
+    while (gpio_busy != 0);
 errors:
-	return status;
+    return status;
 }
 
 /*** SX126X HAL functions ***/
 
 /*******************************************************************/
-sx126x_hal_status_t sx126x_hal_reset(const void* context) {
-	// Local variables.
-	sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Ignore unused parameters.
-	MCAL_UNUSED(context);
-	// Perform reset.
-	mcal_status = GPIO_write(&SX126X_GPIO_NRESET, 0);
-	_check_mcal_status();
-	mcal_status = LPTIM_delay_milliseconds(SX126X_HAL_RESET_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
-	_check_mcal_status();
-	mcal_status = GPIO_write(&SX126X_GPIO_NRESET, 1);
-	_check_mcal_status();
+sx126x_hal_status_t sx126x_hal_reset(const void *context) {
+    // Local variables.
+    sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Ignore unused parameters.
+    MCAL_UNUSED(context);
+    // Perform reset.
+    mcal_status = GPIO_write(&SX126X_GPIO_NRESET, 0);
+    _check_mcal_status();
+    mcal_status = LPTIM_delay_milliseconds(SX126X_HAL_RESET_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
+    _check_mcal_status();
+    mcal_status = GPIO_write(&SX126X_GPIO_NRESET, 1);
+    _check_mcal_status();
 errors:
-	return status;
+    return status;
 }
 
 /*******************************************************************/
-sx126x_hal_status_t sx126x_hal_wakeup(const void* context) {
-	// Local variables.
-	sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Ignore unused parameters.
-	MCAL_UNUSED(context);
-	// Perform reset.
-	mcal_status = GPIO_write(&SX126X_GPIO_NSS, 0);
-	_check_mcal_status();
-	mcal_status = LPTIM_delay_milliseconds(SX126X_HAL_WAKEUP_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
-	_check_mcal_status();
-	mcal_status = GPIO_write(&SX126X_GPIO_NSS, 1);
-	_check_mcal_status();
+sx126x_hal_status_t sx126x_hal_wakeup(const void *context) {
+    // Local variables.
+    sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Ignore unused parameters.
+    MCAL_UNUSED(context);
+    // Perform reset.
+    mcal_status = GPIO_write(&SX126X_GPIO_SPI_NSS, 0);
+    _check_mcal_status();
+    mcal_status = LPTIM_delay_milliseconds(SX126X_HAL_WAKEUP_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
+    _check_mcal_status();
+    mcal_status = GPIO_write(&SX126X_GPIO_SPI_NSS, 1);
+    _check_mcal_status();
 errors:
-	return status;
+    return status;
 }
 
 /*******************************************************************/
-sx126x_hal_status_t sx126x_hal_write(const void* context, const uint8_t* command, const uint16_t command_length, const uint8_t* data, const uint16_t data_length) {
-	// Local variables.
-	sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Ignore unused parameters.
-	MCAL_UNUSED(context);
-	// Wait for chip to be ready.
-	status = _sx126x_hal_wait_busy();
-	if (status != SX126X_HAL_STATUS_OK) goto errors;
-	// SPI transfer.
-	mcal_status = GPIO_write(&SX126X_GPIO_NSS, 0);
-	_check_mcal_status();
-	mcal_status = SPI_write_read((uint8_t*) command, NULL, command_length);
-	_check_mcal_status();
-	mcal_status = SPI_write_read((uint8_t*) data, NULL, data_length);
-	_check_mcal_status();
-	mcal_status = GPIO_write(&SX126X_GPIO_NSS, 1);
-	_check_mcal_status();
+sx126x_hal_status_t sx126x_hal_write(const void *context, const uint8_t *command, const uint16_t command_length, const uint8_t *data, const uint16_t data_length) {
+    // Local variables.
+    sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Ignore unused parameters.
+    MCAL_UNUSED(context);
+    // Wait for chip to be ready.
+    status = _sx126x_hal_wait_busy();
+    if (status != SX126X_HAL_STATUS_OK) goto errors;
+    // SPI transfer.
+    mcal_status = GPIO_write(&SX126X_GPIO_SPI_NSS, 0);
+    _check_mcal_status();
+    mcal_status = SPI_write_read((uint8_t*) command, NULL, command_length);
+    _check_mcal_status();
+    mcal_status = SPI_write_read((uint8_t*) data, NULL, data_length);
+    _check_mcal_status();
+    mcal_status = GPIO_write(&SX126X_GPIO_SPI_NSS, 1);
+    _check_mcal_status();
 errors:
-	return status;
+    return status;
 }
 
 /*******************************************************************/
-sx126x_hal_status_t sx126x_hal_read(const void* context, const uint8_t* command, const uint16_t command_length, uint8_t* data, const uint16_t data_length) {
-	// Local variables.
-	sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
-	MCAL_status_t mcal_status = MCAL_SUCCESS;
-	// Ignore unused parameters.
-	MCAL_UNUSED(context);
-	// Wait for chip to be ready.
-	status = _sx126x_hal_wait_busy();
-	if (status != SX126X_HAL_STATUS_OK) goto errors;
-	// SPI transfer.
-	mcal_status = GPIO_write(&SX126X_GPIO_NSS, 0);
-	_check_mcal_status();
-	mcal_status = SPI_write_read((uint8_t*) command, NULL, command_length);
-	_check_mcal_status();
-	mcal_status = SPI_write_read(NULL, data, data_length);
-	_check_mcal_status();
-	mcal_status = GPIO_write(&SX126X_GPIO_NSS, 1);
-	_check_mcal_status();
+sx126x_hal_status_t sx126x_hal_read(const void *context, const uint8_t *command, const uint16_t command_length, uint8_t *data, const uint16_t data_length) {
+    // Local variables.
+    sx126x_hal_status_t status = SX126X_HAL_STATUS_OK;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
+    // Ignore unused parameters.
+    MCAL_UNUSED(context);
+    // Wait for chip to be ready.
+    status = _sx126x_hal_wait_busy();
+    if (status != SX126X_HAL_STATUS_OK) goto errors;
+    // SPI transfer.
+    mcal_status = GPIO_write(&SX126X_GPIO_SPI_NSS, 0);
+    _check_mcal_status();
+    mcal_status = SPI_write_read((uint8_t*) command, NULL, command_length);
+    _check_mcal_status();
+    mcal_status = SPI_write_read(NULL, data, data_length);
+    _check_mcal_status();
+    mcal_status = GPIO_write(&SX126X_GPIO_SPI_NSS, 1);
+    _check_mcal_status();
 errors:
-	return status;
+    return status;
 }

@@ -37,37 +37,50 @@
 #ifndef __SPI_H__
 #define __SPI_H__
 
+#include "gpio.h"
 #include "mcal.h"
 #include "stdint.h"
+
+/*** SPI structures ***/
+
+/*!******************************************************************
+ * \enum SPI_gpio_t
+ * \brief SPI GPIOs list.
+ *******************************************************************/
+typedef struct {
+    const GPIO_pin_t *sck;
+    const GPIO_pin_t *miso;
+    const GPIO_pin_t *mosi;
+} SPI_gpio_t;
 
 /*** SPI functions ***/
 
 /*!******************************************************************
- * \fn MCAL_status_t SPI_init(void)
+ * \fn MCAL_status_t SPI_init(SPI_gpio_t *spi_gpio)
  * \brief Init common SPI peripheral.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   spi_gpio: Pointer to the SPI GPIOs to use.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t SPI_init(void);
+MCAL_status_t SPI_init(SPI_gpio_t *spi_gpio);
 
 /*!******************************************************************
- * \fn MCAL_status_t SPI_de_init(void)
+ * \fn MCAL_status_t SPI_de_init(SPI_gpio_t *spi_gpio)
  * \brief Release common SPI peripheral.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   spi_gpio: Pointer to the SPI GPIOs to release.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t SPI_de_init(void);
+MCAL_status_t SPI_de_init(SPI_gpio_t *spi_gpio);
 
 /*!******************************************************************
  * \fn MCAL_status_t SPI_write_read(uint8_t* tx_data, uint8_t rx_data, uint16_t transfer_size)
  * \brief SPI 8-bits data transfer function.
- * \param[in]	tx_data: Byte array to send.
- * \param[in]	transfer_size: Number of bytes to send and receive.
- * \param[out] 	rx_data: Pointer to the received bytes.
- * \retval		Function execution status.
+ * \param[in]   tx_data: Byte array to send.
+ * \param[in]   transfer_size: Number of bytes to send and receive.
+ * \param[out]  rx_data: Pointer to the received bytes.
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t SPI_write_read(uint8_t* tx_data, uint8_t* rx_data, uint16_t transfer_size);
+MCAL_status_t SPI_write_read(uint8_t *tx_data, uint8_t *rx_data, uint16_t transfer_size);
 
 #endif /* __SPI_H__ */

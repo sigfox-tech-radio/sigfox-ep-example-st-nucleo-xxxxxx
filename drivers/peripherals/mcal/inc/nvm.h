@@ -38,12 +38,11 @@
 #define __NVM_H__
 
 #include "mcal.h"
-#include "sigfox_types.h"
 #include "stdint.h"
 
 /*** NVM macros ***/
 
-#define NVM_SIZE_BYTES		2048
+#define NVM_SIZE_BYTES      2048
 
 /*** NVM structures ***/
 
@@ -52,8 +51,8 @@
  * \brief NVM address mapping.
  *******************************************************************/
 typedef enum {
-	NVM_ADDRESS_SIGFOX_EP_LIB_DATA = 0,
-	NVM_ADDRESS_LAST = (NVM_SIZE_BYTES - 1)
+    NVM_ADDRESS_SIGFOX_EP_LIB_DATA = 0,
+    NVM_ADDRESS_LAST = (NVM_SIZE_BYTES - 1)
 } NVM_address_t;
 
 /*** NVM functions ***/
@@ -61,18 +60,18 @@ typedef enum {
 /*!******************************************************************
  * \fn MCAL_status_t NVM_read_byte(NVM_address_t address, uint8_t* data)
  * \brief Read byte in NVM.
- * \param[in]  	address: Address to read.
- * \param[out] 	data: Pointer to byte that will contain the read value.
- * \retval		Function execution status.
+ * \param[in]   address: Address to read.
+ * \param[out]  data: Pointer to byte that will contain the read value.
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t NVM_read_byte(NVM_address_t address, uint8_t* data);
+MCAL_status_t NVM_read_byte(NVM_address_t address, uint8_t *data);
 
 /*!******************************************************************
  * \fn MCAL_status_t NVM_write_byte(NVM_address_t address, uint8_t data)
  * \brief Write byte in NVM.
- * \param[in]  	address: Address to write.
- * \param[out] 	data: Byte to write.
- * \retval		Function execution status.
+ * \param[in]   address: Address to write.
+ * \param[out]  data: Byte to write.
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t NVM_write_byte(NVM_address_t address, uint8_t data);
 

@@ -36,15 +36,18 @@
 
 #include "s2lp_mapping.h"
 
-#ifdef USE_SIGFOX_EP_FLAGS_H
+#ifndef SIGFOX_EP_DISABLE_FLAGS_FILE
 #include "sigfox_ep_flags.h"
 #endif
 #include "gpio.h"
 
 /*** S2LP MAPPING global variables ***/
 
-const GPIO_pin_t S2LP_GPIO_NSS = 	(GPIO_pin_t) {GPIO_PORT_B, 6, 0};
+const GPIO_pin_t S2LP_GPIO_SPI_SCK =    { GPIO_PORT_B, 3, 0 };
+const GPIO_pin_t S2LP_GPIO_SPI_MISO =   { GPIO_PORT_A, 6, 0 };
+const GPIO_pin_t S2LP_GPIO_SPI_MOSI =   { GPIO_PORT_A, 7, 0 };
+const GPIO_pin_t S2LP_GPIO_SPI_NSS =    { GPIO_PORT_A, 1, 0 };
 
-const GPIO_pin_t S2LP_GPIO_SDN = 	(GPIO_pin_t) {GPIO_PORT_A, 8, 0};
+const GPIO_pin_t S2LP_GPIO_SDN =        { GPIO_PORT_A, 8, 0 };
 
-const GPIO_pin_t S2LP_GPIO_IRQ = 	(GPIO_pin_t) {GPIO_PORT_C, 0, 0};
+const GPIO_pin_t S2LP_GPIO_IRQ =        { GPIO_PORT_C, 0, 0 };

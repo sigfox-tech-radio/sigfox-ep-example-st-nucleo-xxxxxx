@@ -47,10 +47,10 @@
  * \brief LPTIM delay waiting modes.
  *******************************************************************/
 typedef enum {
-	LPTIM_DELAY_MODE_ACTIVE = 0,
-	LPTIM_DELAY_MODE_SLEEP,
-	LPTIM_DELAY_MODE_STOP,
-	LPTIM_DELAY_MODE_LAST
+    LPTIM_DELAY_MODE_ACTIVE = 0,
+    LPTIM_DELAY_MODE_SLEEP,
+    LPTIM_DELAY_MODE_STOP,
+    LPTIM_DELAY_MODE_LAST
 } LPTIM_delay_mode_t;
 
 /*** LPTIM functions ***/
@@ -58,19 +58,19 @@ typedef enum {
 /*!******************************************************************
  * \fn MCAL_status_t LPTIM_init(void)
  * \brief Init LPTIM1 peripheral for delay operation.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t LPTIM_init(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t LPTIM_delay_milliseconds(uint32_t delay_ms, LPTIM_delay_mode_t delay_mode)
  * \brief Delay function.
- * \param[in]  	delay_ms: Delay to wait in ms.
- * \param[in]	delay_mode: Delay waiting mode.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   delay_ms: Delay to wait in ms.
+ * \param[in]   delay_mode: Delay waiting mode.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t LPTIM_delay_milliseconds(uint32_t delay_ms, LPTIM_delay_mode_t delay_mode);
 

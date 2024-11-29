@@ -53,36 +53,36 @@ typedef void (*BUTTON_press_irq_cb_t)(void);
 /*!******************************************************************
  * \fn MCAL_status_t BUTTON_init(BUTTON_press_irq_cb_t irq_callback)
  * \brief Init button driver.
- * \param[in]  	irq_callback: Function to call when button is pressed.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   irq_callback: Function to call when button is pressed.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t BUTTON_init(BUTTON_press_irq_cb_t irq_callback);
 
 /*!******************************************************************
  * \fn MCAL_status_t BUTTON_de_init(void)
  * \brief Release button driver.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t BUTTON_de_init(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t BUTTON_enable_irq(void)
  * \brief Enable button interrupt.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t BUTTON_enable_irq(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t BUTTON_disable_irq(void)
  * \brief Disable button interrupt.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t BUTTON_disable_irq(void);
 

@@ -42,19 +42,19 @@
 
 /*** GPIO macros ***/
 
-#define GPIO_PINS_PER_PORT	16
+#define GPIO_PINS_PER_PORT  16
 
 /*** GPIO structures ***/
 
 /*!******************************************************************
- * \struct GPIO_port_t
+ * \enum GPIO_port_t
  * \brief GPIO ports list.
  *******************************************************************/
 typedef enum {
-	GPIO_PORT_A = 0,
-	GPIO_PORT_B,
-	GPIO_PORT_C,
-	GPIO_PORT_LAST
+    GPIO_PORT_A = 0,
+    GPIO_PORT_B,
+    GPIO_PORT_C,
+    GPIO_PORT_LAST
 } GPIO_port_t;
 
 /*!******************************************************************
@@ -62,9 +62,9 @@ typedef enum {
  * \brief GPIO pin descriptor.
  *******************************************************************/
 typedef struct {
-	GPIO_port_t port;
-	uint8_t pin;
-	uint8_t alternate_function;
+    GPIO_port_t port;
+    uint8_t pin;
+    uint8_t alternate_function;
 } GPIO_pin_t;
 
 /*!******************************************************************
@@ -72,11 +72,11 @@ typedef struct {
  * \brief GPIO modes list.
  *******************************************************************/
 typedef enum {
-	GPIO_MODE_INPUT = 0,
-	GPIO_MODE_OUTPUT,
-	GPIO_MODE_ALTERNATE_FUNCTION,
-	GPIO_MODE_ANALOG,
-	GPIO_MODE_LAST
+    GPIO_MODE_INPUT = 0,
+    GPIO_MODE_OUTPUT,
+    GPIO_MODE_ALTERNATE_FUNCTION,
+    GPIO_MODE_ANALOG,
+    GPIO_MODE_LAST
 } GPIO_mode_t;
 
 /*!******************************************************************
@@ -84,9 +84,9 @@ typedef enum {
  * \brief GPIO output types.
  *******************************************************************/
 typedef enum {
-	GPIO_OUTPUT_TYPE_PUSH_PULL = 0,
-	GPIO_OUTPUT_TYPE_OPEN_DRAIN,
-	GPIO_OUTPUT_TYPE_LAST
+    GPIO_OUTPUT_TYPE_PUSH_PULL = 0,
+    GPIO_OUTPUT_TYPE_OPEN_DRAIN,
+    GPIO_OUTPUT_TYPE_LAST
 } GPIO_output_type_t;
 
 /*!******************************************************************
@@ -94,11 +94,11 @@ typedef enum {
  * \brief GPIO speeds.
  *******************************************************************/
 typedef enum {
-	GPIO_SPEED_LOW = 0,
-	GPIO_SPEED_MEDIUM,
-	GPIO_SPEED_HIGH,
-	GPIO_SPEED_VERY_HIGH,
-	GPIO_SPEED_LAST
+    GPIO_SPEED_LOW = 0,
+    GPIO_SPEED_MEDIUM,
+    GPIO_SPEED_HIGH,
+    GPIO_SPEED_VERY_HIGH,
+    GPIO_SPEED_LAST
 } GPIO_speed_t;
 
 /*!******************************************************************
@@ -106,10 +106,10 @@ typedef enum {
  * \brief GPIO pull resistor configurations.
  *******************************************************************/
 typedef enum {
-	GPIO_PULL_NONE = 0,
-	GPIO_PULL_UP,
-	GPIO_PULL_DOWN,
-	GPIO_PULL_LAST
+    GPIO_PULL_NONE = 0,
+    GPIO_PULL_UP,
+    GPIO_PULL_DOWN,
+    GPIO_PULL_LAST
 } GPIO_pull_resistor_t;
 
 /*** GPIO functions ***/
@@ -117,51 +117,51 @@ typedef enum {
 /*!******************************************************************
  * \fn void GPIO_init(void)
  * \brief Init GPIO driver.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		none
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      none
  *******************************************************************/
 void GPIO_init(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t GPIO_configure(const GPIO_pin_t* gpio, GPIO_mode_t mode, GPIO_output_type_t output_type, GPIO_speed_t speed, GPIO_pull_resistor_t pull_resistor)
  * \brief Configure a GPIO.
- * \param[in]  	gpio: GPIO to configure.
- * \param[in]	mode: GPIO mode.
- * \param[in]	output_type: GPIO output type.
- * \param[in]	speed: GPIO speed.
- * \param[in]	pull_resistor: GPIO pull resistor configuration.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   gpio: GPIO to configure.
+ * \param[in]   mode: GPIO mode.
+ * \param[in]   output_type: GPIO output type.
+ * \param[in]   speed: GPIO speed.
+ * \param[in]   pull_resistor: GPIO pull resistor configuration.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t GPIO_configure(const GPIO_pin_t* gpio, GPIO_mode_t mode, GPIO_output_type_t output_type, GPIO_speed_t speed, GPIO_pull_resistor_t pull_resistor);
+MCAL_status_t GPIO_configure(const GPIO_pin_t *gpio, GPIO_mode_t mode, GPIO_output_type_t output_type, GPIO_speed_t speed, GPIO_pull_resistor_t pull_resistor);
 
 /*!******************************************************************
  * \fn MCAL_status_t GPIO_write(const GPIO_pin_t* gpio, uint8_t state)
  * \brief Set GPIO output state.
- * \param[in]  	gpio: GPIO to write.
- * \param[in]	state: Output state to write.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   gpio: GPIO to write.
+ * \param[in]   state: Output state to write.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t GPIO_write(const GPIO_pin_t* gpio, uint8_t state);
+MCAL_status_t GPIO_write(const GPIO_pin_t *gpio, uint8_t state);
 
 /*!******************************************************************
  * \fn MCAL_status_t GPIO_read(const GPIO_pin_t* gpio, uint8_t* state)
  * \brief Read GPIO input or output state.
- * \param[in]  	gpio: GPIO to read.
- * \param[out] 	state: Pointer to the GPIO state.
- * \retval		Function execution status.
+ * \param[in]   gpio: GPIO to read.
+ * \param[out]  state: Pointer to the GPIO state.
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t GPIO_read(const GPIO_pin_t* gpio, uint8_t* state);
+MCAL_status_t GPIO_read(const GPIO_pin_t *gpio, uint8_t *state);
 
 /*!******************************************************************
  * \fn MCAL_status_t GPIO_toggle(const GPIO_pin_t* gpio)
  * \brief Toggle GPIO output state.
- * \param[in]  	gpio: GPIO to toggle.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   gpio: GPIO to toggle.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t GPIO_toggle(const GPIO_pin_t* gpio);
+MCAL_status_t GPIO_toggle(const GPIO_pin_t *gpio);
 
 #endif /* __GPIO_H__ */

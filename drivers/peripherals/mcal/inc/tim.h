@@ -47,11 +47,11 @@
  * \brief Timer channels list.
  *******************************************************************/
 typedef enum {
-	TIM_CHANNEL_CH1 = 0,
-	TIM_CHANNEL_CH2,
-	TIM_CHANNEL_CH3,
-	TIM_CHANNEL_CH4,
-	TIM_CHANNEL_LAST
+    TIM_CHANNEL_CH1 = 0,
+    TIM_CHANNEL_CH2,
+    TIM_CHANNEL_CH3,
+    TIM_CHANNEL_CH4,
+    TIM_CHANNEL_LAST
 } TIM_channel_t;
 
 /*!******************************************************************
@@ -59,10 +59,10 @@ typedef enum {
  * \brief Timer completion waiting modes.
  *******************************************************************/
 typedef enum {
-	TIM_WAITING_MODE_ACTIVE = 0,
-	TIM_WAITING_MODE_SLEEP,
-	TIM_WAITING_MODE_LOW_POWER_SLEEP,
-	TIM_WAITING_MODE_LAST
+    TIM_WAITING_MODE_ACTIVE = 0,
+    TIM_WAITING_MODE_SLEEP,
+    TIM_WAITING_MODE_LOW_POWER_SLEEP,
+    TIM_WAITING_MODE_LAST
 } TIM_waiting_mode_t;
 
 /*!******************************************************************
@@ -76,66 +76,66 @@ typedef void (*TIM_completion_irq_cb_t)(void);
 /*!******************************************************************
  * \fn void TIM_init(void)
  * \brief Init timer driver.
- * \param[in]  	irq_priority; Interrupt priority.
- * \param[out] 	none
- * \retval		Function execution status..
+ * \param[in]   irq_priority; Interrupt priority.
+ * \param[out]  none
+ * \retval      Function execution status..
  *******************************************************************/
 MCAL_status_t TIM_init(uint8_t irq_priority);
 
 /*!******************************************************************
  * \fn void TIM_de_init(void)
  * \brief Release timer driver.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		none
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      none
  *******************************************************************/
 void TIM_de_init(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t TIM_start(TIM_channel_t channel, uint32_t duration_ms, TIM_waiting_mode_t waiting_mode)
  * \brief Start a timer channel.
- * \param[in]  	channel: Channel to start.
- * \param[in]	duration_ms: Timer duration in ms.
- * \param[in]	waiting_mode: Completion waiting mode.
- * \param[in]	irq_callback: Function to call on timer completion.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   channel: Channel to start.
+ * \param[in]   duration_ms: Timer duration in ms.
+ * \param[in]   waiting_mode: Completion waiting mode.
+ * \param[in]   irq_callback: Function to call on timer completion.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t TIM_start(TIM_channel_t channel, uint32_t duration_ms, TIM_waiting_mode_t waiting_mode, TIM_completion_irq_cb_t irq_callback);
 
 /*!******************************************************************
  * \fn MCAL_status_t TIM_stop(TIM_channel_t channel)
  * \brief Stop a timer channel.
- * \param[in]  	channel: Channel to stop.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   channel: Channel to stop.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t TIM_stop(TIM_channel_t channel);
 
 /*!******************************************************************
  * \fn MCAL_status_t TIM_get_status(TIM_channel_t channel, uint8_t* timer_has_elapsed)
  * \brief Get the status of a timer channel.
- * \param[in]  	channel: Channel to read.
- * \param[out]	timer_has_elapsed: Pointer to bit that will contain the timer status (0 for running, 1 for complete).
- * \retval		Function execution status.
+ * \param[in]   channel: Channel to read.
+ * \param[out]  timer_has_elapsed: Pointer to bit that will contain the timer status (0 for running, 1 for complete).
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t TIM_get_status(TIM_channel_t channel, uint8_t* timer_has_elapsed);
+MCAL_status_t TIM_get_status(TIM_channel_t channel, uint8_t *timer_has_elapsed);
 
 /*!******************************************************************
  * \fn MCAL_status_t TIM_wait_completion(TIM_channel_t channel)
  * \brief Blocking function waiting for a timer channel completion.
- * \param[in]  	channel: Channel to wait for.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   channel: Channel to wait for.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t TIM_wait_completion(TIM_channel_t channel);
 
 /*!******************************************************************
  * \fn MCAL_status_t TIM_clear_irq_flag(TIM_channel_t channel)
  * \brief Clear timer channel interrupt flag.
- * \param[in]  	channel: Channel to clear.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   channel: Channel to clear.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t TIM_clear_irq_flag(TIM_channel_t channel);
 

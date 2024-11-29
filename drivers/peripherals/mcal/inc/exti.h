@@ -47,11 +47,11 @@
  * \brief EXTI ports list.
  *******************************************************************/
 typedef enum {
-	EXTI_PORT_A = 0,
-	EXTI_PORT_B,
-	EXTI_PORT_C,
-	EXTI_PORT_LAST,
-	EXTI_PORT_NONE = 0xFF
+    EXTI_PORT_A = 0,
+    EXTI_PORT_B,
+    EXTI_PORT_C,
+    EXTI_PORT_LAST,
+    EXTI_PORT_NONE = 0xFF
 } EXTI_port_t;
 
 /*!******************************************************************
@@ -59,34 +59,34 @@ typedef enum {
  * \brief EXTI lines list.
  *******************************************************************/
 typedef enum {
-	EXTI_LINE_GPIO_0 = 0,
-	EXTI_LINE_GPIO_1 = 1,
-	EXTI_LINE_GPIO_2 = 2,
-	EXTI_LINE_GPIO_3 = 3,
-	EXTI_LINE_GPIO_4 = 4,
-	EXTI_LINE_GPIO_5 = 5,
-	EXTI_LINE_GPIO_6 = 6,
-	EXTI_LINE_GPIO_7 = 7,
-	EXTI_LINE_GPIO_8 = 8,
-	EXTI_LINE_GPIO_9 = 9,
-	EXTI_LINE_GPIO_10 = 10,
-	EXTI_LINE_GPIO_11 = 11,
-	EXTI_LINE_GPIO_12 = 12,
-	EXTI_LINE_GPIO_13 = 13,
-	EXTI_LINE_GPIO_14 = 14,
-	EXTI_LINE_GPIO_15 = 15,
-	EXTI_LINE_PVD = 16,
-	EXTI_LINE_RTC_ALARM = 17,
-	EXTI_LINE_RTC_TAMPER_TIMESTAMP = 19,
-	EXTI_LINE_RTC_WAKEUP_TIMER = 20,
-	EXTI_LINE_COMP1 = 21,
-	EXTI_LINE_COMP2 = 22,
-	EXTI_LINE_I2C1 = 23,
-	EXTI_LINE_USART1 = 25,
-	EXTI_LINE_USART2 = 26,
-	EXTI_LINE_LPUART1 = 28,
-	EXTI_LINE_LPTIM1 = 29,
-	EXTI_LINE_LAST
+    EXTI_LINE_GPIO_0 = 0,
+    EXTI_LINE_GPIO_1 = 1,
+    EXTI_LINE_GPIO_2 = 2,
+    EXTI_LINE_GPIO_3 = 3,
+    EXTI_LINE_GPIO_4 = 4,
+    EXTI_LINE_GPIO_5 = 5,
+    EXTI_LINE_GPIO_6 = 6,
+    EXTI_LINE_GPIO_7 = 7,
+    EXTI_LINE_GPIO_8 = 8,
+    EXTI_LINE_GPIO_9 = 9,
+    EXTI_LINE_GPIO_10 = 10,
+    EXTI_LINE_GPIO_11 = 11,
+    EXTI_LINE_GPIO_12 = 12,
+    EXTI_LINE_GPIO_13 = 13,
+    EXTI_LINE_GPIO_14 = 14,
+    EXTI_LINE_GPIO_15 = 15,
+    EXTI_LINE_PVD = 16,
+    EXTI_LINE_RTC_ALARM = 17,
+    EXTI_LINE_RTC_TAMPER_TIMESTAMP = 19,
+    EXTI_LINE_RTC_WAKEUP_TIMER = 20,
+    EXTI_LINE_COMP1 = 21,
+    EXTI_LINE_COMP2 = 22,
+    EXTI_LINE_I2C1 = 23,
+    EXTI_LINE_USART1 = 25,
+    EXTI_LINE_USART2 = 26,
+    EXTI_LINE_LPUART1 = 28,
+    EXTI_LINE_LPTIM1 = 29,
+    EXTI_LINE_LAST
 } EXTI_line_t;
 
 /*!******************************************************************
@@ -94,11 +94,11 @@ typedef enum {
  * \brief EXTI triggers list.
  *******************************************************************/
 typedef enum {
-	EXTI_TRIGGER_NONE = 0,
-	EXTI_TRIGGER_RISING,
-	EXTI_TRIGGER_FALLING,
-	EXTI_TRIGGER_RISING_FALLING,
-	EXTI_TRIGGER_LAST
+    EXTI_TRIGGER_NONE = 0,
+    EXTI_TRIGGER_RISING,
+    EXTI_TRIGGER_FALLING,
+    EXTI_TRIGGER_RISING_FALLING,
+    EXTI_TRIGGER_LAST
 } EXTI_trigger_t;
 
 /*!******************************************************************
@@ -112,67 +112,67 @@ typedef void (*EXTI_gpio_irq_cb_t)(void);
 /*!******************************************************************
  * \fn void EXTI_init(void)
  * \brief Init common EXTI peripheral.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 void EXTI_init(void);
 
 /*!******************************************************************
  * \fn void EXTI_de_init(void)
  * \brief Release common EXTI peripheral.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 void EXTI_de_init(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t EXTI_configure(EXTI_port_t port, EXTI_line_t line, EXTI_trigger_t trigger, EXTI_gpio_irq_cb_t irq_callback)
  * \brief Init EXTI line.
- * \param[in]  	port: Source port to connect.
- * \param[in]	line: Interrupt line to configure.
- * \param[in]	trigger: Signal trigger direction.
- * \param[in]	irq_callback: Function to call on interrupt (in case of GPIO).
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   port: Source port to connect.
+ * \param[in]   line: Interrupt line to configure.
+ * \param[in]   trigger: Signal trigger direction.
+ * \param[in]   irq_callback: Function to call on interrupt (in case of GPIO).
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t EXTI_configure(EXTI_port_t port, EXTI_line_t line, EXTI_trigger_t trigger, EXTI_gpio_irq_cb_t irq_callback);
 
 /*!******************************************************************
  * \fn MCAL_status_t EXTI_de_configure(EXTI_line_t line)
  * \brief Disable EXTI line.
- * \param[in]	line: Interrupt line to disable.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   line: Interrupt line to disable.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t EXTI_de_configure(EXTI_line_t line);
 
 /*!******************************************************************
  * \fn MCAL_status_t EXTI_enable_irq(EXTI_line_t line, uint8_t priority)
  * \brief Enable EXTI line interrupt.
- * \param[in]	line: Interrupt line to configure.
- * \param[in]	irq_priority: Interrupt priority.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   line: Interrupt line to configure.
+ * \param[in]   irq_priority: Interrupt priority.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t EXTI_enable_irq(EXTI_line_t line, uint8_t priority);
 
 /*!******************************************************************
  * \fn MCAL_status_t EXTI_disable_irq(EXTI_line_t line)
  * \brief Disable EXTI line interrupt.
- * \param[in]	line: Interrupt line to disable.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   line: Interrupt line to disable.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t EXTI_disable_irq(EXTI_line_t line);
 
 /*!******************************************************************
  * \fn MCAL_status_t EXTI_clear_flag(EXTI_line_t line)
  * \brief Clear EXTI line flag.
- * \param[in]	line: Interrupt line to clear.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   line: Interrupt line to clear.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t EXTI_clear_flag(EXTI_line_t line);
 

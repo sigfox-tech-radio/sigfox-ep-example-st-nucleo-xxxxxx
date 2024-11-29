@@ -41,15 +41,18 @@
 
 /*** SX126X MAPPING macros ***/
 
-#define SX126X_GPIO_IRQ_EXTI_PORT		EXTI_PORT_B
-#define SX126X_GPIO_IRQ_EXTI_LINE		EXTI_LINE_GPIO_4
+#define SX126X_GPIO_IRQ_EXTI_PORT       EXTI_PORT_B
+#define SX126X_GPIO_IRQ_EXTI_LINE       EXTI_LINE_GPIO_4
 
-#define SX126X_HAL_RESET_DELAY_MS		2
-#define SX126X_HAL_WAKEUP_DELAY_MS		2
+#define SX126X_HAL_RESET_DELAY_MS       2
+#define SX126X_HAL_WAKEUP_DELAY_MS      2
 
 /*** SX126X MAPPING global variables ***/
 
-extern const GPIO_pin_t SX126X_GPIO_NSS;
+extern const GPIO_pin_t SX126X_GPIO_SPI_SCK;
+extern const GPIO_pin_t SX126X_GPIO_SPI_MISO;
+extern const GPIO_pin_t SX126X_GPIO_SPI_MOSI;
+extern const GPIO_pin_t SX126X_GPIO_SPI_NSS;
 
 extern const GPIO_pin_t SX126X_GPIO_NRESET;
 

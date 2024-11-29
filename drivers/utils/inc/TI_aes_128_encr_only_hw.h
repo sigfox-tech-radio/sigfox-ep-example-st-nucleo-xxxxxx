@@ -39,6 +39,6 @@
 #ifndef TI_OPT_AES_H_
 #define TI_OPT_AES_H_
 
-void aes_encrypt(unsigned char *state, unsigned char *key);
+void aes_encrypt_hw(unsigned char *state, unsigned char *key);
 
 #endif /* TI_OPT_AES_H_ */

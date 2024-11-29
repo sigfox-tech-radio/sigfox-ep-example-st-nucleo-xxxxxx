@@ -59,94 +59,94 @@ static uint8_t tx_data[S2LP_CORE_SPI_BUFFER_SIZE_BYTES];
 static uint8_t rx_data[S2LP_CORE_SPI_BUFFER_SIZE_BYTES];
 
 /*******************************************************************/
-uint8_t S2LPSpiWriteRegisters(uint8_t register_address, uint8_t data_size, uint8_t* data) {
-	// Local variables.
-	uint8_t idx = 0;
-	// Build TX data.
-	tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_WRITE;
-	tx_data[1] = register_address;
-	for(idx=0 ; idx<data_size ; idx++) {
-		tx_data[idx + 2] = data[idx];
-	}
-	// SPI transfer.
-	GPIO_write(&S2LP_GPIO_NSS, 0);
-	SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
-	GPIO_write(&S2LP_GPIO_NSS, 1);
-	// Return status byte
-	return (rx_data[1]);
+uint8_t S2LPSpiWriteRegisters(uint8_t register_address, uint8_t data_size, uint8_t *data) {
+    // Local variables.
+    uint8_t idx = 0;
+    // Build TX data.
+    tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_WRITE;
+    tx_data[1] = register_address;
+    for (idx = 0; idx < data_size; idx++) {
+        tx_data[idx + 2] = data[idx];
+    }
+    // SPI transfer.
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
+    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
+    // Return status byte
+    return (rx_data[1]);
 }
 
 /*******************************************************************/
-uint8_t S2LPSpiReadRegisters(uint8_t register_address, uint8_t data_size, uint8_t* data) {
-	// Local variables.
-	uint8_t idx = 0;
-	// Build TX data.
-	tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_READ;
-	tx_data[1] = register_address;
-	for(idx=0; idx<data_size ; idx++) {
-		tx_data[idx + 2] = 0x00;
-	}
-	// SPI transfer.
-	GPIO_write(&S2LP_GPIO_NSS, 0);
-	SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
-	GPIO_write(&S2LP_GPIO_NSS, 1);
-	// Fill RX buffer.
-	for(idx=0 ; idx<data_size ; idx++) {
-		data[idx] = rx_data[idx + 2];
-	}
-	// Return status byte
-	return (rx_data[1]);
+uint8_t S2LPSpiReadRegisters(uint8_t register_address, uint8_t data_size, uint8_t *data) {
+    // Local variables.
+    uint8_t idx = 0;
+    // Build TX data.
+    tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_READ;
+    tx_data[1] = register_address;
+    for (idx = 0; idx < data_size; idx++) {
+        tx_data[idx + 2] = 0x00;
+    }
+    // SPI transfer.
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
+    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
+    // Fill RX buffer.
+    for (idx = 0; idx < data_size; idx++) {
+        data[idx] = rx_data[idx + 2];
+    }
+    // Return status byte
+    return (rx_data[1]);
 }
 
 /*******************************************************************/
 uint8_t S2LPSpiCommandStrobes(uint8_t commmand) {
-	// Build TX data.
-	tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_COMMAND;
-	tx_data[1] = commmand;
-	// SPI transfer.
-	GPIO_write(&S2LP_GPIO_NSS, 0);
-	SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, 2);
-	GPIO_write(&S2LP_GPIO_NSS, 1);
-	// Return status byte
-	return (rx_data[1]);
+    // Build TX data.
+    tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_COMMAND;
+    tx_data[1] = commmand;
+    // SPI transfer.
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
+    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, 2);
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
+    // Return status byte
+    return (rx_data[1]);
 }
 
 /*******************************************************************/
-uint8_t S2LPSpiWriteFifo(uint8_t data_size, uint8_t* data) {
-	// Local variables.
-	uint8_t idx = 0;
-	// Build TX data.
-	tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_WRITE;
-	tx_data[1] = S2LP_CORE_SPI_FIFO_ADDRESS;
-	for(idx=0 ; idx<data_size ; idx++) {
-		tx_data[idx + 2] = data[idx];
-	}
-	// SPI transfer.
-	GPIO_write(&S2LP_GPIO_NSS, 0);
-	SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
-	GPIO_write(&S2LP_GPIO_NSS, 1);
-	// Return status byte
-	return (rx_data[1]);
+uint8_t S2LPSpiWriteFifo(uint8_t data_size, uint8_t *data) {
+    // Local variables.
+    uint8_t idx = 0;
+    // Build TX data.
+    tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_WRITE;
+    tx_data[1] = S2LP_CORE_SPI_FIFO_ADDRESS;
+    for (idx = 0; idx < data_size; idx++) {
+        tx_data[idx + 2] = data[idx];
+    }
+    // SPI transfer.
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
+    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
+    // Return status byte
+    return (rx_data[1]);
 }
 
 /*******************************************************************/
-uint8_t S2LPSpiReadFifo(uint8_t data_size, uint8_t* data) {
-	// Local variables.
-	uint8_t byte_idx = 0;
-	// Build TX data.
-	tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_READ;
-	tx_data[1] = S2LP_CORE_SPI_FIFO_ADDRESS;
-	for(byte_idx=0; byte_idx<data_size ; byte_idx++) {
-		tx_data[byte_idx+2] = 0x00;
-	}
-	// SPI transfer.
-	GPIO_write(&S2LP_GPIO_NSS, 0);
-	SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
-	GPIO_write(&S2LP_GPIO_NSS, 1);
-	// Fill RX buffer.
-	for(byte_idx=0 ; byte_idx<data_size ; byte_idx++) {
-		data[byte_idx] = rx_data[byte_idx + 2];
-	}
-	// Return status byte
-	return (rx_data[1]);
+uint8_t S2LPSpiReadFifo(uint8_t data_size, uint8_t *data) {
+    // Local variables.
+    uint8_t byte_idx = 0;
+    // Build TX data.
+    tx_data[0] = S2LP_CORE_SPI_HEADER_BYTE_READ;
+    tx_data[1] = S2LP_CORE_SPI_FIFO_ADDRESS;
+    for (byte_idx = 0; byte_idx < data_size; byte_idx++) {
+        tx_data[byte_idx + 2] = 0x00;
+    }
+    // SPI transfer.
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
+    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
+    // Fill RX buffer.
+    for (byte_idx = 0; byte_idx < data_size; byte_idx++) {
+        data[byte_idx] = rx_data[byte_idx + 2];
+    }
+    // Return status byte
+    return (rx_data[1]);
 }

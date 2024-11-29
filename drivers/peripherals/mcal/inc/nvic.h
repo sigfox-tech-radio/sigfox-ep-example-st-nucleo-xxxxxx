@@ -44,11 +44,11 @@
  * \brief Interrupts priority definition.
  *******************************************************************/
 typedef enum {
-	NVIC_IRQ_PRIORITY_EXTI_RADIO = 0,
-	NVIC_IRQ_PRIORITY_TIM = 1,
-	NVIC_IRQ_PRIORITY_USART = 2,
-	NVIC_IRQ_PRIORITY_LPTIM = 3,
-	NVIC_IRQ_PRIORITY_EXTI_BUTTON = 3
+    NVIC_IRQ_PRIORITY_EXTI_RADIO = 0,
+    NVIC_IRQ_PRIORITY_TIM = 1,
+    NVIC_IRQ_PRIORITY_USART = 2,
+    NVIC_IRQ_PRIORITY_LPTIM = 3,
+    NVIC_IRQ_PRIORITY_EXTI_BUTTON = 3
 } NVIC_irq_prioriry_t;
 
 #endif /* __NVIC_H__ */

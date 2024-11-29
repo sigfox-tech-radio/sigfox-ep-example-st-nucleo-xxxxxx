@@ -49,48 +49,48 @@
 
 /*******************************************************************/
 void PWR_init(void) {
-	// Enable power interface clock.
-	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
-	// Unlock back-up registers (DBP bit).
-	LL_PWR_EnableBkUpAccess();
-	// Power memories down when entering sleep mode.
-	LL_FLASH_EnableSleepPowerDown();
-	// Use HSI clock when waking-up from stop mode.
-	LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
-	// Switch internal voltage reference off in low power mode and ignore startup time.
-	LL_PWR_EnableUltraLowPower();
-	LL_PWR_EnableFastWakeUp();
-	// Never return in low power sleep mode after wake-up.
-	LL_LPM_DisableSleepOnExit();
+    // Enable power interface clock.
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+    // Unlock back-up registers (DBP bit).
+    LL_PWR_EnableBkUpAccess();
+    // Power memories down when entering sleep mode.
+    LL_FLASH_EnableSleepPowerDown();
+    // Use HSI clock when waking-up from stop mode.
+    LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
+    // Switch internal voltage reference off in low power mode and ignore startup time.
+    LL_PWR_EnableUltraLowPower();
+    LL_PWR_EnableFastWakeUp();
+    // Never return in low power sleep mode after wake-up.
+    LL_LPM_DisableSleepOnExit();
 }
 
 /*******************************************************************/
 void PWR_enter_sleep_mode(void) {
-	// Regulator in normal mode.
-	LL_PWR_SetRegulModeLP(LL_PWR_REGU_LPMODES_MAIN);
-	// Enter low power sleep mode.
-	LL_LPM_EnableSleep();
-	__WFI(); // Wait For Interrupt core instruction.
+    // Regulator in normal mode.
+    LL_PWR_SetRegulModeLP(LL_PWR_REGU_LPMODES_MAIN);
+    // Enter low power sleep mode.
+    LL_LPM_EnableSleep();
+    __WFI(); // Wait For Interrupt core instruction.
 }
 
 /*******************************************************************/
 void PWR_enter_low_power_sleep_mode(void) {
-	// Regulator in low power mode.
-	LL_PWR_SetRegulModeLP(LL_PWR_REGU_LPMODES_LOW_POWER);
-	// Enter low power sleep mode.
-	LL_LPM_EnableSleep();
-	__WFI(); // Wait For Interrupt core instruction.
+    // Regulator in low power mode.
+    LL_PWR_SetRegulModeLP(LL_PWR_REGU_LPMODES_LOW_POWER);
+    // Enter low power sleep mode.
+    LL_LPM_EnableSleep();
+    __WFI(); // Wait For Interrupt core instruction.
 }
 
 /*******************************************************************/
 void PWR_enter_stop_mode(void) {
-	// Regulator in low power mode.
-	LL_PWR_SetRegulModeLP(LL_PWR_REGU_LPMODES_LOW_POWER);
-	// Clear WUF flag.
-	LL_PWR_ClearFlag_WU();
-	// Enter stop mode when CPU enters deepsleep.
-	LL_PWR_SetPowerMode(LL_PWR_MODE_STOP);
-	// Enter stop mode.
-	LL_LPM_EnableDeepSleep();
-	__WFI(); // Wait For Interrupt core instruction.
+    // Regulator in low power mode.
+    LL_PWR_SetRegulModeLP(LL_PWR_REGU_LPMODES_LOW_POWER);
+    // Clear WUF flag.
+    LL_PWR_ClearFlag_WU();
+    // Enter stop mode when CPU enters deepsleep.
+    LL_PWR_SetPowerMode(LL_PWR_MODE_STOP);
+    // Enter stop mode.
+    LL_LPM_EnableDeepSleep();
+    __WFI(); // Wait For Interrupt core instruction.
 }

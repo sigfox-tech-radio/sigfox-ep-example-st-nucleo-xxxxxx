@@ -34,11 +34,11 @@ Other applications will come soon, such as a full AT command modem exposing all 
 From low to top layers, the project is structured as follow:
 
 * `drivers` : hardware drivers split in 5 categories:
-	* `cmsis` : **MCU core** drivers.
-	* `peripherals` : MCU peripherals abstraction layer (**MCAL**) and specific MCU drivers (**STM32 HAL driver** embedded as submodule).
-	* `components` : External components drivers (**radio chips drivers** embedded as submodules).
-	* `shields` : Radio shields drivers (**HW_API** implementation required by the RF_API).
-	* `utils` : Pure software utility functions such as **AES encryption**.
+    * `cmsis` : **MCU core** drivers.
+    * `peripherals` : MCU peripherals abstraction layer (**MCAL**) and specific MCU drivers (**STM32 HAL driver** embedded as submodule).
+    * `components` : External components drivers (**radio chips drivers** embedded as submodules).
+    * `shields` : Radio shields drivers (**HW_API** implementation required by the RF_API).
+    * `utils` : Pure software utility functions such as **AES encryption**.
 * `middleware` : this folder contains all the **Sigfox** submodules, the **MCU API** implementation and the **AT commands** parser.
 * `application` : Main application.
 
@@ -71,17 +71,13 @@ Command line requires tools to be installed :
 * Linux:
 
     * make : ```sudo apt-get install build-essential```
-	
     * cmake (min 3.21) : ```sudo apt-get install cmake```
-
     * [Arm GNU Toolchain arm-none-eabi-gcc](https://developer.arm.com/Tools%20and%20Software/GNU%20Toolchain).
  
 * Windows:
 
     * [make](https://gnuwin32.sourceforge.net/packages/make.htm) add bin installation folder to PATH environment variable.
-
     * [cmake(min 3.21)](https://cmake.org/) and check "add CMake to the system PATH for all user".
-
     * [Arm GNU Toolchain arm-none-eabi-gcc](https://developer.arm.com/Tools%20and%20Software/GNU%20Toolchain) and check "add to PATH to environment variable" during installation.
 
 ```bash
@@ -91,35 +87,36 @@ cmake -DCMAKE_BUILD_TYPE="Release" \
       -DCMAKE_TOOLCHAIN_FILE="cmake/toolchain-arm-none-eabi.cmake" \
       -DTOOLCHAIN_PATH="<REPLACE BY ROOT TOOLCHAIN PATH PREVIOUSLY INSTALLED>" \
       -DRADIO_SHIELD="<REPLACE BY SHIELD TYPE (lr1110dvk1tbks OR sx1261dvk1bas OR steval-fki868v2)>" \
-      -DUSE_SIGFOX_EP_FLAGS_H="OFF" \
-      -DRC1_ZONE="ON" \
-      -DRC2_ZONE="ON" \
-      -DRC3C_ZONE="ON" \
-      -DRC3D_ZONE="ON" \
-      -DRC4_ZONE="ON" \
-      -DRC5_ZONE="ON" \
-      -DRC6_ZONE="ON" \
-      -DRC7_ZONE="ON" \
-      -DAPPLICATION_MESSAGES="ON" \
-      -DCONTROL_KEEP_ALIVE_MESSAGE="ON" \
-      -DBIDIRECTIONAL="ON" \
-      -DASYNCHRONOUS="ON" \
-      -DLOW_LEVEL_OPEN_CLOSE="ON" \
-      -DREGULATORY="ON" \
-      -DLATENCY_COMPENSATION="ON" \
-      -DSINGLE_FRAME="OFF" \
-      -DPARAMETERS_CHECK="ON" \
-      -DCERTIFICATION="ON" \
-      -DPUBLIC_KEY_CAPABLE="ON" \
-      -DVERBOSE="ON" \
-      -DCRC_HW="OFF" \
-      -DERROR_CODES="ON" \
-      -DUL_BIT_RATE_BPS="OFF" \
-      -DT_IFU_MS="OFF" \
-      -DT_CONF_MS="OFF" \
-      -DUL_PAYLOAD_SIZE="OFF" \
-      -DMESSAGE_COUNTER_ROLLOVER="OFF" \
-      -DERROR_STACK="32" 
+      -DSIGFOX_EP_RC1_ZONE=ON \
+      -DSIGFOX_EP_RC2_ZONE=ON \
+      -DSIGFOX_EP_RC3_LBT_ZONE=ON \
+      -DSIGFOX_EP_RC3_LDC_ZONE=ON \
+      -DSIGFOX_EP_RC4_ZONE=ON \
+      -DSIGFOX_EP_RC5_ZONE=ON \
+      -DSIGFOX_EP_RC6_ZONE=ON \
+      -DSIGFOX_EP_RC7_ZONE=ON \
+      -DSIGFOX_EP_APPLICATION_MESSAGES=ON \
+      -DSIGFOX_EP_CONTROL_KEEP_ALIVE_MESSAGE=ON \
+      -DSIGFOX_EP_BIDIRECTIONAL=ON \
+      -DSIGFOX_EP_ASYNCHRONOUS=ON \
+      -DSIGFOX_EP_LOW_LEVEL_OPEN_CLOSE=ON \
+      -DSIGFOX_EP_REGULATORY=ON \
+      -DSIGFOX_EP_LATENCY_COMPENSATION=ON \
+      -DSIGFOX_EP_SINGLE_FRAME=ON \
+      -DSIGFOX_EP_UL_BIT_RATE_BPS=OFF \
+      -DSIGFOX_EP_TX_POWER_DBM_EIRP=OFF \
+      -DSIGFOX_EP_T_IFU_MS=OFF \
+      -DSIGFOX_EP_T_CONF_MS=OFF \
+      -DSIGFOX_EP_UL_PAYLOAD_SIZE=OFF \
+      -DSIGFOX_EP_AES_HW=ON \
+      -DSIGFOX_EP_CRC_HW=OFF \
+      -DSIGFOX_EP_MESSAGE_COUNTER_ROLLOVER=OFF \
+      -DSIGFOX_EP_PARAMETERS_CHECK=ON \
+      -DSIGFOX_EP_CERTIFICATION=ON \
+      -DSIGFOX_EP_PUBLIC_KEY_CAPABLE=ON \
+      -DSIGFOX_EP_VERBOSE=ON \
+      -DSIGFOX_EP_ERROR_CODES=ON \
+      -DSIGFOX_EP_ERROR_STACK=32 \
       -G "Unix Makefiles" ..
 make all
 ```
@@ -149,5 +146,3 @@ Authentication KEY : 0123456789ABCDEF0123456789ACBDEF
 ```
 
 EP ID and Authentication KEY are store respectivly in memory Page 511 at 0x0800FF80 and 0x0800FF84 addresses. It is possible to modify them by directly patching the output ```<application>.bin``` file or by modifying **sigfoxID** and **sigfoxKEY** variables in ```middleware/sigfox/mcu_api/src/mcu_api.c``` file.
-
-

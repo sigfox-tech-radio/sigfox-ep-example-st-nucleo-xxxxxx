@@ -144,7 +144,7 @@ g_pfnVectors:
   .word     EXTI0_1_IRQHandler                /* EXTI Line 0 and 1            */
   .word     EXTI2_3_IRQHandler                /* EXTI Line 2 and 3            */
   .word     EXTI4_15_IRQHandler               /* EXTI Line 4 to 15            */
-  .word     TSC_IRQHandler                     /* TSC                           */
+  .word     TSC_IRQHandler                    /* TSC                           */
   .word     DMA1_Channel1_IRQHandler          /* DMA1 Channel 1               */
   .word     DMA1_Channel2_3_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
   .word     DMA1_Channel4_5_6_7_IRQHandler    /* DMA1 Channel 4, Channel 5, Channel 6 and Channel 7*/
@@ -154,8 +154,8 @@ g_pfnVectors:
   .word     TIM2_IRQHandler                   /* TIM2                         */
   .word     0                                 /* Reserved                     */
   .word     TIM6_DAC_IRQHandler               /* TIM6 and DAC                 */
-  .word     0               				          /* Reserved                     */
-  .word     0              					          /* Reserved                     */
+  .word     0                                 /* Reserved                     */
+  .word     0                                 /* Reserved                     */
   .word     TIM21_IRQHandler                  /* TIM21                        */
   .word     0                                 /* Reserved                     */
   .word     TIM22_IRQHandler                  /* TIM22                        */
