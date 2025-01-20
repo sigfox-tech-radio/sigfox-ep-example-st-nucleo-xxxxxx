@@ -86,12 +86,18 @@ MCAL_status_t SPI_init(SPI_gpio_t *spi_gpio) {
     ll_status = LL_SPI_Init(SPI_INSTANCE, &spi_init);
     _check_ll_status();
     // Init GPIOs.
-    status = GPIO_configure((spi_gpio->sck),  GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_VERY_HIGH, GPIO_PULL_NONE);
-    if (status != MCAL_SUCCESS) goto errors;
+    status = GPIO_configure((spi_gpio->sck), GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_VERY_HIGH, GPIO_PULL_NONE);
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     status = GPIO_configure((spi_gpio->miso), GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_VERY_HIGH, GPIO_PULL_NONE);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     status = GPIO_configure((spi_gpio->mosi), GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_VERY_HIGH, GPIO_PULL_NONE);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     // Enable SPI.
     LL_SPI_Enable(SPI_INSTANCE);
 errors:
@@ -109,11 +115,17 @@ MCAL_status_t SPI_de_init(SPI_gpio_t *spi_gpio) {
     }
     // Put GPIOs in high impedance.
     status = GPIO_configure((spi_gpio->sck), GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     status = GPIO_configure((spi_gpio->miso), GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     status = GPIO_configure((spi_gpio->mosi), GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
 errors:
     // Disable SPI and clock.
     LL_SPI_Disable(SPI_INSTANCE);

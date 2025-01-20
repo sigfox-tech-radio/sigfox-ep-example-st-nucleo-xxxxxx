@@ -321,12 +321,15 @@ MCAL_status_t TIM_wait_completion(TIM_channel_t channel) {
         goto errors;
     }
     // Directly exit if the IRQ already occurred.
-    if ((tim_ctx.channel[channel].running_flag == 0) || (tim_ctx.channel[channel].irq_flag != 0)) goto errors;
+    if ((tim_ctx.channel[channel].running_flag == 0) || (tim_ctx.channel[channel].irq_flag != 0)) {
+        goto errors;
+    }
     // Sleep until channel is not running.
     switch (tim_ctx.channel[channel].waiting_mode) {
     case TIM_WAITING_MODE_ACTIVE:
         // Active loop.
-        while (tim_ctx.channel[channel].irq_flag == 0);
+        while (tim_ctx.channel[channel].irq_flag == 0)
+            ;
         break;
     case TIM_WAITING_MODE_SLEEP:
         // Enter sleep mode.
@@ -337,14 +340,18 @@ MCAL_status_t TIM_wait_completion(TIM_channel_t channel) {
     case TIM_WAITING_MODE_LOW_POWER_SLEEP:
         // Switch to MSI.
         status = RCC_switch_to_msi(RCC_MSI_RANGE_1_131KHZ);
-        if (status != MCAL_SUCCESS) goto errors;
+        if (status != MCAL_SUCCESS) {
+            goto errors;
+        }
         // Enter low power sleep mode.
         while (tim_ctx.channel[channel].irq_flag == 0) {
             PWR_enter_low_power_sleep_mode();
         }
         // Go back to HSI.
         status = RCC_switch_to_hsi();
-        if (status != MCAL_SUCCESS) goto errors;
+        if (status != MCAL_SUCCESS) {
+            goto errors;
+        }
         break;
     default:
         status = MCAL_ERROR;

@@ -58,8 +58,8 @@
 
 /*** SPI local global variables ***/
 
-static const GPIO_pin_t USART_GPIO_TX = { GPIO_PORT_A, 2, 4 };
-static const GPIO_pin_t USART_GPIO_RX = { GPIO_PORT_A, 3, 4 };
+static const GPIO_pin_t USART_GPIO_TX = {GPIO_PORT_A, 2, 4};
+static const GPIO_pin_t USART_GPIO_RX = {GPIO_PORT_A, 3, 4};
 
 /*** SPI local functions ***/
 
@@ -107,6 +107,9 @@ MCAL_status_t USART_init(uint32_t baud_rate, uint8_t irq_priority, USART_rx_irq_
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
     LL_APB1_GRP1_EnableClockSleep(LL_APB1_GRP1_PERIPH_USART2);
     LL_USART_EnableClockInStopMode(USART_INSTANCE);
+    // Configure GPIOs.
+    GPIO_configure(&USART_GPIO_TX, GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    GPIO_configure(&USART_GPIO_RX, GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
     // Configure peripheral.
     usart_init.BaudRate = baud_rate;
     usart_init.DataWidth = LL_USART_DATAWIDTH_8B;
@@ -123,9 +126,6 @@ MCAL_status_t USART_init(uint32_t baud_rate, uint8_t irq_priority, USART_rx_irq_
     // Enable peripheral.
     LL_USART_EnableInStopMode(USART_INSTANCE);
     LL_USART_Enable(USART_INSTANCE);
-    // Configure GPIOs.
-    GPIO_configure(&USART_GPIO_TX, GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-    GPIO_configure(&USART_GPIO_RX, GPIO_MODE_ALTERNATE_FUNCTION, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
     // Register callback.
     usart_rx_irq_callback = irq_callback;
     // Enable interrupt.

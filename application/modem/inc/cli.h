@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    mcal.h
- * \brief   Common definitions for peripherals drivers.
+ * \file    cli.h
+ * \brief   Command line interface.
  *******************************************************************
  * \copyright
  *
@@ -34,38 +34,71 @@
  *
  *******************************************************************/
 
-#ifndef __MCAL_H__
-#define __MCAL_H__
+#ifndef __CLI_H__
+#define __CLI_H__
 
-/*** MCAL structures ***/
+#include "stdint.h"
+
+/*** CLI structures ***/
 
 /*!******************************************************************
- * \enum MCAL_status_t
- * \brief Low level drivers status.
+ * \enum CLI_status_t
+ * \brief CLI driver error codes.
  *******************************************************************/
 typedef enum {
-    MCAL_SUCCESS = 0,
-    MCAL_ERROR
-} MCAL_status_t;
+    // Driver errors.
+    CLI_SUCCESS = 0,
+    CLI_ERROR_NULL_PARAMETER,
+    // Low level drivers errors.
+    CLI_ERROR_DRIVER_AT,
+    CLI_ERROR_DRIVER_SIGFOX_EP_LIB,
+    CLI_ERROR_DRIVER_SIGFOX_EP_ADDON_RFP,
+    CLI_ERROR_DRIVER_SIGFOX_EP_ADDON_TA,
+    CLI_ERROR_DRIVER_MCAL,
+    CLI_ERROR_RC_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_UL_BR_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_N_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_T_IFU_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_KEY_TYPE_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_T_CONF_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_ERROR_STACK_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_APP_MESSAGE_BYTES_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_BIDIR_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_UL_PAYLOAD_BYTES_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_UL_PAYLOAD_BIT_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_UL_PAYLOAD_EMPTY_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    CLI_ERROR_RFP_TEST_MODE_NOT_SUPPORTED_IN_THIS_CONFIGURATION,
+    // Last index.
+    CLI_ERROR_LAST
+} CLI_status_t;
 
-/*** MCAL functions ***/
+/*** CLI functions ***/
 
 /*!******************************************************************
- * \fn MCAL_UNUSED(x)
- * \brief Generic macro to remove unused parameter warning.
- * \param[in]   x: Parameter to ignore.
+ * \fn CLI_status_t CLI_init(void)
+ * \brief Initialize command line interface.
+ * \param[in]   process_callback: Function to be called when the CLI driver has to be processed.
  * \param[out]  none
- * \retval      none
+ * \retval      Function execution status.
  *******************************************************************/
-#define MCAL_UNUSED(x)  { (void) x; }
+CLI_status_t CLI_init(void);
 
 /*!******************************************************************
- * \fn void MCAL_check_status(error)
- * \brief Generic macro to check a MCAL function status and exit.
- * \param[in]   error: High level error code to rise.
+ * \fn CLI_status_t CLI_de_init(void)
+ * \brief Release command line interface.
+ * \param[in]   none
  * \param[out]  none
- * \retval      none
+ * \retval      Function execution status.
  *******************************************************************/
-#define MCAL_check_status(error) { if (mcal_status != MCAL_SUCCESS) { status = error; goto errors; } }
+CLI_status_t CLI_de_init(void);
 
-#endif /* __MCAL_H__ */
+/*!******************************************************************
+ * \fn CLI_status_t CLI_process(void)
+ * \brief Process command line interface.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
+ *******************************************************************/
+CLI_status_t CLI_process(void);
+
+#endif /* __CLI_H__ */

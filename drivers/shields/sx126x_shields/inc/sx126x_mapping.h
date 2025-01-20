@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    mcal.h
- * \brief   Common definitions for peripherals drivers.
+ * \file    sx126x_mapping.h
+ * \brief   SX126X pins mapping.
  *******************************************************************
  * \copyright
  *
@@ -34,38 +34,41 @@
  *
  *******************************************************************/
 
-#ifndef __MCAL_H__
-#define __MCAL_H__
+#ifndef __SX126X_MAPPING_H__
+#define __SX126X_MAPPING_H__
 
-/*** MCAL structures ***/
+#include "gpio.h"
 
-/*!******************************************************************
- * \enum MCAL_status_t
- * \brief Low level drivers status.
- *******************************************************************/
-typedef enum {
-    MCAL_SUCCESS = 0,
-    MCAL_ERROR
-} MCAL_status_t;
+/*** SX126X MAPPING & SHIELD macros ***/
 
-/*** MCAL functions ***/
+#define SX126X_GPIO_IRQ_EXTI_PORT       EXTI_PORT_B
+#define SX126X_GPIO_IRQ_EXTI_LINE       EXTI_LINE_GPIO_4
 
-/*!******************************************************************
- * \fn MCAL_UNUSED(x)
- * \brief Generic macro to remove unused parameter warning.
- * \param[in]   x: Parameter to ignore.
- * \param[out]  none
- * \retval      none
- *******************************************************************/
-#define MCAL_UNUSED(x)  { (void) x; }
+#define SX126X_HAL_RESET_DELAY_MS       2
+#define SX126X_HAL_WAKEUP_DELAY_MS      2
+
+#define SX126X_SHIELDS_SX1261_MIN_PWR -17
+#define SX126X_SHIELDS_SX1261_MAX_PWR 15
+
+/*** SX126X MAPPING structures ***/
 
 /*!******************************************************************
- * \fn void MCAL_check_status(error)
- * \brief Generic macro to check a MCAL function status and exit.
- * \param[in]   error: High level error code to rise.
- * \param[out]  none
- * \retval      none
+ * \struct SX126X_MAPPING_gpios_t
+ * \brief SX126X GPIOs mapping.
  *******************************************************************/
-#define MCAL_check_status(error) { if (mcal_status != MCAL_SUCCESS) { status = error; goto errors; } }
+typedef struct {
+    GPIO_pin_t spi_sck;
+    GPIO_pin_t spi_miso;
+    GPIO_pin_t spi_mosi;
+    GPIO_pin_t spi_nss;
+    GPIO_pin_t busy;
+    GPIO_pin_t irq;
+    GPIO_pin_t reset;
+    GPIO_pin_t antenna_sw;
+    GPIO_pin_t led_tx;
+    GPIO_pin_t led_rx;
+} SX126X_MAPPING_gpios_t;
 
-#endif /* __MCAL_H__ */
+extern const SX126X_MAPPING_gpios_t SX126X_MAPPING_gpios;
+
+#endif /* __SX126X_MAPPING_H__ */

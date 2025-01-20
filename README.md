@@ -3,7 +3,7 @@
 
 ## Description
 
-This repository shows an implementation example of the Sigfox End-Point Library on ST-Microelectronics Nucleo boards and several radio shields. The library, addons and drivers are embedded as submodules for an easier compatibility management between all dependencies.
+This repository provides an implementation example of the Sigfox End-Point Library on ST-Microelectronics Nucleo boards and various radio shields. The library, addons, and drivers are embedded as submodules to facilitate compatibility management between dependencies.
 
 ### Supported Nucleo boards
 
@@ -15,23 +15,28 @@ Support of other MCUs will come in the future.
 
 ### Supported radio shields
 
-| **Reference** | **Radio chip** | **Limitations** |
-|:---:|:---:|:---:|
-| [STEVAL-FKI868V2](https://www.st.com/en/evaluation-tools/steval-fki868v2.html) | S2LP | None |
-| [LR1110DVK1TBKS](https://www.semtech.com/products/wireless-rf/lora-edge/lr1110dvk1tbks) | LR1110 | None |
-| [SX1261DVK1BAS](https://www.semtech.com/products/wireless-rf/lora-connect/sx1261dvk1bas) | SX1261 | None |
+| **Reference** | **Radio chip** | **Limitations** | **RSA report available**|
+|:---:|:---:|:---:|:---:|
+| [STEVAL-FKI868V2](https://www.st.com/en/evaluation-tools/steval-fki868v2.html) | S2LP | Band 868 only  | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/steval-fki868v2_RC1_100.pdf), [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/steval-fki868v2_RC1_100.pdf), |
+| [LR1110MB1DIS](https://www.semtech.fr/products/wireless-rf/lora-edge/lr1110mb1lbks) | LR1110 | None | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1110mb1dis_RC1_100.pdf), [RC1_600](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1110mb1dis_RC1_600.pdf), [RC2](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1110mb1dis_RC2.pdf), |
+| [LR1110MB1DJS](https://www.semtech.fr/products/wireless-rf/lora-edge/lr1110dvk1tcks) *(shield not sold alone)* | LR1110 | None | |
+| [LR1121MB1DIS](https://www.semtech.fr/products/wireless-rf/lora-connect/lr1121dvk1tcks) *(shield not sold alone)* | LR1121 | None | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1121mb1dis_RC1_100.pdf), [RC1_600](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1121mb1dis_RC1_600.pdf), [RC2](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1121mb1dis_RC2.pdf) |
+| [SX1261MB1BAS](https://www.semtech.com/products/wireless-rf/lora-connect/sx1261dvk1bas) *(shield not sold alone)* | SX1261 | Band 868 only  | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/sx1261mb1bas_RC1_100.pdf), [RC1_600](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/sx1261mb1bas_RC1_600.pdf)  |
+| [SX1261MB2BAS](https://www.semtech.fr/products/wireless-rf/lora-connect/sx1261mb2bas) | SX1261 | Band 868 only  | |
 
 Support of other radio shields will come in the future.
 
 ## Applications
 
-* The `main_button.c` defines a simple application where a Sigfox message is sent when the user button is pressed.
+* The `button` defines a simple application where a Sigfox message is sent when the user button is pressed.
+
+* The `modem` defines a more complex application with an AT parser to send Sigfox messages, execute RF & Protocol test mode, or type approval test mode with a set of AT commands.
 
 Other applications will come soon, such as a full AT command modem exposing all Sigfox features and test modes.
 
 ## Architecture
 
-From low to top layers, the project is structured as follow:
+From lower to upper layers, the project is structured as follows:
 
 * `drivers` : hardware drivers split in 5 categories:
     * `cmsis` : **MCU core** drivers.
@@ -86,7 +91,7 @@ cd build
 cmake -DCMAKE_BUILD_TYPE="Release" \
       -DCMAKE_TOOLCHAIN_FILE="cmake/toolchain-arm-none-eabi.cmake" \
       -DTOOLCHAIN_PATH="<REPLACE BY ROOT TOOLCHAIN PATH PREVIOUSLY INSTALLED>" \
-      -DRADIO_SHIELD="<REPLACE BY SHIELD TYPE (lr1110dvk1tbks OR sx1261dvk1bas OR steval-fki868v2)>" \
+      -DRADIO_SHIELD="<REPLACE BY SHIELD TYPE (lr1110mb1dis OR lr1110mb1djs OR lr1121mb1dis OR sx1261mb1bas OR sx1261mb2bas OR steval-fki868v2)>" \
       -DSIGFOX_EP_RC1_ZONE=ON \
       -DSIGFOX_EP_RC2_ZONE=ON \
       -DSIGFOX_EP_RC3_LBT_ZONE=ON \
@@ -102,7 +107,7 @@ cmake -DCMAKE_BUILD_TYPE="Release" \
       -DSIGFOX_EP_LOW_LEVEL_OPEN_CLOSE=ON \
       -DSIGFOX_EP_REGULATORY=ON \
       -DSIGFOX_EP_LATENCY_COMPENSATION=ON \
-      -DSIGFOX_EP_SINGLE_FRAME=ON \
+      -DSIGFOX_EP_SINGLE_FRAME=OFF \
       -DSIGFOX_EP_UL_BIT_RATE_BPS=OFF \
       -DSIGFOX_EP_TX_POWER_DBM_EIRP=OFF \
       -DSIGFOX_EP_T_IFU_MS=OFF \
@@ -121,15 +126,6 @@ cmake -DCMAKE_BUILD_TYPE="Release" \
 make all
 ```
 
-> [!NOTE]
-> If the UNIDFED program not found you can remove first 4 lines of   ```middleware/sigfox/sigfox-ep-lib/cmake/precompile.cmake```, ```middleware/sigfox/sigfox-ep-rf-api-semtech-lr11xx/cmake/precompile-lr11xx-rf-api.cmake```, ```middleware/sigfox/sigfox-ep-rf-api-semtech-sx126x/cmake/precompile-sx126x-rf-api.cmake```, ```middleware/sigfox/sigfox-ep-rf-api-st-s2lp/cmake/precompile-s2lp-rf-api.cmake``` file
-> ```bash
-> - find_program(UNIFDEF unifdef REQUIRED)
-> - if(NOT UNIFDEF)
-> -     message(FATAL_ERROR "unifdef not found!")
-> - endif()
-> ```
-
 All binary files produced are available in `build/application/"application Name"/` folder. 
 
 ### How to program Nucleo Board
@@ -145,4 +141,4 @@ EP ID  : FEDCBA98
 Authentication KEY : 0123456789ABCDEF0123456789ACBDEF
 ```
 
-EP ID and Authentication KEY are store respectivly in memory Page 511 at 0x0800FF80 and 0x0800FF84 addresses. It is possible to modify them by directly patching the output ```<application>.bin``` file or by modifying **sigfoxID** and **sigfoxKEY** variables in ```middleware/sigfox/mcu_api/src/mcu_api.c``` file.
+EP ID and Authentication KEY are stored respectively in memory Page 511 at 0x0800FF80 and 0x0800FF84 addresses. It is possible to modify them by directly patching the output ```<application>.bin``` file or by modifying **sigfoxID** and **sigfoxKEY** variables in ```middleware/sigfox/mcu_api/src/mcu_api.c``` file.

@@ -43,11 +43,11 @@
 
 /*** S2LP MAPPING global variables ***/
 
-const GPIO_pin_t S2LP_GPIO_SPI_SCK =    { GPIO_PORT_B, 3, 0 };
-const GPIO_pin_t S2LP_GPIO_SPI_MISO =   { GPIO_PORT_A, 6, 0 };
-const GPIO_pin_t S2LP_GPIO_SPI_MOSI =   { GPIO_PORT_A, 7, 0 };
-const GPIO_pin_t S2LP_GPIO_SPI_NSS =    { GPIO_PORT_A, 1, 0 };
+const GPIO_pin_t S2LP_GPIO_SPI_SCK = {GPIO_PORT_B, 3, 0};
+const GPIO_pin_t S2LP_GPIO_SPI_MISO = {GPIO_PORT_A, 6, 0};
+const GPIO_pin_t S2LP_GPIO_SPI_MOSI = {GPIO_PORT_A, 7, 0};
+const GPIO_pin_t S2LP_GPIO_SPI_NSS = {GPIO_PORT_A, 1, 0};
 
-const GPIO_pin_t S2LP_GPIO_SDN =        { GPIO_PORT_A, 8, 0 };
+const GPIO_pin_t S2LP_GPIO_SDN = {GPIO_PORT_A, 8, 0};
 
-const GPIO_pin_t S2LP_GPIO_IRQ =        { GPIO_PORT_C, 0, 0 };
+const GPIO_pin_t S2LP_GPIO_IRQ = {GPIO_PORT_C, 0, 0};

@@ -63,15 +63,15 @@
 static const SPI_gpio_t S2LP_HW_API_SPI_GPIO = {
     &S2LP_GPIO_SPI_SCK,
     &S2LP_GPIO_SPI_MISO,
-    &S2LP_GPIO_SPI_MOSI
+    &S2LP_GPIO_SPI_MOSI,
 };
 #if (defined SIGFOX_EP_TIMER_REQUIRED) && (defined SIGFOX_EP_LATENCY_COMPENSATION)
 // Latency values.
 static sfx_u32 S2LP_HW_API_LATENCY_MS[S2LP_HW_API_LATENCY_LAST] = {
     S2LP_SHUTDOWN_DELAY_MS, // Exit shutdown.
-    0, // Enter shutdown.
-    0, // TX init TX.
-    0, // TX de-init.
+    0,                      // Enter shutdown.
+    0,                      // TX init TX.
+    0,                      // TX de-init.
 #ifdef SIGFOX_EP_BIDIRECTIONAL
     0, // RX init.
     0  // RX de-init.
@@ -101,7 +101,7 @@ S2LP_HW_API_status_t S2LP_HW_API_open(S2LP_HW_API_config_t *hw_api_config) {
     mcal_status = GPIO_configure(&S2LP_GPIO_IRQ, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
     _check_mcal_status();
     // Init SPI peripheral.
-    mcal_status = SPI_init((SPI_gpio_t*) &S2LP_HW_API_SPI_GPIO);
+    mcal_status = SPI_init((SPI_gpio_t *) &S2LP_HW_API_SPI_GPIO);
     _check_mcal_status();
     mcal_status = GPIO_configure(&S2LP_GPIO_SPI_NSS, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
     _check_mcal_status();
@@ -130,7 +130,7 @@ S2LP_HW_API_status_t S2LP_HW_API_close(void) {
     mcal_status = EXTI_de_configure(S2LP_GPIO_IRQ_EXTI_LINE);
     _check_mcal_status();
     // Release SPI peripheral.
-    mcal_status = SPI_de_init((SPI_gpio_t*) &S2LP_HW_API_SPI_GPIO);
+    mcal_status = SPI_de_init((SPI_gpio_t *) &S2LP_HW_API_SPI_GPIO);
     _check_mcal_status();
     // Put GPIOs in high impedance.
     mcal_status = GPIO_configure(&S2LP_GPIO_SPI_NSS, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);

@@ -50,28 +50,28 @@
 static GPIO_TypeDef *const GPIO_LL_PORT[GPIO_PORT_LAST] = {
     GPIOA,
     GPIOB,
-    GPIOC
+    GPIOC,
 };
 static const uint32_t GPIO_LL_MODE[GPIO_MODE_LAST] = {
     LL_GPIO_MODE_INPUT,
     LL_GPIO_MODE_OUTPUT,
     LL_GPIO_MODE_ALTERNATE,
-    LL_GPIO_MODE_ANALOG
+    LL_GPIO_MODE_ANALOG,
 };
 static const uint32_t GPIO_LL_OUTPUT_TYPE[GPIO_OUTPUT_TYPE_LAST] = {
     LL_GPIO_OUTPUT_PUSHPULL,
-    LL_GPIO_OUTPUT_OPENDRAIN
+    LL_GPIO_OUTPUT_OPENDRAIN,
 };
 static const uint32_t GPIO_LL_SPEED[GPIO_SPEED_LAST] = {
     LL_GPIO_SPEED_FREQ_LOW,
     LL_GPIO_SPEED_FREQ_MEDIUM,
     LL_GPIO_SPEED_FREQ_HIGH,
-    LL_GPIO_SPEED_FREQ_VERY_HIGH
+    LL_GPIO_SPEED_FREQ_VERY_HIGH,
 };
 static const uint32_t GPIO_LL_PULL[GPIO_PULL_LAST] = {
     LL_GPIO_PULL_NO,
     LL_GPIO_PULL_UP,
-    LL_GPIO_PULL_DOWN
+    LL_GPIO_PULL_DOWN,
 };
 
 /*** GPIO local functions ***/
@@ -127,8 +127,7 @@ MCAL_status_t GPIO_write(const GPIO_pin_t *gpio, uint8_t state) {
     ll_pin = (0b1 << (gpio->pin));
     if (state == 0) {
         LL_GPIO_ResetOutputPin(GPIO_LL_PORT[gpio->port], ll_pin);
-    }
-    else {
+    } else {
         LL_GPIO_SetOutputPin(GPIO_LL_PORT[gpio->port], ll_pin);
     }
 errors:
@@ -148,8 +147,7 @@ MCAL_status_t GPIO_read(const GPIO_pin_t *gpio, uint8_t *state) {
     ll_pin = (0b1 << (gpio->pin));
     if (LL_GPIO_GetPinMode(GPIO_LL_PORT[gpio->port], ll_pin) == LL_GPIO_MODE_OUTPUT) {
         (*state) = LL_GPIO_IsOutputPinSet(GPIO_LL_PORT[gpio->port], ll_pin);
-    }
-    else {
+    } else {
         (*state) = LL_GPIO_IsInputPinSet(GPIO_LL_PORT[gpio->port], ll_pin);
     }
 errors:

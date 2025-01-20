@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    mcal.h
- * \brief   Common definitions for peripherals drivers.
+ * \file    shield_sx1262mb2cas.h
+ * \brief   SX1262MB2CAS shield configuration.
  *******************************************************************
  * \copyright
  *
@@ -34,38 +34,58 @@
  *
  *******************************************************************/
 
-#ifndef __MCAL_H__
-#define __MCAL_H__
+#ifndef __SX126X_SHIELD_SX1262MB2CAS_H__
+#define __SX126X_SHIELD_SX1262MB2CAS_H__
 
-/*** MCAL structures ***/
+#include "sx126x_mapping.h"
+#include "board/sx126x_hw_api.h"
 
-/*!******************************************************************
- * \enum MCAL_status_t
- * \brief Low level drivers status.
- *******************************************************************/
-typedef enum {
-    MCAL_SUCCESS = 0,
-    MCAL_ERROR
-} MCAL_status_t;
-
-/*** MCAL functions ***/
+/*** SHIELD SX1262MB2CAS functions ***/
 
 /*!******************************************************************
- * \fn MCAL_UNUSED(x)
- * \brief Generic macro to remove unused parameter warning.
- * \param[in]   x: Parameter to ignore.
+ * \fn const SX126X_HW_API_pa_pwr_cfg_t *SHIELD_SX1262MB2CAS_get_pa_pwr_cfg(const sfx_u32 rf_freq_in_hz, sfx_s8 expected_output_pwr_in_dbm);
+ * \brief Get the PA power configuration.
+ * \param[in]   rf_freq_in_hz: RF frequency in Hz.
+ * \param[in]   expected_output_pwr_in_dbm: Expected output power in dBm.
  * \param[out]  none
- * \retval      none
+ * \retval      Pointer to PA power configuration structure.
  *******************************************************************/
-#define MCAL_UNUSED(x)  { (void) x; }
+const SX126X_HW_API_pa_pwr_cfg_t SHIELD_SX1262MB2CAS_get_pa_pwr_cfg(const sfx_u32 rf_freq_in_hz, sfx_s8 expected_output_pwr_in_dbm);
 
 /*!******************************************************************
- * \fn void MCAL_check_status(error)
- * \brief Generic macro to check a MCAL function status and exit.
- * \param[in]   error: High level error code to rise.
+ * \fn sfx_bool SHIELD_SX1262MB2CAS_is_dio2_set_as_rf_switch(void);
+ * \brief Check if DIO2 is set as RF switch.
+ * \param[in]   none
  * \param[out]  none
- * \retval      none
+ * \retval      TRUE if DIO2 is set as RF switch, FALSE otherwise.
  *******************************************************************/
-#define MCAL_check_status(error) { if (mcal_status != MCAL_SUCCESS) { status = error; goto errors; } }
+const SX126X_HW_API_pa_pwr_cfg_t SHIELD_SX1262MB2CAS_is_dio2_set_as_rf_switch(void);
 
-#endif /* __MCAL_H__ */
+/*!******************************************************************
+ * \fn const SX126X_HW_API_xosc_cfg_t *SHIELD_SX1262MB2CAS_get_xosc_cfg(void);
+ * \brief Get the XOSC configuration.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Pointer to oscillator structure.
+ *******************************************************************/
+SX126X_HW_API_reg_mod_t SHIELD_SX1262MB2CAS_get_reg_mode(void);
+
+/*!******************************************************************
+ * \fn const SX126X_HW_API_xosc_cfg_t *SHIELD_SX1262MB2CAS_get_xosc_cfg(void);
+ * \brief Get the XOSC configuration.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Pointer to oscillator structure.
+ *******************************************************************/
+const SX126X_HW_API_xosc_cfg_t *SHIELD_SX1262MB2CAS_get_xosc_cfg(void);
+
+/*!******************************************************************
+ * \fn const SX126X_MAPPING_gpios_t *SHIELD_SX1262MB2CAS_get_pinout(void);
+ * \brief Get the SX1262MB2CAS shield pinout.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Pointer to SX1262MB2CAS shield pinout structure.
+ *******************************************************************/
+const SX126X_MAPPING_gpios_t *SHIELD_SX1262MB2CAS_get_pinout(void);
+
+#endif // __SX126X_SHIELD_SX1262MB2CAS_H__

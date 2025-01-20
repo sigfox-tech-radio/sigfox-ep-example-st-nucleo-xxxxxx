@@ -63,13 +63,13 @@ typedef struct {
 static const uint32_t EXTI_LL_PORT[EXTI_PORT_LAST] = {
     LL_SYSCFG_EXTI_PORTA,
     LL_SYSCFG_EXTI_PORTB,
-    LL_SYSCFG_EXTI_PORTC
+    LL_SYSCFG_EXTI_PORTC,
 };
 static const uint8_t EXTI_LL_TRIGGER[EXTI_TRIGGER_LAST] = {
     LL_EXTI_TRIGGER_NONE,
     LL_EXTI_TRIGGER_RISING,
     LL_EXTI_TRIGGER_FALLING,
-    LL_EXTI_TRIGGER_RISING_FALLING
+    LL_EXTI_TRIGGER_RISING_FALLING,
 };
 static EXTI_context_t exti_ctx;
 
@@ -82,12 +82,16 @@ static EXTI_context_t exti_ctx;
 void __attribute__((optimize("-O0"))) EXTI0_1_IRQHandler(void) {
     // Line 0.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_0)) {
-        if (exti_ctx.gpio_irq_callbacks[0] != NULL) exti_ctx.gpio_irq_callbacks[0]();
+        if (exti_ctx.gpio_irq_callbacks[0] != NULL) {
+            exti_ctx.gpio_irq_callbacks[0]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_0);
     }
     // Line 1.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_1)) {
-        if (exti_ctx.gpio_irq_callbacks[1] != NULL) exti_ctx.gpio_irq_callbacks[1]();
+        if (exti_ctx.gpio_irq_callbacks[1] != NULL) {
+            exti_ctx.gpio_irq_callbacks[1]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
     }
 }
@@ -96,12 +100,16 @@ void __attribute__((optimize("-O0"))) EXTI0_1_IRQHandler(void) {
 void __attribute__((optimize("-O0"))) EXTI2_3_IRQHandler(void) {
     // Line 2.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_2)) {
-        if (exti_ctx.gpio_irq_callbacks[2] != NULL) exti_ctx.gpio_irq_callbacks[2]();
+        if (exti_ctx.gpio_irq_callbacks[2] != NULL) {
+            exti_ctx.gpio_irq_callbacks[2]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
     }
     // Line 3.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_3)) {
-        if (exti_ctx.gpio_irq_callbacks[3] != NULL) exti_ctx.gpio_irq_callbacks[3]();
+        if (exti_ctx.gpio_irq_callbacks[3] != NULL) {
+            exti_ctx.gpio_irq_callbacks[3]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_3);
     }
 }
@@ -110,62 +118,86 @@ void __attribute__((optimize("-O0"))) EXTI2_3_IRQHandler(void) {
 void __attribute__((optimize("-O0"))) EXTI4_15_IRQHandler(void) {
     // Line 4.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_4)) {
-        if (exti_ctx.gpio_irq_callbacks[4] != NULL) exti_ctx.gpio_irq_callbacks[4]();
+        if (exti_ctx.gpio_irq_callbacks[4] != NULL) {
+            exti_ctx.gpio_irq_callbacks[4]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
     }
     // Line 5.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_5)) {
-        if (exti_ctx.gpio_irq_callbacks[5] != NULL) exti_ctx.gpio_irq_callbacks[5]();
+        if (exti_ctx.gpio_irq_callbacks[5] != NULL) {
+            exti_ctx.gpio_irq_callbacks[5]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_5);
     }
     // Line 6.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_6)) {
-        if (exti_ctx.gpio_irq_callbacks[6] != NULL) exti_ctx.gpio_irq_callbacks[6]();
+        if (exti_ctx.gpio_irq_callbacks[6] != NULL) {
+            exti_ctx.gpio_irq_callbacks[6]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_6);
     }
     // Line 7.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_7)) {
-        if (exti_ctx.gpio_irq_callbacks[7] != NULL) exti_ctx.gpio_irq_callbacks[7]();
+        if (exti_ctx.gpio_irq_callbacks[7] != NULL) {
+            exti_ctx.gpio_irq_callbacks[7]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_7);
     }
     // Line 8.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_8)) {
-        if (exti_ctx.gpio_irq_callbacks[8] != NULL) exti_ctx.gpio_irq_callbacks[8]();
+        if (exti_ctx.gpio_irq_callbacks[8] != NULL) {
+            exti_ctx.gpio_irq_callbacks[8]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_8);
     }
     // Line 9.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_9)) {
-        if (exti_ctx.gpio_irq_callbacks[9] != NULL) exti_ctx.gpio_irq_callbacks[9]();
+        if (exti_ctx.gpio_irq_callbacks[9] != NULL) {
+            exti_ctx.gpio_irq_callbacks[9]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_9);
     }
     // Line 10.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_10)) {
-        if (exti_ctx.gpio_irq_callbacks[10] != NULL) exti_ctx.gpio_irq_callbacks[10]();
+        if (exti_ctx.gpio_irq_callbacks[10] != NULL) {
+            exti_ctx.gpio_irq_callbacks[10]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
     }
     // Line 11.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_11)) {
-        if (exti_ctx.gpio_irq_callbacks[11] != NULL) exti_ctx.gpio_irq_callbacks[11]();
+        if (exti_ctx.gpio_irq_callbacks[11] != NULL) {
+            exti_ctx.gpio_irq_callbacks[11]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
     }
     // Line 12.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12)) {
-        if (exti_ctx.gpio_irq_callbacks[12] != NULL) exti_ctx.gpio_irq_callbacks[12]();
+        if (exti_ctx.gpio_irq_callbacks[12] != NULL) {
+            exti_ctx.gpio_irq_callbacks[12]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
     }
     // Line 13.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_13)) {
-        if (exti_ctx.gpio_irq_callbacks[13] != NULL) exti_ctx.gpio_irq_callbacks[13]();
+        if (exti_ctx.gpio_irq_callbacks[13] != NULL) {
+            exti_ctx.gpio_irq_callbacks[13]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
     }
     // Line 14.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_14)) {
-        if (exti_ctx.gpio_irq_callbacks[14] != NULL) exti_ctx.gpio_irq_callbacks[14]();
+        if (exti_ctx.gpio_irq_callbacks[14] != NULL) {
+            exti_ctx.gpio_irq_callbacks[14]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_14);
     }
     // Line 15.
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_15)) {
-        if (exti_ctx.gpio_irq_callbacks[15] != NULL) exti_ctx.gpio_irq_callbacks[15]();
+        if (exti_ctx.gpio_irq_callbacks[15] != NULL) {
+            exti_ctx.gpio_irq_callbacks[15]();
+        }
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_15);
     }
 }
@@ -179,8 +211,9 @@ void EXTI_init(void) {
     // Enable peripheral clock.
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
     // Init context.
-    for (idx = 0; idx < GPIO_PINS_PER_PORT; idx++)
+    for (idx = 0; idx < GPIO_PINS_PER_PORT; idx++) {
         exti_ctx.gpio_irq_callbacks[idx] = NULL;
+    }
     exti_ctx.exti_0_1_enable_count = 0;
     exti_ctx.exti_2_3_enable_count = 0;
     exti_ctx.exti_4_15_enable_count = 0;

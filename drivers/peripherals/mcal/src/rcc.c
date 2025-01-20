@@ -68,7 +68,8 @@ MCAL_status_t __attribute__((optimize("-O0"))) RCC_init(void) {
     uint32_t loop_count = 0;
     // Reset backup domain.
     LL_RCC_ForceBackupDomainReset();
-    for (loop_count = 0; loop_count < 100; loop_count++);
+    for (loop_count = 0; loop_count < 100; loop_count++)
+        ;
     LL_RCC_ReleaseBackupDomainReset();
     // Start low speed oscillator.
     LL_RCC_LSE_Enable();
@@ -91,7 +92,9 @@ MCAL_status_t RCC_switch_to_hsi(void) {
     MCAL_status_t status = MCAL_SUCCESS;
     uint32_t loop_count = 0;
     // Check current clock source.
-    if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_HSI) goto errors;
+    if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_HSI) {
+        goto errors;
+    }
     // Enable HSI.
     LL_RCC_HSI_Enable();
     // Wait for HSI to be stable.
@@ -127,7 +130,9 @@ MCAL_status_t RCC_switch_to_msi(RCC_msi_range_t msi_range) {
     MCAL_status_t status = MCAL_SUCCESS;
     uint32_t loop_count = 0;
     // Check current clock source.
-    if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_MSI) goto errors;
+    if (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_MSI) {
+        goto errors;
+    }
     // Check parameter.
     if (msi_range >= RCC_MSI_RANGE_LAST) {
         status = MCAL_ERROR;

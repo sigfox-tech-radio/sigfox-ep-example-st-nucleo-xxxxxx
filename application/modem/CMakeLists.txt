@@ -57,60 +57,81 @@
 ################################################################################
  
 cmake_minimum_required(VERSION 3.21)
-project(peripherials)
+project(app-modem)
 
-add_library(${PROJECT_NAME} OBJECT)
-
-if(MCU STREQUAL stm32l053r8)
-    target_sources(${PROJECT_NAME} 
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_adc.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_pwr.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_exti.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_gpio.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_lptim.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_rcc.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_spi.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_tim.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_usart.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_hal_flash.c
-    )    
-    target_include_directories(${PROJECT_NAME} 
-        PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Inc/Legacy
-    )
-    target_compile_definitions(${PROJECT_NAME} 
-        PUBLIC 
-        USE_FULL_LL_DRIVER
-    )          
-endif()
-
-target_sources(${PROJECT_NAME} 
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/adc.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/exti.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/fault.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/gpio.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/lptim.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/nvm.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/pwr.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/rcc.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/spi.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/tim.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/usart.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/mcu.c
+list(APPEND ${PROJECT_NAME}_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/main_modem.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/cli.c
 )
-target_include_directories(${PROJECT_NAME}
+
+add_executable(${PROJECT_NAME}
+#add_library(${PROJECT_NAME} OBJECT
+    ${${PROJECT_NAME}_SOURCES}
+    $<TARGET_OBJECTS:sigfox_ep_lib_obj>
+    $<TARGET_OBJECTS:sigfox_ep_addon_rfp_obj>
+    $<TARGET_OBJECTS:sigfox_ep_addon_ta_obj>
+    $<TARGET_OBJECTS:${SIGFOX_RF_API}>
+    $<TARGET_OBJECTS:mcu_api>
+    $<TARGET_OBJECTS:at>
+    $<TARGET_OBJECTS:at_parser>
+    $<TARGET_OBJECTS:peripherials>
+    $<TARGET_OBJECTS:cmsis>
+    $<TARGET_OBJECTS:shield>
+    $<TARGET_OBJECTS:utils> 
+    $<TARGET_OBJECTS:components>
+    $<TARGET_OBJECTS:${RADIO_DRIVER}>  
+)
+
+target_include_directories( ${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/inc
     PRIVATE
-    $<BUILD_INTERFACE:$<TARGET_PROPERTY:cmsis,INTERFACE_INCLUDE_DIRECTORIES>>
     $<BUILD_INTERFACE:$<TARGET_PROPERTY:sigfox_ep_lib_obj,INTERFACE_INCLUDE_DIRECTORIES>>
-    PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/mcal/inc
-    ${CMAKE_CURRENT_SOURCE_DIR}            
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:sigfox_ep_addon_rfp_obj,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:sigfox_ep_addon_ta_obj,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:${SIGFOX_RF_API},INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:mcu_api,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:at,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:peripherials,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:cmsis,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:shield,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:utils,INTERFACE_INCLUDE_DIRECTORIES>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:components,INTERFACE_INCLUDE_DIRECTORIES>>
 )
-target_compile_definitions(${PROJECT_NAME}
-    PRIVATE
-    $<BUILD_INTERFACE:$<TARGET_PROPERTY:cmsis,INTERFACE_COMPILE_DEFINITIONS>>
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC 
     $<BUILD_INTERFACE:$<TARGET_PROPERTY:sigfox_ep_lib_obj,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:sigfox_ep_addon_rfp_obj,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:sigfox_ep_addon_ta_obj,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:${SIGFOX_RF_API},INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:mcu_api,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:at,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:peripherials,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:cmsis,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:shield,INTERFACE_COMPILE_DEFINITIONS>>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:components,INTERFACE_COMPILE_DEFINITIONS>>
+)
+
+target_link_options(${PROJECT_NAME} PUBLIC 
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:cmsis,INTERFACE_LINK_OPTIONS>>
+    "LINKER:-Map,${PROJECT_NAME}.map"
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".elf")
+
+target_link_libraries(${PROJECT_NAME} c_nano nosys gcc)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
+    COMMAND ${CMAKE_SIZE_UTIL} ${PROJECT_NAME}.elf
+)
+
+add_custom_target(${PROJECT_NAME}.hex ALL 
+    DEPENDS ${PROJECT_NAME}
+    BYPRODUCTS ${PROJECT_NAME}.hex
+    COMMAND ${CMAKE_OBJCOPY} -Oihex  ${PROJECT_NAME}.elf ${PROJECT_NAME}.hex
+)
+
+add_custom_target(${PROJECT_NAME}.bin ALL
+    DEPENDS ${PROJECT_NAME}
+    BYPRODUCTS ${PROJECT_NAME}.bin
+    COMMAND ${CMAKE_OBJCOPY} -Obinary  ${PROJECT_NAME}.elf ${PROJECT_NAME}.bin
 )

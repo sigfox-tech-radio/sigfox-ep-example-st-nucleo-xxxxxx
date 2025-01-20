@@ -70,7 +70,7 @@ uint8_t S2LPSpiWriteRegisters(uint8_t register_address, uint8_t data_size, uint8
     }
     // SPI transfer.
     GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
-    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    SPI_write_read((uint8_t *) tx_data, (uint8_t *) rx_data, (data_size + 2));
     GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
     // Return status byte
     return (rx_data[1]);
@@ -88,7 +88,7 @@ uint8_t S2LPSpiReadRegisters(uint8_t register_address, uint8_t data_size, uint8_
     }
     // SPI transfer.
     GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
-    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    SPI_write_read((uint8_t *) tx_data, (uint8_t *) rx_data, (data_size + 2));
     GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
     // Fill RX buffer.
     for (idx = 0; idx < data_size; idx++) {
@@ -105,7 +105,7 @@ uint8_t S2LPSpiCommandStrobes(uint8_t commmand) {
     tx_data[1] = commmand;
     // SPI transfer.
     GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
-    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, 2);
+    SPI_write_read((uint8_t *) tx_data, (uint8_t *) rx_data, 2);
     GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
     // Return status byte
     return (rx_data[1]);
@@ -123,7 +123,7 @@ uint8_t S2LPSpiWriteFifo(uint8_t data_size, uint8_t *data) {
     }
     // SPI transfer.
     GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
-    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    SPI_write_read((uint8_t *) tx_data, (uint8_t *) rx_data, (data_size + 2));
     GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
     // Return status byte
     return (rx_data[1]);
@@ -141,7 +141,7 @@ uint8_t S2LPSpiReadFifo(uint8_t data_size, uint8_t *data) {
     }
     // SPI transfer.
     GPIO_write(&S2LP_GPIO_SPI_NSS, 0);
-    SPI_write_read((uint8_t*) tx_data, (uint8_t*) rx_data, (data_size + 2));
+    SPI_write_read((uint8_t *) tx_data, (uint8_t *) rx_data, (data_size + 2));
     GPIO_write(&S2LP_GPIO_SPI_NSS, 1);
     // Fill RX buffer.
     for (byte_idx = 0; byte_idx < data_size; byte_idx++) {

@@ -102,7 +102,9 @@ MCAL_status_t __attribute__((optimize("-O0"))) LPTIM_init(void) {
     lptim_ctx.clock_frequency_hz = (LSE_VALUE >> 3);
     // Enable LPTIM EXTI line.
     status = EXTI_configure(EXTI_PORT_NONE, EXTI_LINE_LPTIM1, EXTI_TRIGGER_RISING, NULL);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
 errors:
     return status;
 }
@@ -162,7 +164,8 @@ MCAL_status_t __attribute__((optimize("-O0"))) LPTIM_delay_milliseconds(uint32_t
     switch (delay_mode) {
     case LPTIM_DELAY_MODE_ACTIVE:
         // Active loop.
-        while (LL_LPTIM_IsActiveFlag_ARRM(LPTIM_INSTANCE) == 0);
+        while (LL_LPTIM_IsActiveFlag_ARRM(LPTIM_INSTANCE) == 0)
+            ;
         break;
     case LPTIM_DELAY_MODE_SLEEP:
         // Enable interrupt.
@@ -191,7 +194,8 @@ MCAL_status_t __attribute__((optimize("-O0"))) LPTIM_delay_milliseconds(uint32_t
 errors:
     // Reset peripheral.
     LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_LPTIM1);
-    for (loop_count = 0; loop_count < 100; loop_count++);
+    for (loop_count = 0; loop_count < 100; loop_count++)
+        ;
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LPTIM1);
     // Disable peripheral clock.
     LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_LPTIM1);

@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    sx126x_mapping.h
- * \brief   SX126X pins mapping.
+ * \file    lr11xx_mapping.h
+ * \brief   LR11XX pins mapping.
  *******************************************************************
  * \copyright
  *
@@ -34,36 +34,37 @@
  *
  *******************************************************************/
 
-#ifndef __SX126X_MAPPING_H__
-#define __SX126X_MAPPING_H__
+#ifndef __LR11XX_MAPPING_H__
+#define __LR11XX_MAPPING_H__
 
 #include "gpio.h"
 
-/*** SX126X MAPPING macros ***/
+/*** LR11XX MAPPING macros ***/
 
-#define SX126X_GPIO_IRQ_EXTI_PORT       EXTI_PORT_B
-#define SX126X_GPIO_IRQ_EXTI_LINE       EXTI_LINE_GPIO_4
+#define LR11XX_GPIO_IRQ_EXTI_PORT       EXTI_PORT_B
+#define LR11XX_GPIO_IRQ_EXTI_LINE       EXTI_LINE_GPIO_4
 
-#define SX126X_HAL_RESET_DELAY_MS       2
-#define SX126X_HAL_WAKEUP_DELAY_MS      2
+#define LR11XX_HAL_RESET_DELAY_MS       2
+#define LR11XX_HAL_WAKEUP_DELAY_MS      2
 
-/*** SX126X MAPPING global variables ***/
+/*!******************************************************************
+ * \struct LR11XX_MAPPING_gpios_t
+ * \brief LR11XX GPIOs mapping.
+ *******************************************************************/
+typedef struct  {
+    GPIO_pin_t spi_sck;
+    GPIO_pin_t spi_miso;
+    GPIO_pin_t spi_mosi;
+    GPIO_pin_t spi_nss;
+    GPIO_pin_t busy;
+    GPIO_pin_t irq;
+    GPIO_pin_t reset;
+    GPIO_pin_t lna;
+    GPIO_pin_t led_tx;
+    GPIO_pin_t led_rx;
+    GPIO_pin_t led_scan;
+} LR11XX_MAPPING_gpios_t;
 
-extern const GPIO_pin_t SX126X_GPIO_SPI_SCK;
-extern const GPIO_pin_t SX126X_GPIO_SPI_MISO;
-extern const GPIO_pin_t SX126X_GPIO_SPI_MOSI;
-extern const GPIO_pin_t SX126X_GPIO_SPI_NSS;
+extern const LR11XX_MAPPING_gpios_t LR11XX_MAPPING_gpios;
 
-extern const GPIO_pin_t SX126X_GPIO_NRESET;
-
-extern const GPIO_pin_t SX126X_GPIO_IRQ;
-
-extern const GPIO_pin_t SX126X_GPIO_BUSY;
-
-extern const GPIO_pin_t SX126X_GPIO_ANT_SW;
-
-extern const GPIO_pin_t SX126X_GPIO_LED_TX;
-
-extern const GPIO_pin_t SX126X_GPIO_LED_RX;
-
-#endif /* __SX126X_MAPPING_H__ */
+#endif /* __LR11XX_MAPPING_H__ */

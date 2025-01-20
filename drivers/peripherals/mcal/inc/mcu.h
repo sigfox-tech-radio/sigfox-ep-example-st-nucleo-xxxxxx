@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    mcal.h
- * \brief   Common definitions for peripherals drivers.
+ * \file    mcu.h
+ * \brief   Common MCU driver based on LL driver.
  *******************************************************************
  * \copyright
  *
@@ -34,38 +34,35 @@
  *
  *******************************************************************/
 
-#ifndef __MCAL_H__
-#define __MCAL_H__
+#ifndef __MCU_H__
+#define __MCU_H__
 
-/*** MCAL structures ***/
+#include "mcal.h"
+#include "stdint.h"
 
-/*!******************************************************************
- * \enum MCAL_status_t
- * \brief Low level drivers status.
- *******************************************************************/
-typedef enum {
-    MCAL_SUCCESS = 0,
-    MCAL_ERROR
-} MCAL_status_t;
+/*** MCU macros ***/
 
-/*** MCAL functions ***/
+#define MCU_DIE_ID_SIZE_BYTES   4
+#define MCU_CHIP_ID_SIZE_BYTES  8
+
+/*** MCU functions ***/
 
 /*!******************************************************************
- * \fn MCAL_UNUSED(x)
- * \brief Generic macro to remove unused parameter warning.
- * \param[in]   x: Parameter to ignore.
- * \param[out]  none
- * \retval      none
+ * \fn MCAL_status_t MCU_get_die_id(uint8_t *die_id);
+ * \brief Read MCU DIE id.
+ * \param[in]   none
+ * \param[out]  die_id: Pointer to the DIE ID bytes.
+ * \retval      Function execution status.
  *******************************************************************/
-#define MCAL_UNUSED(x)  { (void) x; }
+MCAL_status_t MCU_get_die_id(uint8_t *die_id);
 
 /*!******************************************************************
- * \fn void MCAL_check_status(error)
- * \brief Generic macro to check a MCAL function status and exit.
- * \param[in]   error: High level error code to rise.
- * \param[out]  none
- * \retval      none
+ * \fn MCAL_status_t MCU_get_chip_id(uint8_t *chip_id);
+ * \brief Read MCU chip id.
+ * \param[in]   none
+ * \param[out]  die_id: Pointer to the chip ID bytes.
+ * \retval      Function execution status.
  *******************************************************************/
-#define MCAL_check_status(error) { if (mcal_status != MCAL_SUCCESS) { status = error; goto errors; } }
+MCAL_status_t MCU_get_chip_id(uint8_t *chip_id);
 
-#endif /* __MCAL_H__ */
+#endif /* __MCU_H__ */

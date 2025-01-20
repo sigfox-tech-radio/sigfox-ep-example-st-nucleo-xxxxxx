@@ -31,24 +31,22 @@
 ################################################################################
 
 cmake_minimum_required(VERSION 3.21)
+project(at)
 
-set(SIGFOX_EP_LIB_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-lib)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-lib EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-addon-rfp EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-addon-ta EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/mcu_api EXCLUDE_FROM_ALL)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-at-parser)
 
-if(SIGFOX_RF_API STREQUAL lr11xx_rf_api_obj)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-rf-api-semtech-lr11xx EXCLUDE_FROM_ALL)
-elseif(SIGFOX_RF_API STREQUAL sx126x_rf_api_obj)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-rf-api-semtech-sx126x EXCLUDE_FROM_ALL)
-elseif(SIGFOX_RF_API STREQUAL s2lp_rf_api_obj)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-rf-api-st-s2lp EXCLUDE_FROM_ALL)
-  #Patch for rf-api-st-s2lp, adding board directory
-  target_include_directories( s2lp_rf_api_obj PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-rf-api-st-s2lp/inc/board
-  )
-endif()
+set(AT_PARSER_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/at_hw_api.c
+)
 
+#Target to create object
+add_library(${PROJECT_NAME} OBJECT EXCLUDE_FROM_ALL ${AT_PARSER_SOURCES}
+    $<TARGET_OBJECTS:at_parser>)
 
+target_include_directories( ${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/inc
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:at_parser,INTERFACE_INCLUDE_DIRECTORIES>>
+    PRIVATE
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:peripherials,INTERFACE_INCLUDE_DIRECTORIES>>
 
+)

@@ -1,0 +1,43 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cmake",
+			"label": "CMake: configure",
+			"command": "configure",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "CMake configure task"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build app-button",
+			"command": "build",
+			"targets": [
+				"app-button"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "CMake app-modem build task",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"CMake: configure",
+			]
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build app-modem",
+			"command": "build",
+			"targets": [
+				"app-modem"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "CMake app-modem build task",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"CMake: configure",
+			]
+		},      
+	]
+}

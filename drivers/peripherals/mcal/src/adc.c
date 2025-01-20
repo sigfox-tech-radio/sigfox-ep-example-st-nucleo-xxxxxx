@@ -103,7 +103,9 @@ MCAL_status_t ADC_init(void) {
     // Enable ADC voltage regulator.
     LL_ADC_EnableInternalRegulator(ADC_INSTANCE);
     status = LPTIM_delay_milliseconds(ADC_REGULATOR_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     // Configure common parameters.
     adc_common_init.CommonClock = LL_ADC_CLOCK_ASYNC_DIV1;
     ll_status = LL_ADC_CommonInit(__LL_ADC_COMMON_INSTANCE(ADC_INSTANCE), &adc_common_init);
@@ -152,7 +154,9 @@ MCAL_status_t ADC_init(void) {
     // Enable internal reference and temperature sensor.
     LL_ADC_SetCommonPathInternalCh(__LL_ADC_COMMON_INSTANCE(ADC_INSTANCE), (LL_ADC_PATH_INTERNAL_VREFINT | LL_ADC_PATH_INTERNAL_TEMPSENSOR));
     status = LPTIM_delay_milliseconds(ADC_VREF_TS_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
 errors:
     return status;
 }
@@ -187,7 +191,9 @@ MCAL_status_t ADC_get_mcu_voltage(uint16_t *mcu_voltage_mv) {
     (*mcu_voltage_mv) = ADC_VMCU_MV_DEFAULT;
     // Use VREFINT.
     status = _ADC_single_conversion(LL_ADC_CHANNEL_VREFINT, &mcu_voltage_12bits);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     // Convert to mV.
     (*mcu_voltage_mv) = (uint16_t) __LL_ADC_CALC_VREFANALOG_VOLTAGE(mcu_voltage_12bits, LL_ADC_RESOLUTION_12B);
 errors:
@@ -208,7 +214,9 @@ MCAL_status_t ADC_get_mcu_temperature(int16_t *mcu_temperature_degrees) {
     (*mcu_temperature_degrees) = ADC_TMCU_DEGREES_DEFAULT;
     // Use temperature sensor.
     status = _ADC_single_conversion(LL_ADC_CHANNEL_TEMPSENSOR, &mcu_temperature_12bits);
-    if (status != MCAL_SUCCESS) goto errors;
+    if (status != MCAL_SUCCESS) {
+        goto errors;
+    }
     // Convert to mV.
     (*mcu_temperature_degrees) = __LL_ADC_CALC_TEMPERATURE(ADC_VMCU_MV_DEFAULT, mcu_temperature_12bits, LL_ADC_RESOLUTION_12B);
 errors:

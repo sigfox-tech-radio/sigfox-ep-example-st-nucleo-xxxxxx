@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    lr11xx_mapping.c
- * \brief   LR11XX pins mapping.
+ * \file    mcu.c
+ * \brief   Common MCU driver based on LL driver.
  *******************************************************************
  * \copyright
  *
@@ -34,28 +34,50 @@
  *
  *******************************************************************/
 
-#include "lr11xx_mapping.h"
+#include "mcu.h"
 
-#ifndef SIGFOX_EP_DISABLE_FLAGS_FILE
-#include "sigfox_ep_flags.h"
-#endif
-#include "gpio.h"
+#include "mcal.h"
+#include "stddef.h"
+#include "stdint.h"
+#include "stm32l0xx.h"
+#include "stm32l0xx_ll_utils.h"
 
-/*** LR11XX MAPPING global variables ***/
+/*** MCU functions ***/
 
-const GPIO_pin_t LR11XX_GPIO_SPI_SCK =  { GPIO_PORT_A, 5, 0 };
-const GPIO_pin_t LR11XX_GPIO_SPI_MISO = { GPIO_PORT_A, 6, 0 };
-const GPIO_pin_t LR11XX_GPIO_SPI_MOSI = { GPIO_PORT_A, 7, 0 };
-const GPIO_pin_t LR11XX_GPIO_SPI_NSS =  { GPIO_PORT_A, 8, 0 };
+/*******************************************************************/
+MCAL_status_t MCU_get_die_id(uint8_t *die_id) {
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint8_t idx = 0;
+    // Check parameters.
+    if (die_id == NULL) {
+        status = MCAL_ERROR;
+        goto errors;
+    }
+    for (idx = 0; idx < MCU_DIE_ID_SIZE_BYTES; idx++) {
+        die_id[idx] = 0;
+    }
+errors:
+    return status;
+}
 
-const GPIO_pin_t LR11XX_GPIO_NRESET =   { GPIO_PORT_A, 0, 0 };
-
-const GPIO_pin_t LR11XX_GPIO_IRQ =      { GPIO_PORT_B, 4, 0 };
-
-const GPIO_pin_t LR11XX_GPIO_BUSY =     { GPIO_PORT_B, 3, 0 };
-
-const GPIO_pin_t LR11XX_GPIO_SCAN =     { GPIO_PORT_B, 5, 0 };
-
-const GPIO_pin_t LR11XX_GPIO_LED_TX =   { GPIO_PORT_C, 1, 0 };
-
-const GPIO_pin_t LR11XX_GPIO_LED_RX =   { GPIO_PORT_C, 0, 0 };
+/*******************************************************************/
+MCAL_status_t MCU_get_chip_id(uint8_t *chip_id) {
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint8_t idx = 0;
+    // Check parameters.
+    if (chip_id == NULL) {
+        status = MCAL_ERROR;
+        goto errors;
+    }
+    for (idx = 0; idx < MCU_DIE_ID_SIZE_BYTES; idx++) {
+        if (idx < 4) {
+            chip_id[idx] = (uint8_t) (LL_GetUID_Word0() >> ((idx % 4) << 3));
+        } else {
+            chip_id[idx] = (uint8_t) (LL_GetUID_Word1() >> ((idx % 4) << 3));
+        }
+    }
+errors:
+    return status;
+}

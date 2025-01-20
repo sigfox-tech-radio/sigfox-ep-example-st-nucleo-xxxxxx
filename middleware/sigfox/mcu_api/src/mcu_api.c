@@ -62,8 +62,8 @@ static sfx_u32 MCU_API_LATENCY_MS[MCU_API_LATENCY_LAST] = {
 static const sfx_u8 MCU_API_VERSION[] = "v2.0";
 #endif
 
-const uint8_t sigfoxID[4] __attribute__ ((section(".sigfoxID"))) = { 0xFE, 0xDC, 0xBA, 0x98 };
-const uint8_t sigfoxKEY[16] __attribute__ ((section(".sigfoxKEY"))) = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
+const uint8_t sigfoxID[4] __attribute__((section(".sigfoxID"))) = {0xFE, 0xDC, 0xBA, 0x98};
+const uint8_t sigfoxKEY[16] __attribute__((section(".sigfoxKEY"))) = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
 
 /*** MCU API local functions ***/
 
@@ -243,7 +243,7 @@ MCU_API_status_t MCU_API_aes_128_cbc_encrypt(MCU_API_encryption_data_t *aes_data
     }
 #endif
     // Init peripheral.
-    aes_encrypt_hw((aes_data->data), (uint8_t*) local_key);
+    aes_encrypt_hw((aes_data->data), (uint8_t *) local_key);
 #ifdef SIGFOX_EP_PUBLIC_KEY_CAPABLE
 errors:
 #endif
@@ -413,7 +413,7 @@ MCU_API_status_t MCU_API_get_version(sfx_u8 **version, sfx_u8 *version_size_char
     if ((version == NULL) || (version_size_char == NULL)) {
         SIGFOX_EXIT_ERROR(MCU_API_ERROR);
     }
-    (*version) = (sfx_u8*) MCU_API_VERSION;
+    (*version) = (sfx_u8 *) MCU_API_VERSION;
     (*version_size_char) = (sfx_u8) sizeof(MCU_API_VERSION);
 errors:
     SIGFOX_RETURN();

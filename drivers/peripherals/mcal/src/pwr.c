@@ -49,6 +49,7 @@
 
 /*******************************************************************/
 void PWR_init(void) {
+
     // Enable power interface clock.
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
     // Unlock back-up registers (DBP bit).
@@ -62,6 +63,16 @@ void PWR_init(void) {
     LL_PWR_EnableFastWakeUp();
     // Never return in low power sleep mode after wake-up.
     LL_LPM_DisableSleepOnExit();
+#ifdef DEBUG
+    // Enable debug MCU interface clock.
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_DBGMCU);
+    // Enable debug in standby mode.
+    LL_DBGMCU_EnableDBGStandbyMode();
+    // Enable debug in sleep mode.
+    LL_DBGMCU_EnableDBGSleepMode();
+    // Enable debug in stop mode.
+    LL_DBGMCU_EnableDBGStopMode();
+#endif
 }
 
 /*******************************************************************/
