@@ -41,12 +41,15 @@
 
 /*** S2LP MAPPING macros ***/
 
-#define S2LP_GPIO_IRQ_EXTI_PORT		EXTI_PORT_C
-#define S2LP_GPIO_IRQ_EXTI_LINE		EXTI_LINE_GPIO_0
+#define S2LP_GPIO_IRQ_EXTI_PORT     EXTI_PORT_C
+#define S2LP_GPIO_IRQ_EXTI_LINE     EXTI_LINE_GPIO_0
 
 /*** S2LP MAPPING global variables ***/
 
-extern const GPIO_pin_t S2LP_GPIO_NSS;
+extern const GPIO_pin_t S2LP_GPIO_SPI_SCK;
+extern const GPIO_pin_t S2LP_GPIO_SPI_MISO;
+extern const GPIO_pin_t S2LP_GPIO_SPI_MOSI;
+extern const GPIO_pin_t S2LP_GPIO_SPI_NSS;
 
 extern const GPIO_pin_t S2LP_GPIO_SDN;
 

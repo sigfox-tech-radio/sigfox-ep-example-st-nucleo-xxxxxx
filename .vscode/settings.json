@@ -1,0 +1,116 @@
+{
+    "cmake.configureSettings": {
+        // In case of the toolchain is not in the PATH you must uncomment this line, set the path to the toolchain and uncomment cortex-debug.armToolchainPath line  
+        //"CMAKE_PREFIX_PATH": "/home/user/gcc-arm-none-eabi-10.3-2021.10/bin/",
+
+        // Toolchain file
+        "CMAKE_TOOLCHAIN_FILE":"cmake/toolchain-arm-none-eabi.cmake",
+        
+        // Build type (Debug, Release)
+        "CMAKE_BUILD_TYPE":"Debug",
+
+        //Internal ONLY Need to be remove before push on GH
+        "SFX_INTERNAL_REPO":"ON",
+        
+        // lr1110mb1dis, lr1110mb1djs, lr1121mb1dis,  sx1261mb1bas, sx1261mb2bas, steval-fki868v2.
+        "RADIO_SHIELD":"lr1110mb1dis",
+
+        // Support radio configuration zone 1 (Europe, Middle-East and Africa).
+        "SIGFOX_EP_RC1_ZONE":"ON",
+        // Support radio configuration zone 2 (Brazil, Canada, Mexico, Puerto Rico and USA)
+        "SIGFOX_EP_RC2_ZONE":"ON",
+        // Support radio configuration zone 3 (Japan) with LBT.
+        "SIGFOX_EP_RC3C_ZONE":"ON",
+        // Support radio configuration zone 3 (Japan) with DC.
+        "SIGFOX_EP_RC3D_ZONE":"ON",
+        // Support radio configuration zone 4 (Latin America and Asia Pacific).
+        "SIGFOX_EP_RC4_ZONE":"ON",
+        // Support radio configuration zone 5 (South-Corea).
+        "SIGFOX_EP_RC5_ZONE":"ON",
+        // Support radio configuration zone 6 (India).
+        "SIGFOX_EP_RC6_ZONE":"ON",
+        // Support radio configuration zone 7 (Russia).
+        "SIGFOX_EP_RC7_ZONE":"ON",
+
+        // Support uplink application messages if defined.
+        "SIGFOX_EP_APPLICATION_MESSAGES":"ON",
+        // Support uplink control keep alive message if defined.
+        "SIGFOX_EP_CONTROL_KEEP_ALIVE_MESSAGE":"ON",
+
+        // Support bidirectional procedure (downlink) if defined. Only applicable to application messages.
+        // Otherwise all messages will be uplink only.
+        "SIGFOX_EP_BIDIRECTIONAL":"ON",
+
+        // Asynchronous mode if defined, blocking mode otherwise.
+        "SIGFOX_EP_ASYNCHRONOUS":"ON",
+
+        // Enable MCU and RF open/close functions if defined.
+        "SIGFOX_EP_LOW_LEVEL_OPEN_CLOSE":"ON",
+
+        // Enable radio regulatory control (DC, FH or LBT check) if defined.
+        "SIGFOX_EP_REGULATORY":"ON",
+
+        // If defined, enable radio latency compensation to improve MCU timers accuracy.
+        "SIGFOX_EP_LATENCY_COMPENSATION":"ON",
+
+        // Send 1 frame per message (N=1) if defined.
+        // Otherwise number of frames per message is dynamically given when sending a message (N=1, N=2 or N=3).
+        "SIGFOX_EP_SINGLE_FRAME":"OFF",
+
+        // If defined, give the only uplink bit rate supported (100 or 600 depending on the RC).
+        // Otherwise, value is dynamically given when sending a message.
+        "SIGFOX_EP_UL_BIT_RATE_BPS":"OFF",
+
+        // If defined, give the only TX power supported by the radio.
+        // Otherwise the value is dynamically given when sending a message.
+        "SIGFOX_EP_TX_POWER_DBM_EIRP":"OFF",
+        
+        // If defined, give the fixed inter-frame delay used between uplink frames of a same message (0 to 2000ms).
+        // Value 0 disables the delay and associated timers to optimize memory space.
+        // Otherwise value is dynamically given when sending a message.
+        "SIGFOX_EP_T_IFU_MS":"OFF",
+
+        // If defined, give the fixed delay between downlink frame reception and uplink confirmation message (1400 to 4000ms).
+        // Otherwise value is dynamically given when sending a message.
+        "SIGFOX_EP_T_CONF_MS":"OFF",
+
+        // If defined, give the only uplink payload length supported (0 to 12).
+        // Value 0 enables the bit 0, bit 1 and empty messages.
+        // Otherwise, all uplink payload lengths are dynamically supported.
+        "SIGFOX_EP_UL_PAYLOAD_SIZE":"OFF",
+        
+        // If defined, enable hardware AES through MCU API function. Otherwise the embedded driver from TI is used.
+        "SIGFOX_EP_AES_HW":"OFF",
+
+        // If defined, enable hardware CRC through MCU API functions. Otherwise the embedded driver is used.
+        "SIGFOX_EP_CRC_HW":"OFF",
+
+        // If defined, give the only message counter rollover value supported.
+        // Otherwise, value is dynamically given when opening the library. 
+        "SIGFOX_EP_MESSAGE_COUNTER_ROLLOVER":"OFF",
+
+        // Enable parameters check if defined.
+        "SIGFOX_EP_PARAMETERS_CHECK":"ON",
+
+        // Enable certification features if defined.
+        "SIGFOX_EP_CERTIFICATION":"ON",
+
+        // Enable public key switch feature if defined.
+        "SIGFOX_EP_PUBLIC_KEY_CAPABLE":"ON",
+        
+        // Enable credentials (ID/PAC) API access and version control functions if defined.
+        "SIGFOX_EP_VERBOSE":"ON",
+
+        // Use return codes if defined, otherwise all functions return void.
+        "SIGFOX_EP_ERROR_CODES":"ON",
+
+        // If defined, store low level errors in a stack (the macro gives the depth).
+        // Errors can be read with the SIGFOX_EP_API_unstack_error() function. 
+        "SIGFOX_EP_ERROR_STACK":"32"
+    },
+
+    // In case of the toolchain is not in the PATH you must uncomment this line
+    // "cortex-debug.armToolchainPath": "${config:cmake.configureSettings.CMAKE_PREFIX_PATH}",
+    "git.detectSubmodulesLimit": 20,
+
+}

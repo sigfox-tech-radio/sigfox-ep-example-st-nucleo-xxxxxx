@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    sx126x_mapping.c
- * \brief   SX126X pins mapping.
+ * \file    mcu.c
+ * \brief   Common MCU driver based on LL driver.
  *******************************************************************
  * \copyright
  *
@@ -34,25 +34,50 @@
  *
  *******************************************************************/
 
-#include "sx126x_mapping.h"
+#include "mcu.h"
 
-#ifdef USE_SIGFOX_EP_FLAGS_H
-#include "sigfox_ep_flags.h"
-#endif
-#include "gpio.h"
+#include "mcal.h"
+#include "stddef.h"
+#include "stdint.h"
+#include "stm32l0xx.h"
+#include "stm32l0xx_ll_utils.h"
 
-/*** SX126X MAPPING global variables ***/
+/*** MCU functions ***/
 
-const GPIO_pin_t SX126X_GPIO_NSS = 		(GPIO_pin_t) {GPIO_PORT_A, 8, 0};
+/*******************************************************************/
+MCAL_status_t MCU_get_die_id(uint8_t *die_id) {
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint8_t idx = 0;
+    // Check parameters.
+    if (die_id == NULL) {
+        status = MCAL_ERROR;
+        goto errors;
+    }
+    for (idx = 0; idx < MCU_DIE_ID_SIZE_BYTES; idx++) {
+        die_id[idx] = 0;
+    }
+errors:
+    return status;
+}
 
-const GPIO_pin_t SX126X_GPIO_NRESET = 	(GPIO_pin_t) {GPIO_PORT_A, 0, 0};
-
-const GPIO_pin_t SX126X_GPIO_IRQ = 		(GPIO_pin_t) {GPIO_PORT_B, 4, 0};
-
-const GPIO_pin_t SX126X_GPIO_BUSY =		(GPIO_pin_t) {GPIO_PORT_B, 3, 0};
-
-const GPIO_pin_t SX126X_GPIO_ANT_SW =	(GPIO_pin_t) {GPIO_PORT_A, 9, 0};
-
-const GPIO_pin_t SX126X_GPIO_LED_TX = 	(GPIO_pin_t) {GPIO_PORT_C, 1, 0};
-
-const GPIO_pin_t SX126X_GPIO_LED_RX = 	(GPIO_pin_t) {GPIO_PORT_C, 0, 0};
+/*******************************************************************/
+MCAL_status_t MCU_get_chip_id(uint8_t *chip_id) {
+    // Local variables.
+    MCAL_status_t status = MCAL_SUCCESS;
+    uint8_t idx = 0;
+    // Check parameters.
+    if (chip_id == NULL) {
+        status = MCAL_ERROR;
+        goto errors;
+    }
+    for (idx = 0; idx < MCU_DIE_ID_SIZE_BYTES; idx++) {
+        if (idx < 4) {
+            chip_id[idx] = (uint8_t) (LL_GetUID_Word0() >> ((idx % 4) << 3));
+        } else {
+            chip_id[idx] = (uint8_t) (LL_GetUID_Word1() >> ((idx % 4) << 3));
+        }
+    }
+errors:
+    return status;
+}

@@ -1,5 +1,5 @@
 /*!*****************************************************************
- * \file    lr11xx_mapping.c
+ * \file    lr11xx_mapping.h
  * \brief   LR11XX pins mapping.
  *******************************************************************
  * \copyright
@@ -34,25 +34,37 @@
  *
  *******************************************************************/
 
-#include "lr11xx_mapping.h"
+#ifndef __LR11XX_MAPPING_H__
+#define __LR11XX_MAPPING_H__
 
-#ifdef USE_SIGFOX_EP_FLAGS_H
-#include "sigfox_ep_flags.h"
-#endif
 #include "gpio.h"
 
-/*** LR11XX MAPPING global variables ***/
+/*** LR11XX MAPPING macros ***/
 
-const GPIO_pin_t LR11XX_GPIO_NSS = 		(GPIO_pin_t) {GPIO_PORT_A, 8, 0};
+#define LR11XX_GPIO_IRQ_EXTI_PORT       EXTI_PORT_B
+#define LR11XX_GPIO_IRQ_EXTI_LINE       EXTI_LINE_GPIO_4
 
-const GPIO_pin_t LR11XX_GPIO_NRESET = 	(GPIO_pin_t) {GPIO_PORT_A, 0, 0};
+#define LR11XX_HAL_RESET_DELAY_MS       2
+#define LR11XX_HAL_WAKEUP_DELAY_MS      2
 
-const GPIO_pin_t LR11XX_GPIO_IRQ = 		(GPIO_pin_t) {GPIO_PORT_B, 4, 0};
+/*!******************************************************************
+ * \struct LR11XX_MAPPING_gpios_t
+ * \brief LR11XX GPIOs mapping.
+ *******************************************************************/
+typedef struct  {
+    GPIO_pin_t spi_sck;
+    GPIO_pin_t spi_miso;
+    GPIO_pin_t spi_mosi;
+    GPIO_pin_t spi_nss;
+    GPIO_pin_t busy;
+    GPIO_pin_t irq;
+    GPIO_pin_t reset;
+    GPIO_pin_t lna;
+    GPIO_pin_t led_tx;
+    GPIO_pin_t led_rx;
+    GPIO_pin_t led_scan;
+} LR11XX_MAPPING_gpios_t;
 
-const GPIO_pin_t LR11XX_GPIO_BUSY =		(GPIO_pin_t) {GPIO_PORT_B, 3, 0};
+extern const LR11XX_MAPPING_gpios_t LR11XX_MAPPING_gpios;
 
-const GPIO_pin_t LR11XX_GPIO_SCAN =		(GPIO_pin_t) {GPIO_PORT_B, 5, 0};
-
-const GPIO_pin_t LR11XX_GPIO_LED_TX = 	(GPIO_pin_t) {GPIO_PORT_C, 1, 0};
-
-const GPIO_pin_t LR11XX_GPIO_LED_RX = 	(GPIO_pin_t) {GPIO_PORT_C, 0, 0};
+#endif /* __LR11XX_MAPPING_H__ */

@@ -45,37 +45,37 @@
 /*!******************************************************************
  * \fn MCAL_status_t ADC_init(void)
  * \brief Init common ADC peripheral.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t ADC_init(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t ADC_de_init(void)
  * \brief Release common ADC peripheral.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t ADC_de_init(void);
 
 /*!******************************************************************
  * \fn MCAL_status_t ADC_get_mcu_voltage(uint16_t* mcu_voltage_mv)
  * \brief Compute MCU Voltage.
- * \param[in]	none
- * \param[out]	mcu_voltage_mv: MCU voltage in mV.
- * \retval		none
+ * \param[in]   none
+ * \param[out]  mcu_voltage_mv: MCU voltage in mV.
+ * \retval      none
  *******************************************************************/
-MCAL_status_t ADC_get_mcu_voltage(uint16_t* mcu_voltage_mv);
+MCAL_status_t ADC_get_mcu_voltage(uint16_t *mcu_voltage_mv);
 
 /*!******************************************************************
  * \fn MCAL_status_t ADC_get_mcu_temperature(int16_t* mcu_temperature_degrees)
  * \brief Compute MCU temperature.
- * \param[in]	none
- * \param[out]	mcu_temperature_degrees: temperature in degrees.
- * \retval		none.
+ * \param[in]   none
+ * \param[out]  mcu_temperature_degrees: temperature in degrees.
+ * \retval      none.
  *******************************************************************/
-MCAL_status_t ADC_get_mcu_temperature(int16_t* mcu_temperature_degrees);
+MCAL_status_t ADC_get_mcu_temperature(int16_t *mcu_temperature_degrees);
 
 #endif /* __ADC_H__ */

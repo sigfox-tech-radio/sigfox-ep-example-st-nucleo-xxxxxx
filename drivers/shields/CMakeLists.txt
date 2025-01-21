@@ -60,17 +60,33 @@ cmake_minimum_required(VERSION 3.21)
 project(shield)
 
 add_library(${PROJECT_NAME} OBJECT EXCLUDE_FROM_ALL)
-
-if(RADIO_SHIELD STREQUAL lr1110dvk1tbks)
+if(RADIO_DRIVER STREQUAL lr11xx_driver)
+  # Add shield specific defines and source files
+  if (RADIO_SHIELD STREQUAL lr1110mb1dis)
   target_sources(${PROJECT_NAME} 
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/lr1110dvk1tbks/src/lr11xx_hal.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/lr1110dvk1tbks/src/lr11xx_hw_api.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/lr1110dvk1tbks/src/lr11xx_mapping.c    
+    ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/src/lr1110mb1dis_hw_api.c
+  )
+  endif()
+  if (RADIO_SHIELD STREQUAL lr1110mb1djs)
+  target_sources(${PROJECT_NAME} 
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/src/lr1110mb1djs_hw_api.c
+  )
+  endif()
+  if (RADIO_SHIELD STREQUAL lr1121mb1dis)
+  target_sources(${PROJECT_NAME} 
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/src/lr1121mb1dis_hw_api.c
+  )
+  endif()
+  target_sources(${PROJECT_NAME} 
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/src/lr11xx_hal.c
   )
   target_include_directories(${PROJECT_NAME}
     PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/lr1110dvk1tbks/inc/
+    ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/inc/
     $<TARGET_PROPERTY:lr11xx_rf_api_obj,INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:components,INTERFACE_INCLUDE_DIRECTORIES>
   )
@@ -80,26 +96,37 @@ if(RADIO_SHIELD STREQUAL lr1110dvk1tbks)
     $<TARGET_PROPERTY:lr11xx_rf_api_obj,INTERFACE_COMPILE_DEFINITIONS>
     $<TARGET_PROPERTY:components,INTERFACE_COMPILE_DEFINITIONS>
   )
-elseif(RADIO_SHIELD STREQUAL sx1261dvk1bas)
+elseif(RADIO_DRIVER STREQUAL sx126x_driver)
+  # Add shield specific defines and source files
+  if (RADIO_SHIELD STREQUAL sx1261mb1bas)
   target_sources(${PROJECT_NAME} 
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/sx1261dvk1bas/src/sx126x_hal.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/sx1261dvk1bas/src/sx126x_hw_api.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/sx1261dvk1bas/src/sx126x_mapping.c    
+    ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_shields/src/sx1261mb1bas_hw_api.c
+  )
+  endif()
+  if(RADIO_SHIELD STREQUAL sx1261mb2bas)
+  target_sources(${PROJECT_NAME} 
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_shields/src/sx1261mb2bas_hw_api.c
+  )
+  endif()
+  target_sources(${PROJECT_NAME} 
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_shields/src/sx126x_hal.c
   )
   target_include_directories(${PROJECT_NAME}
     PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/sx1261dvk1bas/inc/
+    ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_shields/inc/
     $<TARGET_PROPERTY:sx126x_rf_api_obj,INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:components,INTERFACE_INCLUDE_DIRECTORIES>
   )
   target_compile_definitions(${PROJECT_NAME} 
     PUBLIC 
-    LR11XX_DISABLE_WARNINGS
     $<TARGET_PROPERTY:sx126x_rf_api_obj,INTERFACE_COMPILE_DEFINITIONS>
     $<TARGET_PROPERTY:components,INTERFACE_COMPILE_DEFINITIONS>
   )
-elseif(RADIO_SHIELD STREQUAL steval-fki868v2)
+
+elseif(RADIO_DRIVER STREQUAL s2lp_driver)
   target_sources(${PROJECT_NAME} 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/steval-fki868v2/src/S2LP_CORE_SPI.c

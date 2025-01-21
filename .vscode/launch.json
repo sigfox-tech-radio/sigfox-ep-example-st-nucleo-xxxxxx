@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex-M button",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/application/button/app-button.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "configFiles": [
+                "interface/stlink.cfg",   
+                "target/stm32l0.cfg"
+            ],
+            "openOCDLaunchCommands": [
+                "transport select hla_swd",
+                "reset_config srst_only srst_nogate connect_assert_srst",
+                "init",
+                "reset halt"
+            ],
+            //"svdFile": "${workspaceFolder}/path/to/your_device.svd", 
+            "preLaunchTask": "CMake: build app-button",
+            "showDevDebugOutput": "raw"
+        },
+        {
+            "name": "Cortex-M modem",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/application/modem/app-modem.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32l0.cfg"
+            ],
+            "openOCDLaunchCommands": [
+                "transport select hla_swd",
+                "reset_config srst_only srst_nogate connect_assert_srst",
+                "init",
+                "reset halt"
+            ],
+            //"svdFile": "${workspaceFolder}/path/to/your_device.svd",
+            "preLaunchTask": "CMake: build app-modem",
+            "serverpath" : "openocd",
+            "showDevDebugOutput": "raw"
+        },
+    ]
+}

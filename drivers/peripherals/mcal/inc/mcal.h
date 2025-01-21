@@ -44,8 +44,8 @@
  * \brief Low level drivers status.
  *******************************************************************/
 typedef enum {
-	MCAL_SUCCESS = 0,
-	MCAL_ERROR
+    MCAL_SUCCESS = 0,
+    MCAL_ERROR
 } MCAL_status_t;
 
 /*** MCAL functions ***/
@@ -53,10 +53,19 @@ typedef enum {
 /*!******************************************************************
  * \fn MCAL_UNUSED(x)
  * \brief Generic macro to remove unused parameter warning.
- * \param[in]  	x: Parameter to ignore.
- * \param[out] 	none
- * \retval		none
+ * \param[in]   x: Parameter to ignore.
+ * \param[out]  none
+ * \retval      none
  *******************************************************************/
-#define MCAL_UNUSED(x)	{ (void) x; }
+#define MCAL_UNUSED(x)  { (void) x; }
+
+/*!******************************************************************
+ * \fn void MCAL_check_status(error)
+ * \brief Generic macro to check a MCAL function status and exit.
+ * \param[in]   error: High level error code to rise.
+ * \param[out]  none
+ * \retval      none
+ *******************************************************************/
+#define MCAL_check_status(error) { if (mcal_status != MCAL_SUCCESS) { status = error; goto errors; } }
 
 #endif /* __MCAL_H__ */

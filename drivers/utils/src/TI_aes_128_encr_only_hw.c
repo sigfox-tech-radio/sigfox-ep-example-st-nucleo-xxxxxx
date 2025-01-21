@@ -38,7 +38,7 @@
 
 
 // foreward sbox
-const unsigned char sbox[256] =   {
+const unsigned char sbox_hw[256] =   {
 //0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76, //0
 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0, //1
@@ -58,7 +58,7 @@ const unsigned char sbox[256] =   {
 0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 }; //F
 
 // multiply by 2 in the galois field
-unsigned char galois_mul2(unsigned char value)
+unsigned char galois_mul2_hw(unsigned char value)
 {
   signed char temp;
   // cast to signed value
@@ -73,7 +73,7 @@ unsigned char galois_mul2(unsigned char value)
 
 // aes encryption function
 // It manipulates the state and computes the key schedule on the fly
-void aes_encrypt(unsigned char *state, unsigned char *key)
+void aes_encrypt_hw(unsigned char *state, unsigned char *key)
 {
   unsigned char buf1, buf2, buf3, buf4, round, i;
   unsigned char rcon;
@@ -85,7 +85,7 @@ void aes_encrypt(unsigned char *state, unsigned char *key)
   for (round = 0; round < 10; round++){
     //add key + sbox
     for (i = 0; i <16; i++){
-      state[i]=sbox[state[i] ^ key[i]];
+      state[i]=sbox_hw[state[i] ^ key[i]];
     }
     //shift rows
     buf1 = state[1];
@@ -112,26 +112,26 @@ void aes_encrypt(unsigned char *state, unsigned char *key)
       for (i=0; i <4; i++){
         // compute the current index
         buf4 = (i << 2);
-	buf1 = state[buf4] ^ state[buf4+1] ^ state[buf4+2] ^ state[buf4+3];
-	buf2 = state[buf4];
-	buf3 = state[buf4]^state[buf4+1]; buf3=galois_mul2(buf3); state[buf4] = state[buf4] ^ buf3 ^ buf1;
-	buf3 = state[buf4+1]^state[buf4+2]; buf3=galois_mul2(buf3); state[buf4+1] = state[buf4+1] ^ buf3 ^ buf1;
-	buf3 = state[buf4+2]^state[buf4+3]; buf3=galois_mul2(buf3); state[buf4+2] = state[buf4+2] ^ buf3 ^ buf1;
-	buf3 = state[buf4+3]^buf2;     buf3=galois_mul2(buf3); state[buf4+3] = state[buf4+3] ^ buf3 ^ buf1;
-	}
+        buf1 = state[buf4] ^ state[buf4+1] ^ state[buf4+2] ^ state[buf4+3];
+        buf2 = state[buf4];
+        buf3 = state[buf4]^state[buf4+1]; buf3=galois_mul2_hw(buf3); state[buf4] = state[buf4] ^ buf3 ^ buf1;
+        buf3 = state[buf4+1]^state[buf4+2]; buf3=galois_mul2_hw(buf3); state[buf4+1] = state[buf4+1] ^ buf3 ^ buf1;
+        buf3 = state[buf4+2]^state[buf4+3]; buf3=galois_mul2_hw(buf3); state[buf4+2] = state[buf4+2] ^ buf3 ^ buf1;
+        buf3 = state[buf4+3]^buf2;     buf3=galois_mul2_hw(buf3); state[buf4+3] = state[buf4+3] ^ buf3 ^ buf1;
+      }
     }
-	  
+
     //key schedule
     // compute the 16 next round key bytes
-    key[0] = sbox[key[13]]^key[0]^rcon;
-    key[1] = sbox[key[14]]^key[1];
-    key[2] = sbox[key[15]]^key[2];
-    key[3] = sbox[key[12]]^key[3];
+    key[0] = sbox_hw[key[13]]^key[0]^rcon;
+    key[1] = sbox_hw[key[14]]^key[1];
+    key[2] = sbox_hw[key[15]]^key[2];
+    key[3] = sbox_hw[key[12]]^key[3];
     for (i=4; i<16; i++) {
-	key[i] = key[i] ^ key[i-4];
+      key[i] = key[i] ^ key[i-4];
     }
     // compute the next Rcon value
-    rcon = galois_mul2(rcon);
+    rcon = galois_mul2_hw(rcon);
   }
 
   // process last AddRoundKey

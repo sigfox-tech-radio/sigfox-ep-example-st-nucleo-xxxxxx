@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    lr11xx_mapping.h
- * \brief   LR11XX pins mapping.
+ * \file    syscalls.c
+ * \brief   System calls file.
  *******************************************************************
  * \copyright
  *
@@ -34,33 +34,14 @@
  *
  *******************************************************************/
 
-#ifndef __LR11XX_MAPPING_H__
-#define __LR11XX_MAPPING_H__
+void _close(void) {
+}
 
-#include "gpio.h"
+void _lseek(void) {
+}
 
-/*** LR11XX MAPPING macros ***/
+void _read(void) {
+}
 
-#define LR11XX_GPIO_IRQ_EXTI_PORT		EXTI_PORT_B
-#define LR11XX_GPIO_IRQ_EXTI_LINE		EXTI_LINE_GPIO_4
-
-#define LR11XX_HAL_RESET_DELAY_MS		2
-#define LR11XX_HAL_WAKEUP_DELAY_MS		2
-
-/*** LR11XX MAPPING global variables ***/
-
-extern const GPIO_pin_t LR11XX_GPIO_NSS;
-
-extern const GPIO_pin_t LR11XX_GPIO_NRESET;
-
-extern const GPIO_pin_t LR11XX_GPIO_IRQ;
-
-extern const GPIO_pin_t LR11XX_GPIO_BUSY;
-
-extern const GPIO_pin_t LR11XX_GPIO_SCAN;
-
-extern const GPIO_pin_t LR11XX_GPIO_LED_TX;
-
-extern const GPIO_pin_t LR11XX_GPIO_LED_RX;
-
-#endif /* __LR11XX_MAPPING_H__ */
+void _write(void) {
+}

@@ -65,6 +65,7 @@ if(MCU STREQUAL stm32l053r8)
    # Object build options
       target_sources(${PROJECT_NAME} 
         PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/syscalls.c
         ${CMAKE_CURRENT_SOURCE_DIR}/device/src/system_stm32l0xx.c
         ${CMAKE_CURRENT_SOURCE_DIR}/device/src/startup_stm32l053xx.S
     )    

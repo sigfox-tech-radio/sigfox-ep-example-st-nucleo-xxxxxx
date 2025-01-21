@@ -99,6 +99,7 @@ target_sources(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/spi.c            
         ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/tim.c
         ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/usart.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/mcu.c
 )
 target_include_directories(${PROJECT_NAME}
     PRIVATE

@@ -1,6 +1,6 @@
 /*!*****************************************************************
- * \file    sx126x_mapping.h
- * \brief   SX126X pins mapping.
+ * \file    at_hw_api.c
+ * \brief   AT low level interface.
  *******************************************************************
  * \copyright
  *
@@ -34,33 +34,50 @@
  *
  *******************************************************************/
 
-#ifndef __SX126X_MAPPING_H__
-#define __SX126X_MAPPING_H__
+#include "at_hw_api.h"
 
-#include "gpio.h"
+#include "at.h"
+#include "stdint.h"
+#include "mcal.h"
+#include "usart.h"
 
-/*** SX126X MAPPING macros ***/
 
-#define SX126X_GPIO_IRQ_EXTI_PORT		EXTI_PORT_B
-#define SX126X_GPIO_IRQ_EXTI_LINE		EXTI_LINE_GPIO_4
 
-#define SX126X_HAL_RESET_DELAY_MS		2
-#define SX126X_HAL_WAKEUP_DELAY_MS		2
+/*** AT HW API functions ***/
 
-/*** SX126X MAPPING global variables ***/
+/*******************************************************************/
+#define _check_mcal_status(void) { if (mcal_status != MCAL_SUCCESS) { status = AT_ERROR_AT_HW_API; goto errors; } }
 
-extern const GPIO_pin_t SX126X_GPIO_NSS;
+/*******************************************************************/
+AT_status_t AT_HW_API_init(AT_HW_API_config_t *hw_api_config) {
+    // Local variables.
+    AT_status_t status = AT_SUCCESS;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
 
-extern const GPIO_pin_t SX126X_GPIO_NRESET;
+    // Init USART interface.
+    mcal_status = USART_init(115200, 0, hw_api_config->rx_irq_callback);
+    _check_mcal_status();
+errors:
+    return status;
+}
 
-extern const GPIO_pin_t SX126X_GPIO_IRQ;
+/*******************************************************************/
+AT_status_t AT_HW_API_de_init(void) {
+    // Local variables.
+    AT_status_t status = AT_SUCCESS;
+    // Release USART interface.
+    USART_de_init();
+    return status;
+}
 
-extern const GPIO_pin_t SX126X_GPIO_BUSY;
+/*******************************************************************/
+AT_status_t AT_HW_API_write(uint8_t *data, uint32_t data_size_bytes) {
+    // Local variables.
+    AT_status_t status = AT_SUCCESS;
+    MCAL_status_t mcal_status = MCAL_SUCCESS;
 
-extern const GPIO_pin_t SX126X_GPIO_ANT_SW;
-
-extern const GPIO_pin_t SX126X_GPIO_LED_TX;
-
-extern const GPIO_pin_t SX126X_GPIO_LED_RX;
-
-#endif /* __SX126X_MAPPING_H__ */
+    mcal_status = USART_write( data, data_size_bytes);
+    _check_mcal_status();
+errors:
+    return status;
+}

@@ -53,31 +53,31 @@ typedef void (*USART_rx_irq_cb_t)(uint8_t data);
 /*!******************************************************************
  * \fn USART_status_t USART_init(uint32_t baud_rate, USART_rx_irq_cb_t irq_callback)
  * \brief Init USART peripheral.
- * \param[in]	baud_rate: USART link baud rate.
- * \param[in]	irq_priority: RX interrupt priority.
- * \param[in]  	irq_callback: Function to call on RX interrupt.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   baud_rate: USART link baud rate.
+ * \param[in]   irq_priority: RX interrupt priority.
+ * \param[in]   irq_callback: Function to call on RX interrupt.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
 MCAL_status_t USART_init(uint32_t baud_rate, uint8_t irq_priority, USART_rx_irq_cb_t irq_callback);
 
 /*!******************************************************************
  * \fn void USART_de_init(void)
  * \brief Release USART peripheral.
- * \param[in]  	none
- * \param[out] 	none
- * \retval		none
+ * \param[in]   none
+ * \param[out]  none
+ * \retval      none
  *******************************************************************/
 void USART_de_init(void);
 
 /*!******************************************************************
  * \fn USART_status_t USART_write(uint8_t* data, uint32_t data_size_bytes)
  * \brief Send data over USART.
- * \param[in]	data: Byte array to send.
- * \param[in]	data_size_bytes: Number of bytes to send.
- * \param[out] 	none
- * \retval		Function execution status.
+ * \param[in]   data: Byte array to send.
+ * \param[in]   data_size_bytes: Number of bytes to send.
+ * \param[out]  none
+ * \retval      Function execution status.
  *******************************************************************/
-MCAL_status_t USART_write(uint8_t* data, uint32_t data_size_bytes);
+MCAL_status_t USART_write(uint8_t *data, uint32_t data_size_bytes);
 
 #endif /* __USART_H__ */
