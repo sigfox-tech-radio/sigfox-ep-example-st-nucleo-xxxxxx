@@ -1,49 +1,45 @@
-[submodule "middleware/sigfox/sigfox-ep-lib"]
-	path = middleware/sigfox/sigfox-ep-lib
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-lib.git
-[submodule "middleware/sigfox/sigfox-ep-addon-rfp"]
-	path = middleware/sigfox/sigfox-ep-addon-rfp
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-addon-rfp.git
-[submodule "middleware/sigfox/sigfox-ep-addon-ta"]
-	path = middleware/sigfox/sigfox-ep-addon-ta
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-addon-ta.git
-[submodule "middleware/sigfox/sigfox-ep-rf-api-semtech-sx126x"]
-	path = middleware/sigfox/sigfox-ep-rf-api-semtech-sx126x
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-sx126x.git
-[submodule "middleware/sigfox/sigfox-ep-rf-api-semtech-lr11xx"]
-	path = middleware/sigfox/sigfox-ep-rf-api-semtech-lr11xx
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-lr11xx.git
-[submodule "middleware/sigfox/sigfox-ep-rf-api-st-s2lp"]
-	path = middleware/sigfox/sigfox-ep-rf-api-st-s2lp
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-s2lp.git
-[submodule "drivers/components/SWDR001"]
-	path = drivers/components/SWDR001
-	url = https://github.com/Lora-net/SWDR001.git
-[submodule "drivers/components/sx126x_driver"]
-	path = drivers/components/sx126x_driver
-	url = https://github.com/Lora-net/sx126x_driver.git
-[submodule "drivers/components/sigfox-ep-rf-api-st-s2lp"]
-	path = drivers/components/sigfox-ep-rf-api-st-s2lp
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-s2lp.git
-[submodule "drivers/components/x-cube-subg2"]
-	path = drivers/components/x-cube-subg2
-	url = https://github.com/STMicroelectronics/x-cube-subg2.git
-[submodule "middleware/at/sigfox-at-parser"]
-	path = middleware/at/sigfox-at-parser
-	url = https://github.com/sigfox-tech-radio/sigfox-at-parser.git
-
-[submodule "drivers/peripherals/stm32l0xx-hal-driver"]
-	path = drivers/peripherals/stm32l0xx-hal-driver
-	url = https://github.com/STMicroelectronics/stm32l0xx-hal-driver.git
 [submodule "drivers/cmsis/device/cmsis-device-l0"]
-	path = drivers/cmsis/device/cmsis-device-l0
-	url = https://github.com/STMicroelectronics/cmsis-device-l0.git
+    path = drivers/cmsis/device/cmsis-device-l0
+    url = https://github.com/STMicroelectronics/cmsis-device-l0.git
 [submodule "drivers/cmsis/device/cmsis-device-wl3"]
-	path = drivers/cmsis/device/cmsis-device-wl3
-	url = https://github.com/STMicroelectronics/cmsis-device-wl3.git
+    path = drivers/cmsis/device/cmsis-device-wl3
+    url = https://github.com/STMicroelectronics/cmsis-device-wl3.git
+[submodule "drivers/peripherals/stm32l0xx-hal-driver"]
+    path = drivers/peripherals/stm32l0xx-hal-driver
+    url = https://github.com/STMicroelectronics/stm32l0xx-hal-driver.git
 [submodule "drivers/peripherals/stm32wl3x-hal-driver"]
-	path = drivers/peripherals/stm32wl3x-hal-driver
-	url = https://github.com/STMicroelectronics/stm32wl3x-hal-driver.git
+    path = drivers/peripherals/stm32wl3x-hal-driver
+    url = https://github.com/STMicroelectronics/stm32wl3x-hal-driver.git
+[submodule "drivers/components/x-cube-subg2"]
+    path = drivers/components/x-cube-subg2
+    url = https://github.com/STMicroelectronics/x-cube-subg2.git
+[submodule "drivers/components/SWDR001"]
+    path = drivers/components/SWDR001
+    url = https://github.com/Lora-net/SWDR001.git
+[submodule "drivers/components/sx126x_driver"]
+    path = drivers/components/sx126x_driver
+    url = https://github.com/Lora-net/sx126x_driver.git
+[submodule "middleware/sigfox/sigfox-ep-lib"]
+    path = middleware/sigfox/sigfox-ep-lib
+    url = https://github.com/sigfox-tech-radio/sigfox-ep-lib.git
+[submodule "middleware/sigfox/sigfox-ep-addon-rfp"]
+    path = middleware/sigfox/sigfox-ep-addon-rfp
+    url = https://github.com/sigfox-tech-radio/sigfox-ep-addon-rfp.git
+[submodule "middleware/sigfox/sigfox-ep-addon-ta"]
+    path = middleware/sigfox/sigfox-ep-addon-ta
+    url = https://github.com/sigfox-tech-radio/sigfox-ep-addon-ta.git
+[submodule "middleware/sigfox/sigfox-ep-rf-api-st-s2lp"]
+    path = middleware/sigfox/sigfox-ep-rf-api-st-s2lp
+    url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-s2lp.git
+[submodule "middleware/sigfox/sigfox-ep-rf-api-semtech-lr11xx"]
+    path = middleware/sigfox/sigfox-ep-rf-api-semtech-lr11xx
+    url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-lr11xx.git
+[submodule "middleware/sigfox/sigfox-ep-rf-api-semtech-sx126x"]
+    path = middleware/sigfox/sigfox-ep-rf-api-semtech-sx126x
+    url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-sx126x.git
 [submodule "middleware/sigfox/sigfox-ep-rf-api-st-stm32wl3x"]
-	path = middleware/sigfox/sigfox-ep-rf-api-st-stm32wl3x
-	url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-stm32wl3x.git
+    path = middleware/sigfox/sigfox-ep-rf-api-st-stm32wl3x
+    url = https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-stm32wl3x.git
+[submodule "middleware/at/sigfox-at-parser"]
+    path = middleware/at/sigfox-at-parser
+    url = https://github.com/sigfox-tech-radio/sigfox-at-parser.git
