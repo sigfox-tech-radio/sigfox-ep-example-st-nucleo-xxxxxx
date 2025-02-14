@@ -49,26 +49,34 @@
 #include "stdint.h"
 #include "stddef.h"
 #include "spi.h"
-#include "sx126x_mapping.h"
+#include "sx126x_shield.h"
 
 #if (defined SIGFOX_EP_RC1_ZONE) || (defined SIGFOX_EP_RC6_ZONE) || (defined SIGFOX_EP_RC7_ZONE)
 
 #define SX1261MB1BAS_FREQ_MIN 863000000
 #define SX1261MB1BAS_FREQ_MAX 870000000
 
-/***SX1261MB1BAS SX126X HW API local global variables ***/
+/*** SX1261MB1BAS HW API global variables ***/
 
-const SX126X_MAPPING_gpios_t SX126X_MAPPING_gpios = {
-    .spi_sck = {GPIO_PORT_A, 5, 0},
-    .spi_miso = {GPIO_PORT_A, 6, 0},
-    .spi_mosi = {GPIO_PORT_A, 7, 0},
-    .spi_nss = {GPIO_PORT_A, 8, 0},
-    .busy = {GPIO_PORT_B, 3, 0},
-    .irq = {GPIO_PORT_B, 4, 0},
-    .reset = {GPIO_PORT_A, 0, 0},
-    .antenna_sw = {GPIO_PORT_A, 9, 0},
-    .led_tx = {GPIO_PORT_C, 1, 0},
-    .led_rx = {GPIO_PORT_C, 0, 0},
+const SX126X_shield_gpio_t SX126X_SHIELD_GPIO = {
+    .spi_sck = GPIO_PIN_D13,
+    .spi_miso = GPIO_PIN_D12,
+    .spi_mosi = GPIO_PIN_D11,
+    .spi_nss = GPIO_PIN_D7,
+    .busy = GPIO_PIN_D3,
+    .irq = GPIO_PIN_D5,
+    .reset = GPIO_PIN_A0,
+    .antenna_sw = GPIO_PIN_D8,
+    .led_tx = GPIO_PIN_A4,
+    .led_rx = GPIO_PIN_A5,
+};
+
+/*** SX1261MB1BAS HW API local global variables ***/
+
+static const SPI_gpio_t SX1261MB1DAS_SPI_GPIO = {
+    { SX126X_SHIELD_GPIO.spi_sck, 0 },
+    { SX126X_SHIELD_GPIO.spi_miso, 0 },
+    { SX126X_SHIELD_GPIO.spi_mosi, 0 },
 };
 
 static const SX126X_HW_API_pa_pwr_cfg_t _sx1261mb1bas_pa_pwr_cfg_table[SX126X_SHIELDS_SX1261_MAX_PWR - SX126X_SHIELDS_SX1261_MIN_PWR + 1] = {
@@ -338,12 +346,12 @@ static const SX126X_HW_API_pa_pwr_cfg_t _sx1261mb1bas_pa_pwr_cfg_table[SX126X_SH
     },
 };
 
-/*** SX126X HW API local functions ***/
+/*** SX1261MB1BAS HW API local functions ***/
 
 /*******************************************************************/
 #define _check_mcal_status(void) { if (mcal_status != MCAL_SUCCESS) SIGFOX_EXIT_ERROR(SX126X_HW_API_ERROR); }
 
-/*** SX126X HW API functions ***/
+/*** SX1261MB1BAS HW API functions ***/
 
 /*******************************************************************/
 SX126X_HW_API_status_t SX126X_HW_API_open(SX126X_HW_API_config_t *hw_api_config) {
@@ -352,7 +360,6 @@ SX126X_HW_API_status_t SX126X_HW_API_open(SX126X_HW_API_config_t *hw_api_config)
     SX126X_HW_API_status_t status = SX126X_HW_API_SUCCESS;
 #endif /* SIGFOX_EP_ERROR_CODES */
     MCAL_status_t mcal_status = MCAL_SUCCESS;
-    SPI_gpio_t spi_gpio;
 #ifdef SIGFOX_EP_PARAMETERS_CHECK
     // Check input parameters.
     if (hw_api_config == NULL) {
@@ -360,38 +367,31 @@ SX126X_HW_API_status_t SX126X_HW_API_open(SX126X_HW_API_config_t *hw_api_config)
     }
 #endif /* SIGFOX_EP_PARAMETERS_CHECK */
     // Configure hardware interface.
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.antenna_sw, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.antenna_sw, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_write(&SX126X_MAPPING_gpios.antenna_sw, 1);
+    mcal_status = GPIO_write(SX126X_SHIELD_GPIO.antenna_sw, 1);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.reset, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.reset, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.irq, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.irq, GPIO_MODE_DIGITAL_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.busy, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_UP);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.busy, GPIO_MODE_DIGITAL_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_UP, 0);
     _check_mcal_status();
-    if (SX126X_MAPPING_gpios.led_tx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.led_tx, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-        _check_mcal_status();
-    }
-    if (SX126X_MAPPING_gpios.led_rx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.led_rx, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-        _check_mcal_status();
-    }
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.led_tx, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
+    _check_mcal_status();
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.led_rx, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
+    _check_mcal_status();
     // Init SPI peripheral.
-    spi_gpio.miso = &SX126X_MAPPING_gpios.spi_miso;
-    spi_gpio.mosi = &SX126X_MAPPING_gpios.spi_mosi;
-    spi_gpio.sck = &SX126X_MAPPING_gpios.spi_sck;
-    mcal_status = SPI_init(&spi_gpio);
+    mcal_status = SPI_init((SPI_gpio_t*) &SX1261MB1DAS_SPI_GPIO);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.spi_nss, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.spi_nss, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_write(&SX126X_MAPPING_gpios.spi_nss, 1);
+    mcal_status = GPIO_write(SX126X_SHIELD_GPIO.spi_nss, 1);
     _check_mcal_status();
     // Init IRQ line.
-    mcal_status = EXTI_configure(SX126X_GPIO_IRQ_EXTI_PORT, SX126X_GPIO_IRQ_EXTI_LINE, EXTI_TRIGGER_RISING, hw_api_config->gpio_irq_callback);
+    mcal_status = EXTI_configure_gpio(SX126X_SHIELD_GPIO.irq, 1, EXTI_TRIGGER_RISING_EDGE, hw_api_config->gpio_irq_callback);
     _check_mcal_status();
-    mcal_status = EXTI_enable_irq(SX126X_GPIO_IRQ_EXTI_LINE, NVIC_IRQ_PRIORITY_EXTI_RADIO);
+    mcal_status = EXTI_set_gpio_interrupt(SX126X_SHIELD_GPIO.irq, 1, NVIC_IRQ_PRIORITY_EXTI_RADIO);
     _check_mcal_status();
 errors:
     SIGFOX_RETURN();
@@ -404,35 +404,29 @@ SX126X_HW_API_status_t SX126X_HW_API_close(void) {
     SX126X_HW_API_status_t status = SX126X_HW_API_SUCCESS;
 #endif /* SIGFOX_EP_ERROR_CODES */
     MCAL_status_t mcal_status = MCAL_SUCCESS;
-    SPI_gpio_t spi_gpio;
     // Disable EXTI line.
-    mcal_status = EXTI_de_configure(SX126X_GPIO_IRQ_EXTI_LINE);
+    mcal_status = EXTI_set_gpio_interrupt(SX126X_SHIELD_GPIO.irq, 0, NVIC_IRQ_PRIORITY_EXTI_RADIO);
+    _check_mcal_status();
+    mcal_status = EXTI_configure_gpio(SX126X_SHIELD_GPIO.irq, 0, EXTI_TRIGGER_NONE_EDGE, NULL);
     _check_mcal_status();
     // Release SPI peripheral.
-    spi_gpio.miso = &SX126X_MAPPING_gpios.spi_miso;
-    spi_gpio.mosi = &SX126X_MAPPING_gpios.spi_mosi;
-    spi_gpio.sck = &SX126X_MAPPING_gpios.spi_sck;
-    mcal_status = SPI_de_init(&spi_gpio);
+    mcal_status = SPI_de_init((SPI_gpio_t*) &SX1261MB1DAS_SPI_GPIO);
     _check_mcal_status();
     // Put GPIOs in high impedance.
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.spi_nss, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.spi_nss, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.antenna_sw, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.antenna_sw, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.reset, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.reset, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.irq, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.irq, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.busy, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.busy, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    if (SX126X_MAPPING_gpios.led_tx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.led_tx, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-        _check_mcal_status();
-    }
-    if (SX126X_MAPPING_gpios.led_rx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_configure(&SX126X_MAPPING_gpios.led_rx, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
-        _check_mcal_status();
-    }
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.led_tx, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
+    _check_mcal_status();
+    mcal_status = GPIO_configure(SX126X_SHIELD_GPIO.led_rx, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
+    _check_mcal_status();
 errors:
     SIGFOX_RETURN();
 }
@@ -544,10 +538,8 @@ SX126X_HW_API_status_t SX126X_HW_API_tx_on(void) {
 #endif /* SIGFOX_EP_ERROR_CODES */
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn TX LED on.
-    if (SX126X_MAPPING_gpios.led_tx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&SX126X_MAPPING_gpios.led_tx, 1);
-        _check_mcal_status();
-    }
+    mcal_status = GPIO_write(SX126X_SHIELD_GPIO.led_tx, 1);
+    _check_mcal_status();
 errors:
     SIGFOX_RETURN();
 }
@@ -560,10 +552,8 @@ SX126X_HW_API_status_t SX126X_HW_API_tx_off(void) {
 #endif /* SIGFOX_EP_ERROR_CODES */
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn TX LED off.
-    if (SX126X_MAPPING_gpios.led_tx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&SX126X_MAPPING_gpios.led_tx, 0);
-        _check_mcal_status();
-    }
+    mcal_status = GPIO_write(SX126X_SHIELD_GPIO.led_tx, 0);
+    _check_mcal_status();
 errors:
     SIGFOX_RETURN();
 }
@@ -576,11 +566,8 @@ SX126X_HW_API_status_t SX126X_HW_API_rx_on(void) {
 #endif /* SIGFOX_EP_ERROR_CODES */
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn RX LED on.
-    if (SX126X_MAPPING_gpios.led_rx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&SX126X_MAPPING_gpios.led_rx, 1);
-        _check_mcal_status();
-    }
-
+    mcal_status = GPIO_write(SX126X_SHIELD_GPIO.led_rx, 1);
+    _check_mcal_status();
 errors:
     SIGFOX_RETURN();
 }
@@ -592,10 +579,8 @@ SX126X_HW_API_status_t SX126X_HW_API_rx_off(void) {
 #endif /* SIGFOX_EP_ERROR_CODES */
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn RX LED off.
-    if (SX126X_MAPPING_gpios.led_rx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&SX126X_MAPPING_gpios.led_rx, 0);
-        _check_mcal_status();
-    }
+    mcal_status = GPIO_write(SX126X_SHIELD_GPIO.led_rx, 0);
+    _check_mcal_status();
 errors:
     SIGFOX_RETURN();
 }

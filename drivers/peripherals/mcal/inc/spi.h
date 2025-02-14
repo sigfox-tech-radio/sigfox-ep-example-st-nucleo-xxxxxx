@@ -44,13 +44,22 @@
 /*** SPI structures ***/
 
 /*!******************************************************************
+ * \enum SPI_pin_t
+ * \brief SPI pin definition.
+ *******************************************************************/
+typedef struct {
+    GPIO_pin_t gpio;
+    uint8_t af_number;
+} SPI_pin_t;
+
+/*!******************************************************************
  * \enum SPI_gpio_t
  * \brief SPI GPIOs list.
  *******************************************************************/
 typedef struct {
-    const GPIO_pin_t *sck;
-    const GPIO_pin_t *miso;
-    const GPIO_pin_t *mosi;
+    SPI_pin_t sck;
+    SPI_pin_t miso;
+    SPI_pin_t mosi;
 } SPI_gpio_t;
 
 /*** SPI functions ***/

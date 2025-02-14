@@ -53,7 +53,7 @@
 
 /*** CLI local macros ***/
 
-#define CLI_FIRMWARE_VERSION        "2.0"
+#define CLI_FIRMWARE_VERSION        "v2.1"
 
 #define CLI_REPLY_BUFFER_SIZE       256
 

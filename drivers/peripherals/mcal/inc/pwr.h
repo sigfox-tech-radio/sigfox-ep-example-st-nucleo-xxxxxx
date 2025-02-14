@@ -37,6 +37,33 @@
 #ifndef __PWR_H__
 #define __PWR_H__
 
+#include "mcal.h"
+
+/*** PWR structures ***/
+
+/*!******************************************************************
+ * \enum PWR_smps_voltage_t
+ * \brief Internal SMPS voltage settings (STM32WL3x only).
+ *******************************************************************/
+typedef enum {
+    PWR_SMPS_VOLTAGE_1V2 = 0,
+    PWR_SMPS_VOLTAGE_1V3,
+    PWR_SMPS_VOLTAGE_1V4,
+    PWR_SMPS_VOLTAGE_1V5,
+    PWR_SMPS_VOLTAGE_1V6,
+    PWR_SMPS_VOLTAGE_1V7,
+    PWR_SMPS_VOLTAGE_1V8,
+    PWR_SMPS_VOLTAGE_1V9,
+    PWR_SMPS_VOLTAGE_2V0,
+    PWR_SMPS_VOLTAGE_2V1,
+    PWR_SMPS_VOLTAGE_2V2,
+    PWR_SMPS_VOLTAGE_2V3,
+    PWR_SMPS_VOLTAGE_2V4,
+    PWR_SMPS_VOLTAGE_LAST
+} PWR_smps_voltage_t;
+
+/*** PWR functions ***/
+
 /*!******************************************************************
  * \fn void PWR_init(void)
  * \brief Init PWR interface.
@@ -72,5 +99,23 @@ void PWR_enter_low_power_sleep_mode(void);
  * \retval      none
  *******************************************************************/
 void PWR_enter_stop_mode(void);
+
+/*!******************************************************************
+ * \fn MCAL_status_t PWR_set_smps_voltage(PWR_smps_voltage_t_t smps_voltage)
+ * \brief Set SMPS output voltage (STM32WL3x only).
+ * \param[in]   smps_voltage: SMPS voltage setting.
+ * \param[out]  none
+ * \retval      Function execution status.
+ *******************************************************************/
+MCAL_status_t PWR_set_smps_voltage(PWR_smps_voltage_t smps_voltage);
+
+/*!******************************************************************
+ * \fn MCAL_status_t PWR_get_smps_voltage(PWR_smps_voltage_t *smps_voltage)
+ * \brief Get SMPS output voltage (STM32WL3x only).
+ * \param[in]   none
+ * \param[out]  smps_voltage: Pointer to the current SMPS voltage setting.
+ * \retval      Function execution status.
+ *******************************************************************/
+MCAL_status_t PWR_get_smps_voltage(PWR_smps_voltage_t *smps_voltage);
 
 #endif /* __PWR_H__ */

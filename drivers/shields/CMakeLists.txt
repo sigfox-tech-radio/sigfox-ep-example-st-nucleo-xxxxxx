@@ -67,14 +67,12 @@ if(RADIO_DRIVER STREQUAL lr11xx_driver)
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/src/lr1110mb1dis_hw_api.c
   )
-  endif()
-  if (RADIO_SHIELD STREQUAL lr1110mb1djs)
+  elseif (RADIO_SHIELD STREQUAL lr1110mb1djs)
   target_sources(${PROJECT_NAME} 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/src/lr1110mb1djs_hw_api.c
   )
-  endif()
-  if (RADIO_SHIELD STREQUAL lr1121mb1dis)
+  elseif (RADIO_SHIELD STREQUAL lr1121mb1dis)
   target_sources(${PROJECT_NAME} 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/lr11xx_shields/src/lr1121mb1dis_hw_api.c
@@ -103,8 +101,7 @@ elseif(RADIO_DRIVER STREQUAL sx126x_driver)
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_shields/src/sx1261mb1bas_hw_api.c
   )
-  endif()
-  if(RADIO_SHIELD STREQUAL sx1261mb2bas)
+  elseif(RADIO_SHIELD STREQUAL sx1261mb2bas)
   target_sources(${PROJECT_NAME} 
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_shields/src/sx1261mb2bas_hw_api.c
@@ -129,13 +126,12 @@ elseif(RADIO_DRIVER STREQUAL sx126x_driver)
 elseif(RADIO_DRIVER STREQUAL s2lp_driver)
   target_sources(${PROJECT_NAME} 
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/steval-fki868v2/src/S2LP_CORE_SPI.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/steval-fki868v2/src/s2lp_hw_api.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/steval-fki868v2/src/s2lp_mapping.c    
+    ${CMAKE_CURRENT_SOURCE_DIR}/s2lp_shields/src/S2LP_CORE_SPI.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/s2lp_shields/src/steval_fki868v2_hw_api.c
   )
   target_include_directories(${PROJECT_NAME}
     PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/steval-fki868v2/inc/
+    ${CMAKE_CURRENT_SOURCE_DIR}/s2lp_shields/inc/
     $<TARGET_PROPERTY:s2lp_rf_api_obj,INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:components,INTERFACE_INCLUDE_DIRECTORIES>
   )
@@ -144,5 +140,26 @@ elseif(RADIO_DRIVER STREQUAL s2lp_driver)
     LR11XX_DISABLE_WARNINGS
     $<TARGET_PROPERTY:s2lp_rf_api_obj,INTERFACE_COMPILE_DEFINITIONS>
     $<TARGET_PROPERTY:components,INTERFACE_COMPILE_DEFINITIONS>
+  )
+elseif(RADIO_DRIVER STREQUAL stm32wl3x_driver)
+  target_sources(${PROJECT_NAME} 
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x_shields/src/nucleo_wl33cc1_hw_api.c
+    PUBLIC
+    $<TARGET_OBJECTS:peripherials>
+  )
+  target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    $<TARGET_PROPERTY:stm32wl3x_rf_api_obj,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:components,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:cmsis,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:peripherials,INTERFACE_INCLUDE_DIRECTORIES>
+  )
+  target_compile_definitions(${PROJECT_NAME} 
+    PUBLIC 
+    $<TARGET_PROPERTY:stm32wl3x_rf_api_obj,INTERFACE_COMPILE_DEFINITIONS>
+    $<TARGET_PROPERTY:components,INTERFACE_COMPILE_DEFINITIONS>
+    $<TARGET_PROPERTY:cmsis,INTERFACE_COMPILE_DEFINITIONS>
+    $<TARGET_PROPERTY:peripherials,INTERFACE_COMPILE_DEFINITIONS>
   )
 endif()

@@ -6,14 +6,14 @@
         // Toolchain file
         "CMAKE_TOOLCHAIN_FILE":"cmake/toolchain-arm-none-eabi.cmake",
         
-        // Build type (Debug, Release)
+        //Build type (Debug, Release)
         "CMAKE_BUILD_TYPE":"Debug",
 
-        //Internal ONLY Need to be remove before push on GH
-        "SFX_INTERNAL_REPO":"ON",
+        //Select MCU board: NucleoL053R8, NucleoWL33CC1
+        "MCU_BOARD": "none",
         
-        // lr1110mb1dis, lr1110mb1djs, lr1121mb1dis,  sx1261mb1bas, sx1261mb2bas, steval-fki868v2.
-        "RADIO_SHIELD":"lr1110mb1dis",
+        //Select radio shield: none, lr1110mb1dis, lr1110mb1djs, lr1121mb1dis,  sx1261mb1bas, sx1261mb2bas, steval-fki868v2.
+        "RADIO_SHIELD":"none",
 
         // Support radio configuration zone 1 (Europe, Middle-East and Africa).
         "SIGFOX_EP_RC1_ZONE":"ON",
@@ -112,5 +112,8 @@
     // In case of the toolchain is not in the PATH you must uncomment this line
     // "cortex-debug.armToolchainPath": "${config:cmake.configureSettings.CMAKE_PREFIX_PATH}",
     "git.detectSubmodulesLimit": 20,
+    "files.associations": {
+        "sigfox_ep_api_test.h": "c"
+    },
 
 }

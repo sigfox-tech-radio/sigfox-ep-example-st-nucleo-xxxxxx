@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.1](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/releases/tag/v2.1) - 14 Feb 2025
+
+### Added
+
+* Support of **Nucleo-WL33CC1** board.
+
+### Changed
+
+* Upgrade **sigfox-ep-lib** to [v4.1](https://github.com/sigfox-tech-radio/sigfox-ep-lib/releases/tag/v4.1).
+* Upgrade **sigfox-ep-addon-rfp** to [v2.1](https://github.com/sigfox-tech-radio/sigfox-ep-addon-rfp/releases/tag/v2.1).
+* Replace **CMSIS device** files by **submodule**.
+* Use **standard pins name** in GPIO driver for easier compatibility between boards.
+
 ## [v2.0](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/releases/tag/v2.0) - 20 Jan 2025
 
 ### Changed

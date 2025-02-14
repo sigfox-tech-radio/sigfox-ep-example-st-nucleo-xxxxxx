@@ -108,13 +108,26 @@ elseif(RADIO_DRIVER STREQUAL s2lp_driver)
         ${CMAKE_CURRENT_SOURCE_DIR}/x-cube-subg2/Drivers/BSP/Components/S2LP/S2LP_Library/src/S2LP_Types.c
     )
     target_include_directories(${RADIO_DRIVER}
-      PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR}/x-cube-subg2/Drivers/BSP/Components/S2LP/S2LP_Library/inc/
-      $<TARGET_PROPERTY:s2lp_rf_api_obj,INTERFACE_INCLUDE_DIRECTORIES>
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/x-cube-subg2/Drivers/BSP/Components/S2LP/S2LP_Library/inc/
+        $<TARGET_PROPERTY:s2lp_rf_api_obj,INTERFACE_INCLUDE_DIRECTORIES>
     )
     target_compile_definitions(${RADIO_DRIVER}
         PRIVATE
-        $<TARGET_PROPERTY:sigfox_ep_lib_obj,INTERFACE_COMPILE_DEFINITIONS>   
+        $<TARGET_PROPERTY:sigfox_ep_lib_obj,INTERFACE_COMPILE_DEFINITIONS>
+    )
+elseif(RADIO_DRIVER STREQUAL stm32wl3x_driver)
+    target_sources(${RADIO_DRIVER}
+        PUBLIC
+        $<TARGET_OBJECTS:peripherials>
+    )
+    target_include_directories(${RADIO_DRIVER}
+        PUBLIC
+        $<TARGET_PROPERTY:peripherials,INTERFACE_INCLUDE_DIRECTORIES>
+    )
+    target_compile_definitions(${RADIO_DRIVER}
+        PRIVATE
+        $<TARGET_PROPERTY:peripherials,INTERFACE_COMPILE_DEFINITIONS>
     )
 endif()
 
@@ -131,7 +144,6 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/button/inc/
     $<TARGET_PROPERTY:${RADIO_DRIVER},INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:peripherials,INTERFACE_INCLUDE_DIRECTORIES>
-
 )
 
 target_compile_definitions(${PROJECT_NAME}

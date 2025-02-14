@@ -38,7 +38,7 @@
 
 #include "gpio.h"
 #include "lptim.h"
-#include "lr11xx_mapping.h"
+#include "lr11xx_shield.h"
 #include "mcal.h"
 #include "spi.h"
 #include "stdint.h"
@@ -63,7 +63,7 @@ lr11xx_hal_status_t _lr11xx_hal_wait_busy(void) {
     // Wait for chip to be ready.
     do {
         // Read pin.
-        mcal_status = GPIO_read(&LR11XX_MAPPING_gpios.busy, &gpio_busy);
+        mcal_status = GPIO_read(LR11XX_SHIELD_GPIO.busy, &gpio_busy);
         _check_mcal_status();
         // Manage timeout.
         loop_count++;
@@ -86,11 +86,11 @@ lr11xx_hal_status_t lr11xx_hal_reset(const void *context) {
     // Ignore unused parameters.
     MCAL_UNUSED(context);
     // Perform reset.
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.reset, 0);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.reset, 0);
     _check_mcal_status();
     mcal_status = LPTIM_delay_milliseconds(LR11XX_HAL_RESET_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
     _check_mcal_status();
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.reset, 1);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.reset, 1);
     _check_mcal_status();
 errors:
     return status;
@@ -104,11 +104,11 @@ lr11xx_hal_status_t lr11xx_hal_wakeup(const void *context) {
     // Ignore unused parameters.
     MCAL_UNUSED(context);
     // Perform reset.
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 0);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 0);
     _check_mcal_status();
     mcal_status = LPTIM_delay_milliseconds(LR11XX_HAL_WAKEUP_DELAY_MS, LPTIM_DELAY_MODE_ACTIVE);
     _check_mcal_status();
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 1);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 1);
     _check_mcal_status();
 errors:
     return status;
@@ -128,11 +128,11 @@ lr11xx_hal_status_t lr11xx_hal_read(const void *context, const uint8_t *cbuffer,
         goto errors;
     }
     // 1st SPI transaction.
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 0);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 0);
     _check_mcal_status();
     mcal_status = SPI_write_read((uint8_t *) cbuffer, NULL, cbuffer_length);
     _check_mcal_status();
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 1);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 1);
     _check_mcal_status();
     // Wait for chip to be ready.
     status = _lr11xx_hal_wait_busy();
@@ -140,13 +140,13 @@ lr11xx_hal_status_t lr11xx_hal_read(const void *context, const uint8_t *cbuffer,
         goto errors;
     }
     // 2nd SPI transaction.
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 0);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 0);
     _check_mcal_status();
     mcal_status = SPI_write_read(&dummy_byte, NULL, 1);
     _check_mcal_status();
     mcal_status = SPI_write_read(NULL, rbuffer, rbuffer_length);
     _check_mcal_status();
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 1);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 1);
     _check_mcal_status();
 errors:
     return status;
@@ -165,13 +165,13 @@ lr11xx_hal_status_t lr11xx_hal_write(const void *context, const uint8_t *cbuffer
         goto errors;
     }
     // SPI transaction.
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 0);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 0);
     _check_mcal_status();
     mcal_status = SPI_write_read((uint8_t *) cbuffer, NULL, cbuffer_length);
     _check_mcal_status();
     mcal_status = SPI_write_read((uint8_t *) cdata, NULL, cdata_length);
     _check_mcal_status();
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 1);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 1);
     _check_mcal_status();
 errors:
     return status;
@@ -190,11 +190,11 @@ lr11xx_hal_status_t lr11xx_hal_direct_read(const void *context, uint8_t *buffer,
         goto errors;
     }
     // SPI transaction.
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 0);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 0);
     _check_mcal_status();
     mcal_status = SPI_write_read(NULL, buffer, length);
     _check_mcal_status();
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 1);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 1);
     _check_mcal_status();
 errors:
     return status;

@@ -61,45 +61,69 @@ project(peripherials)
 
 add_library(${PROJECT_NAME} OBJECT)
 
-if(MCU STREQUAL stm32l053r8)
+if(BOARD_NAME STREQUAL nucleo-l053r8)
     target_sources(${PROJECT_NAME} 
         PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_adc.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_pwr.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_exti.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_gpio.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_lptim.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_rcc.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_spi.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_tim.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_ll_usart.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Src/stm32l0xx_hal_flash.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_adc.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_pwr.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_exti.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_gpio.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_lptim.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_rcc.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_spi.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_tim.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_ll_usart.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Src/stm32l0xx_hal_flash.c
     )    
     target_include_directories(${PROJECT_NAME} 
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx_hal_driver/Inc/Legacy
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32l0xx-hal-driver/Inc/Legacy
     )
     target_compile_definitions(${PROJECT_NAME} 
         PUBLIC 
         USE_FULL_LL_DRIVER
-    )          
+    )
+elseif(BOARD_NAME STREQUAL nucleo-wl33cc1)
+    target_sources(${PROJECT_NAME} 
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_adc.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_gpio.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_pwr.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_rcc.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_system.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_tim.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_usart.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_ll_utils.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_hal.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_hal_flash.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_hal_flash_ex.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Src/stm32wl3x_hal_mrsubg.c
+    )    
+    target_include_directories(${PROJECT_NAME} 
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/stm32wl3x-hal-driver/Inc/Legacy
+    )
+    target_compile_definitions(${PROJECT_NAME} 
+        PUBLIC 
+        USE_FULL_LL_DRIVER
+    )                 
 endif()
 
 target_sources(${PROJECT_NAME} 
         PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/adc.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/exti.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/fault.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/gpio.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/lptim.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/nvm.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/pwr.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/rcc.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/spi.c            
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/tim.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/usart.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/mcu.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/adc.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/exti.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/gpio.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/lptim.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/nvm.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/pwr.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/rcc.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/spi.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/tim.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/usart.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/mcal/src/${BOARD_NAME}/mcu.c
 )
 target_include_directories(${PROJECT_NAME}
     PRIVATE
