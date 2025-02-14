@@ -42,15 +42,6 @@
 #include "stddef.h"
 #include "stdint.h"
 
-/*** BUTTON local macros ***/
-
-#define BUTTON_EXTI_PORT    EXTI_PORT_C
-#define BUTTON_EXTI_LINE    EXTI_LINE_GPIO_13
-
-/*** BUTTON local global variables ***/
-
-const GPIO_pin_t BUTTON_GPIO = {GPIO_PORT_C, 13, 0};
-
 /*** BUTTON functions ***/
 
 /*******************************************************************/
@@ -58,12 +49,12 @@ MCAL_status_t BUTTON_init(BUTTON_press_irq_cb_t irq_callback) {
     // Local variables.
     MCAL_status_t status = MCAL_SUCCESS;
     // Init GPIO.
-    status = GPIO_configure(&BUTTON_GPIO, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    status = GPIO_configure(GPIO_PIN_BP_USER, GPIO_MODE_DIGITAL_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_UP, 0);
     if (status != MCAL_SUCCESS) {
         goto errors;
     }
     // Init interrupt.
-    status = EXTI_configure(BUTTON_EXTI_PORT, BUTTON_EXTI_LINE, EXTI_TRIGGER_FALLING, irq_callback);
+    status = EXTI_configure_gpio(GPIO_PIN_BP_USER, 1, EXTI_TRIGGER_FALLING_EDGE, irq_callback);
     if (status != MCAL_SUCCESS) {
         goto errors;
     }
@@ -76,12 +67,12 @@ MCAL_status_t BUTTON_de_init(void) {
     // Local variables.
     MCAL_status_t status = MCAL_SUCCESS;
     // Disable interrupt.
-    status = EXTI_de_configure(BUTTON_EXTI_LINE);
+    status = EXTI_configure_gpio(GPIO_PIN_BP_USER, 0, EXTI_TRIGGER_NONE_EDGE, NULL);
     if (status != MCAL_SUCCESS) {
         goto errors;
     }
     // Put GPIO in high impedance.
-    status = GPIO_configure(&BUTTON_GPIO, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_OPEN_DRAIN, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    status = GPIO_configure(GPIO_PIN_BP_USER, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_OPEN_DRAIN, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     if (status != MCAL_SUCCESS) {
         goto errors;
     }
@@ -94,7 +85,7 @@ MCAL_status_t BUTTON_enable_irq(void) {
     // Local variables.
     MCAL_status_t status = MCAL_SUCCESS;
     // Enable interrupt.
-    status = EXTI_enable_irq(BUTTON_EXTI_LINE, NVIC_IRQ_PRIORITY_EXTI_BUTTON);
+    status = EXTI_set_gpio_interrupt(GPIO_PIN_BP_USER, 1, NVIC_IRQ_PRIORITY_EXTI_BUTTON);
     if (status != MCAL_SUCCESS) {
         goto errors;
     }
@@ -107,7 +98,7 @@ MCAL_status_t BUTTON_disable_irq(void) {
     // Local variables.
     MCAL_status_t status = MCAL_SUCCESS;
     // Disable interrupt.
-    status = EXTI_disable_irq(BUTTON_EXTI_LINE);
+    status = EXTI_set_gpio_interrupt(GPIO_PIN_BP_USER, 0, NVIC_IRQ_PRIORITY_EXTI_BUTTON);
     if (status != MCAL_SUCCESS) {
         goto errors;
     }

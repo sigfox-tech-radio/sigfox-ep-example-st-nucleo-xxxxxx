@@ -59,7 +59,7 @@ static sfx_u32 MCU_API_LATENCY_MS[MCU_API_LATENCY_LAST] = {
 };
 #endif
 #ifdef SIGFOX_EP_VERBOSE
-static const sfx_u8 MCU_API_VERSION[] = "v2.0";
+static const sfx_u8 MCU_API_VERSION[] = "v2.1";
 #endif
 
 const uint8_t sigfoxID[4] __attribute__((section(".sigfoxID"))) = {0xFE, 0xDC, 0xBA, 0x98};

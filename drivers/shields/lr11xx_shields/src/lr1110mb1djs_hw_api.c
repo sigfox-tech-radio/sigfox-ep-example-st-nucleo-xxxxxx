@@ -46,7 +46,7 @@
 #include "exti.h"
 #include "gpio.h"
 #include "lptim.h"
-#include "lr11xx_mapping.h"
+#include "lr11xx_shield.h"
 #include "nvic.h"
 #include "stdint.h"
 #include "stddef.h"
@@ -60,25 +60,31 @@
 #define LR1110MB1DJS_POWER_MIN  -17
 #define LR1110MB1DJS_POWER_MAX  22
 
-/***LR1110MB1DJS HW API global variables ***/
+/*** LR1110MB1DJS HW API global variables ***/
 
-const LR11XX_MAPPING_gpios_t LR11XX_MAPPING_gpios = {
-    .spi_sck = {GPIO_PORT_A, 5, 0},
-    .spi_miso = {GPIO_PORT_A, 6, 0},
-    .spi_mosi = {GPIO_PORT_A, 7, 0},
-    .spi_nss = {GPIO_PORT_A, 8, 0},
-    .busy = {GPIO_PORT_B, 3, 0},
-    .irq = {GPIO_PORT_B, 4, 0},
-    .reset = {GPIO_PORT_A, 0, 0},
-    .lna = {GPIO_PORT_B, 0, 0},
-    .led_tx = {GPIO_PORT_C, 1, 0},
-    .led_rx = {GPIO_PORT_C, 0, 0},
-    .led_scan = {GPIO_PORT_B, 5, 0},
+const LR11XX_shield_gpio_t LR11XX_SHIELD_GPIO = {
+    .spi_sck = GPIO_PIN_D13,
+    .spi_miso = GPIO_PIN_D12,
+    .spi_mosi = GPIO_PIN_D11,
+    .spi_nss = GPIO_PIN_D7,
+    .busy = GPIO_PIN_D3,
+    .irq = GPIO_PIN_D5,
+    .reset = GPIO_PIN_A0,
+    .lna = GPIO_PIN_A3,
+    .led_tx = GPIO_PIN_A4,
+    .led_rx = GPIO_PIN_A5,
+    .led_scan = GPIO_PIN_D4
 };
 
-/*** LR11XX HW API local functions ***/
+/*** LR1110MB1DJS HW API local global variables ***/
 
-const LR11XX_HW_API_pa_pwr_cfg_t _lr1110mb1djs_pa_pwr_cfg_table[LR1110MB1DJS_POWER_MAX - LR1110MB1DJS_POWER_MIN + 1] = {
+static const SPI_gpio_t LR1110MB1DJS_SPI_GPIO = {
+    { LR11XX_SHIELD_GPIO.spi_sck, 0 },
+    { LR11XX_SHIELD_GPIO.spi_miso, 0 },
+    { LR11XX_SHIELD_GPIO.spi_mosi, 0 },
+};
+
+static const LR11XX_HW_API_pa_pwr_cfg_t _lr1110mb1djs_pa_pwr_cfg_table[LR1110MB1DJS_POWER_MAX - LR1110MB1DJS_POWER_MIN + 1] = {
     {
         // Expected output power = -17dBm
         .power = -15,
@@ -401,10 +407,12 @@ const LR11XX_HW_API_pa_pwr_cfg_t _lr1110mb1djs_pa_pwr_cfg_table[LR1110MB1DJS_POW
     },
 };
 
+/*** LR1110MB1DJS HW API local functions ***/
+
 /*******************************************************************/
 #define _check_mcal_status(void) { if (mcal_status != MCAL_SUCCESS) SIGFOX_EXIT_ERROR(LR11XX_HW_API_ERROR); }
 
-/*** LR11XX HW API functions ***/
+/*** LR1110MB1DJS HW API functions ***/
 
 /*******************************************************************/
 LR11XX_HW_API_status_t LR11XX_HW_API_open(LR11XX_HW_API_config_t *hw_api_config) {
@@ -413,34 +421,30 @@ LR11XX_HW_API_status_t LR11XX_HW_API_open(LR11XX_HW_API_config_t *hw_api_config)
     LR11XX_HW_API_status_t status = LR11XX_HW_API_SUCCESS;
 #endif
     MCAL_status_t mcal_status = MCAL_SUCCESS;
-    SPI_gpio_t spi_gpio;
     // Configure hardware interface.
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.reset, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.reset, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.irq, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.irq, GPIO_MODE_DIGITAL_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.busy, GPIO_MODE_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_UP);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.busy, GPIO_MODE_DIGITAL_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_UP, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.led_scan, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.led_scan, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.led_tx, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.led_tx, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.led_rx, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.led_rx, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
     // Init SPI peripheral.
-    spi_gpio.miso = &LR11XX_MAPPING_gpios.spi_miso;
-    spi_gpio.mosi = &LR11XX_MAPPING_gpios.spi_mosi;
-    spi_gpio.sck = &LR11XX_MAPPING_gpios.spi_sck;
-    mcal_status = SPI_init(&spi_gpio);
+    mcal_status = SPI_init((SPI_gpio_t*) &LR1110MB1DJS_SPI_GPIO);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.spi_nss, GPIO_MODE_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.spi_nss, GPIO_MODE_DIGITAL_OUTPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.spi_nss, 1);
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.spi_nss, 1);
     _check_mcal_status();
     // Init IRQ line.
-    mcal_status = EXTI_configure(LR11XX_GPIO_IRQ_EXTI_PORT, LR11XX_GPIO_IRQ_EXTI_LINE, EXTI_TRIGGER_RISING, hw_api_config->gpio_irq_callback);
+    mcal_status = EXTI_configure_gpio(LR11XX_SHIELD_GPIO.irq, 1, EXTI_TRIGGER_RISING_EDGE, hw_api_config->gpio_irq_callback);
     _check_mcal_status();
-    mcal_status = EXTI_enable_irq(LR11XX_GPIO_IRQ_EXTI_LINE, NVIC_IRQ_PRIORITY_EXTI_RADIO);
+    mcal_status = EXTI_set_gpio_interrupt(LR11XX_SHIELD_GPIO.irq, 1, NVIC_IRQ_PRIORITY_EXTI_RADIO);
     _check_mcal_status();
 errors:
     SIGFOX_RETURN();
@@ -453,30 +457,26 @@ LR11XX_HW_API_status_t LR11XX_HW_API_close(void) {
     LR11XX_HW_API_status_t status = LR11XX_HW_API_SUCCESS;
 #endif
     MCAL_status_t mcal_status = MCAL_SUCCESS;
-    SPI_gpio_t spi_gpio;
     // Disable EXTI line.
-    mcal_status = EXTI_de_configure(LR11XX_GPIO_IRQ_EXTI_LINE);
+    mcal_status = EXTI_configure_gpio(LR11XX_SHIELD_GPIO.irq, 0, EXTI_TRIGGER_NONE_EDGE, NULL);
     _check_mcal_status();
     // Release SPI peripheral.
-    spi_gpio.miso = &LR11XX_MAPPING_gpios.spi_miso;
-    spi_gpio.mosi = &LR11XX_MAPPING_gpios.spi_mosi;
-    spi_gpio.sck = &LR11XX_MAPPING_gpios.spi_sck;
-    mcal_status = SPI_de_init(&spi_gpio);
+    mcal_status = SPI_de_init((SPI_gpio_t*) &LR1110MB1DJS_SPI_GPIO);
     _check_mcal_status();
     // Put GPIOs in high impedance.
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.spi_nss, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.spi_nss, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.led_scan, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.led_scan, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.reset, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.reset, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.irq, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.irq, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.busy, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.busy, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.led_tx, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.led_tx, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
-    mcal_status = GPIO_configure(&LR11XX_MAPPING_gpios.led_rx, GPIO_MODE_ANALOG, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE);
+    mcal_status = GPIO_configure(LR11XX_SHIELD_GPIO.led_rx, GPIO_MODE_ANALOG_INPUT, GPIO_OUTPUT_TYPE_PUSH_PULL, GPIO_OUTPUT_SPEED_LOW, GPIO_PULL_NONE, 0);
     _check_mcal_status();
 errors:
     SIGFOX_RETURN();
@@ -576,9 +576,7 @@ LR11XX_HW_API_status_t LR11XX_HW_API_tx_on(void) {
 #endif
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn TX LED on.
-    if (LR11XX_MAPPING_gpios.led_tx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.led_tx, 1);
-    }
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.led_tx, 1);
     _check_mcal_status();
 errors:
     SIGFOX_RETURN();
@@ -592,9 +590,7 @@ LR11XX_HW_API_status_t LR11XX_HW_API_tx_off(void) {
 #endif
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn TX LED off.
-    if (LR11XX_MAPPING_gpios.led_tx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.led_tx, 0);
-    }
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.led_tx, 0);
     _check_mcal_status();
 errors:
     SIGFOX_RETURN();
@@ -608,9 +604,7 @@ LR11XX_HW_API_status_t LR11XX_HW_API_rx_on(void) {
 #endif
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn RX LED on.
-    if (LR11XX_MAPPING_gpios.led_rx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.led_rx, 1);
-    }
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.led_rx, 1);
     _check_mcal_status();
 errors:
     SIGFOX_RETURN();
@@ -624,9 +618,7 @@ LR11XX_HW_API_status_t LR11XX_HW_API_rx_off(void) {
 #endif
     MCAL_status_t mcal_status = MCAL_SUCCESS;
     // Turn RX LED off.
-    if (LR11XX_MAPPING_gpios.led_rx.port != GPIO_PORT_LAST) {
-        mcal_status = GPIO_write(&LR11XX_MAPPING_gpios.led_rx, 0);
-    }
+    mcal_status = GPIO_write(LR11XX_SHIELD_GPIO.led_rx, 0);
     _check_mcal_status();
 errors:
     SIGFOX_RETURN();

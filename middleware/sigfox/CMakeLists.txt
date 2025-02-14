@@ -48,7 +48,12 @@ elseif(SIGFOX_RF_API STREQUAL s2lp_rf_api_obj)
   target_include_directories( s2lp_rf_api_obj PUBLIC
       ${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-rf-api-st-s2lp/inc/board
   )
+elseif(SIGFOX_RF_API STREQUAL stm32wl3x_rf_api_obj)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sigfox-ep-rf-api-st-stm32wl3x EXCLUDE_FROM_ALL)
+  #Patch for rf-api-st-stm32wl3x, adding CMSIS and peripherals includes.
+  target_include_directories(stm32wl3x_rf_api_obj
+    PUBLIC
+    $<TARGET_PROPERTY:cmsis,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:peripherials,INTERFACE_INCLUDE_DIRECTORIES>
+  )
 endif()
-
-
-

@@ -38,11 +38,8 @@
 #define __NVM_H__
 
 #include "mcal.h"
+#include "sigfox_types.h"
 #include "stdint.h"
-
-/*** NVM macros ***/
-
-#define NVM_SIZE_BYTES      2048
 
 /*** NVM structures ***/
 
@@ -52,7 +49,7 @@
  *******************************************************************/
 typedef enum {
     NVM_ADDRESS_SIGFOX_EP_LIB_DATA = 0,
-    NVM_ADDRESS_LAST = (NVM_SIZE_BYTES - 1)
+    NVM_ADDRESS_LAST = (NVM_ADDRESS_SIGFOX_EP_LIB_DATA + SIGFOX_NVM_DATA_SIZE_BYTES),
 } NVM_address_t;
 
 /*** NVM functions ***/

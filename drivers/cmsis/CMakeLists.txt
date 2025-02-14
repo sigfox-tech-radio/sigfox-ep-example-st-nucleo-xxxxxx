@@ -61,27 +61,49 @@ enable_language(ASM)
 
 add_library(${PROJECT_NAME} OBJECT)
 
-if(MCU STREQUAL stm32l053r8)
-   # Object build options
-      target_sources(${PROJECT_NAME} 
+if(BOARD_NAME STREQUAL nucleo-l053r8)
+    # Object build options
+    target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/cmsis-device-l0/Include
+    )
+    target_sources(${PROJECT_NAME}
         PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/syscalls.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/system_stm32l0xx.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/startup_stm32l053xx.S
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/syscalls.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/system_stm32l0xx.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/startup_stm32l053r8.S
     )    
     target_compile_definitions(${PROJECT_NAME} 
         PUBLIC 
         STM32L053xx
-        STM32L0XX
     )
     target_link_options(${PROJECT_NAME} 
         PUBLIC
-        "-T${CMAKE_CURRENT_SOURCE_DIR}/device/src/STM32L053R8Tx_FLASH.ld"
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/stm32l053r8.ld"
+    )
+elseif(BOARD_NAME STREQUAL nucleo-wl33cc1)
+    # Object build options
+    target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/cmsis-device-wl3/Include
+    )
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/syscalls.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/system_stm32wl3x.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/startup_stm32wl33cc.S
+    )    
+    target_compile_definitions(${PROJECT_NAME} 
+        PUBLIC 
+        STM32L053xx
+    )
+    target_link_options(${PROJECT_NAME} 
+        PUBLIC
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/device/src/${BOARD_NAME}/stm32wl33cc.ld"
     )
 endif()
     
 target_include_directories(${PROJECT_NAME} 
     PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/device/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/core/inc
 )
