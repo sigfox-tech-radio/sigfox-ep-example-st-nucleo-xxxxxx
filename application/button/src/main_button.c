@@ -53,16 +53,17 @@
 
 /*** APP local macros ***/
 
-#define APP_ERROR_STACK_DEPTH   10
+#define APP_ERROR_STACK_DEPTH           10
 #ifdef SIGFOX_EP_UL_PAYLOAD_SIZE
-#define APP_UL_PAYLOAD_SIZE     SIGFOX_EP_UL_PAYLOAD_SIZE
+#define APP_UL_PAYLOAD_SIZE             SIGFOX_EP_UL_PAYLOAD_SIZE
 #else
-#define APP_UL_PAYLOAD_SIZE     9
+#define APP_UL_PAYLOAD_SIZE             9
 #endif /* SIGFOX_EP_UL_PAYLOAD_SIZE */
 
 /*** APP local structures ***/
 
-#define DEFAULT_ANTENNA_GAIN_DBI   2
+#define APP_DEFAULT_TX_POWER_DBM        14
+#define APP_DEFAULT_ANTENNA_GAIN_DBI    2
 
 // Applicative error codes.
 typedef enum {
@@ -88,7 +89,9 @@ typedef struct {
     APP_status_t error_stack[APP_ERROR_STACK_DEPTH];
     uint8_t error_stack_index;
     const SIGFOX_rc_t *rc;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     SIGFOX_ul_bit_rate_t default_sigfox_ul_bit_rate;
+#endif
 } APP_context_t;
 
 /*** APP local global variables ***/
@@ -178,28 +181,44 @@ static void _APP_open_sigfox_library(void) {
     // Configure library.
 #if defined(SIGFOX_EP_RC1_ZONE)
     app_ctx.rc = &SIGFOX_RC1;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+#endif
 #elif defined(SIGFOX_EP_RC2_ZONE)
     app_ctx.rc = &SIGFOX_RC2;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_600BPS;
+#endif
 #elif defined(SIGFOX_EP_RC3_LBT_ZONE)
     app_ctx.rc = &SIGFOX_RC3_LBT;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+#endif
 #elif defined(SIGFOX_EP_RC3_LDC_ZONE)
     app_ctx.rc = &SIGFOX_RC3_LDC;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+#endif
 #elif defined(SIGFOX_EP_RC4_ZONE)
     app_ctx.rc = &SIGFOX_RC4;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_600BPS;
+#endif
 #elif defined(SIGFOX_EP_RC5_ZONE)
     app_ctx.rc = &SIGFOX_RC5;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+#endif
 #elif defined(SIGFOX_EP_RC6_ZONE)
     app_ctx.rc = &SIGFOX_RC6;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+#endif
 #elif defined(SIGFOX_EP_RC7_ZONE)
     app_ctx.rc = &SIGFOX_RC7;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     app_ctx.default_sigfox_ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+#endif
 #endif /* SIGFOX_EP_RCx */
     lib_config.rc = app_ctx.rc;
 #ifndef SIGFOX_EP_MESSAGE_COUNTER_ROLLOVER
@@ -240,10 +259,14 @@ static void _APP_send_sigfox_message(void) {
 #endif /* SIGFOX_EP_APPLICATION_MESSAGES */
     // Configure message.
 #ifndef SIGFOX_EP_UL_BIT_RATE_BPS
-    message.common_parameters.ul_bit_rate = SIGFOX_UL_BIT_RATE_100BPS;
+    message.common_parameters.ul_bit_rate = app_ctx.default_sigfox_ul_bit_rate;
 #endif /* SIGFOX_EP_UL_BIT_RATE_BPS */
 #ifndef SIGFOX_EP_TX_POWER_DBM_EIRP
-    message.common_parameters.tx_power_dbm_eirp = app_ctx.rc->tx_power_dbm_eirp_max - DEFAULT_ANTENNA_GAIN_DBI;
+#ifdef SIGFOX_EP_PARAMETERS_CHECK
+    message.common_parameters.tx_power_dbm_eirp = app_ctx.rc->tx_power_dbm_eirp_max - APP_DEFAULT_ANTENNA_GAIN_DBI;
+#else
+    message.common_parameters.tx_power_dbm_eirp = APP_DEFAULT_TX_POWER_DBM - APP_DEFAULT_ANTENNA_GAIN_DBI;
+#endif
 #endif /* SIGFOX_EP_TX_POWER_DBM_EIRP */
 #ifndef SIGFOX_EP_SINGLE_FRAME
     message.common_parameters.number_of_frames = 3;

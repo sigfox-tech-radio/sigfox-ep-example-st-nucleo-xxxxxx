@@ -41,9 +41,12 @@
 #include "mcu.h"
 #include "nvm.h"
 #include "sigfox_ep_api.h"
+#include "sigfox_ep_flags.h"
+#include "sigfox_ep_lib_version.h"
+#ifdef SIGFOX_EP_CERTIFICATION
 #include "sigfox_ep_addon_rfp_api.h"
 #include "sigfox_ep_addon_ta_api.h"
-#include "sigfox_ep_flags.h"
+#endif
 #include "sigfox_rc.h"
 #include "sigfox_types.h"
 #include "stddef.h"
@@ -53,19 +56,21 @@
 
 /*** CLI local macros ***/
 
-#define CLI_FIRMWARE_VERSION        "v2.1"
+#define CLI_FIRMWARE_VERSION            "v2.2"
 
-#define CLI_REPLY_BUFFER_SIZE       256
+#define CLI_REPLY_BUFFER_SIZE           256
 
-#define DEFAULT_ANTENNA_GAIN_DBI   2
+#define CLI_DEFAULT_TX_POWER_DBM        14
+#define CLI_DEFAULT_ANTENNA_GAIN_DBI    2
 
 /*** CLI local structures ***/
 
 /*******************************************************************/
 typedef enum {
     CLI_INFORMATION_INDEX_CHIP_ID = 0,
-    CLI_INFORMATION_INDEX_SIGFOX_EP_ID,
     CLI_INFORMATION_INDEX_FIRMWARE_VERSION,
+    CLI_INFORMATION_INDEX_SIGFOX_EP_LIB_VERSION,
+    CLI_INFORMATION_INDEX_SIGFOX_EP_ID,
     CLI_INFORMATION_INDEX_LAST
 } CLI_information_index_t;
 
@@ -73,7 +78,11 @@ typedef enum {
 typedef struct {
     const char *name;
     const SIGFOX_rc_t *ptr;
+#ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     const SIGFOX_ul_bit_rate_t default_sigfox_ul_bit_rate;
+#else
+    const uint8_t unused;
+#endif
 } CLI_sigfox_rc_t;
 
 /*******************************************************************/
@@ -84,19 +93,21 @@ typedef struct {
 } CLI_ep_key_type_t;
 #endif /* SIGFOX_EP_PRIVATE_KEY */
 
+#ifdef SIGFOX_EP_CERTIFICATION
 /*******************************************************************/
 typedef struct {
     const char *letter;
     SIGFOX_EP_ADDON_RFP_API_test_mode_reference_t test_mode_reference;
 } CLI_sigfox_ep_addon_rfp_test_mode_t;
+#endif
 
+#if ((defined SIGFOX_EP_CERTIFICATION) && (defined SIGFOX_EP_SPECTRUM_ACCESS_FH))
 /*******************************************************************/
-#ifdef SIGFOX_EP_SPECTRUM_ACCESS_FH
 typedef struct {
     const char *name;
     SIGFOX_EP_ADDON_TA_API_fh_mode_t fh_mode;
 } CLI_fh_mode_t;
-#endif /* SIGFOX_EP_SPECTRUM_ACCESS_FH */
+#endif
 
 /*******************************************************************/
 typedef union {
@@ -147,7 +158,9 @@ static AT_status_t _errors_read_callback(CLI_status_t *error_code);
 
 static AT_status_t _msg_write_callback(uint32_t argc, char *argv[], CLI_status_t *error_code);
 
+#ifdef SIGFOX_EP_CERTIFICATION
 static AT_status_t _rfp_write_callback(uint32_t argc, char *argv[], CLI_status_t *error_code);
+#endif
 
 /*** CLI local global variables ***/
 
@@ -163,7 +176,7 @@ static const char *CLI_STATUS_STR[] = {
     "DRIVER_MCAL",
     "RC_NOT_SUPPORTED",
     "UL_BR_NOT_SUPPORTED",
-    "N_NOT_SUPPORTED"
+    "N_NOT_SUPPORTED",
     "T_IFU_NOT_SUPPORTED",
     "KEY_TYPE_NOT_SUPPORTED",
     "T_CONF_NOT_SUPPORTED",
@@ -180,42 +193,74 @@ static const char *CLI_STATUS_STR[] = {
 
 static CLI_sigfox_rc_t CLI_SIGFOX_RC[] = {
 #ifdef SIGFOX_EP_RC1_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC1", &SIGFOX_RC1, 0},
+#else
     {"RC1", &SIGFOX_RC1, SIGFOX_UL_BIT_RATE_100BPS},
+#endif
 #else
     {"RC1", NULL, 0},
 #endif /* SIGFOX_EP_RC1_ZONE */
 #ifdef SIGFOX_EP_RC2_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC2", &SIGFOX_RC2, 0},
+#else
     {"RC2", &SIGFOX_RC2, SIGFOX_UL_BIT_RATE_600BPS},
+#endif
 #else
     {"RC2", NULL, 0},
 #endif /* SIGFOX_EP_RC2_ZONE */
 #ifdef SIGFOX_EP_RC3_LBT_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC3_LBT", &SIGFOX_RC3_LBT, 0},
+#else
     {"RC3_LBT", &SIGFOX_RC3_LBT, SIGFOX_UL_BIT_RATE_100BPS},
+#endif
 #else
     {"RC3_LBT", NULL, 0},
 #endif /* SIGFOX_EP_RC3_LBT_ZONE */
 #ifdef SIGFOX_EP_RC3_LDC_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC3_LDC", &SIGFOX_RC3_LDC, 0},
+#else
     {"RC3_LDC", &SIGFOX_RC3_LDC, SIGFOX_UL_BIT_RATE_100BPS},
+#endif
 #else
     {"RC3_LDC", NULL, 0},
 #endif /* SIGFOX_EP_RC3_LDC_ZONE */
 #ifdef SIGFOX_EP_RC4_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC4", &SIGFOX_RC4, 0},
+#else
     {"RC4", &SIGFOX_RC4, SIGFOX_UL_BIT_RATE_600BPS},
+#endif
 #else
     {"RC4", NULL, 0},
 #endif /* SIGFOX_EP_RC4_ZONE */
 #ifdef SIGFOX_EP_RC5_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC5", &SIGFOX_RC5, 0},
+#else
     {"RC5", &SIGFOX_RC5, SIGFOX_UL_BIT_RATE_100BPS},
+#endif
 #else
     {"RC5", NULL, 0},
 #endif /* SIGFOX_EP_RC5_ZONE */
 #ifdef SIGFOX_EP_RC6_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC6", &SIGFOX_RC6, 0},
+#else
     {"RC6", &SIGFOX_RC6, SIGFOX_UL_BIT_RATE_100BPS},
+#endif
 #else
     {"RC6", NULL, 0},
 #endif /* SIGFOX_EP_RC6_ZONE */
 #ifdef SIGFOX_EP_RC7_ZONE
+#ifdef SIGFOX_EP_UL_BIT_RATE_BPS
+    {"RC7", &SIGFOX_RC7, 0},
+#else
     {"RC7", &SIGFOX_RC7, SIGFOX_UL_BIT_RATE_100BPS},
+#endif
 #else
     {"RC7", NULL, 0},
 #endif /* SIGFOX_EP_RC7_ZONE */
@@ -228,6 +273,7 @@ static CLI_ep_key_type_t CLI_SIGFOX_EP_KEY_TYPE[SIGFOX_EP_KEY_LAST] = {
 };
 #endif /* SIGFOX_EP_PRIVATE_KEY */
 
+#ifdef SIGFOX_EP_CERTIFICATION
 static const CLI_sigfox_ep_addon_rfp_test_mode_t CLI_SIGFOX_EP_ADDON_RFP_TEST_MODE[] = {
     {"A", SIGFOX_EP_ADDON_RFP_API_TEST_MODE_A},
     {"B", SIGFOX_EP_ADDON_RFP_API_TEST_MODE_B},
@@ -254,6 +300,7 @@ static const CLI_sigfox_ep_addon_rfp_test_mode_t CLI_SIGFOX_EP_ADDON_RFP_TEST_MO
 #endif
     {"L", SIGFOX_EP_ADDON_RFP_API_TEST_MODE_L},
 };
+#endif
 
 static const AT_command_t CLI_COMMAND_INFO = {
     .syntax = "I",
@@ -342,7 +389,7 @@ static const AT_command_t CLI_COMMAND_KEY_TYPE = {
 static const AT_command_t CLI_COMMAND_T_CONF = {
     .syntax = "T_CONF",
     .type = AT_COMMAND_TYPE_EXTENDED,
-    .help = "Sigfox D-Procedure Confirmation message Time in ms",
+    .help = "Sigfox B-Procedure Confirmation message Time in ms",
     .execution_callback = NULL,
     .execution_help = NULL,
     .read_callback = (AT_command_read_cb_t) &_t_conf_read_callback,
@@ -381,6 +428,7 @@ static const AT_command_t CLI_COMMAND_MSG = {
     .enum_to_str_callback = &_cli_error_enum_to_str_callback,
 };
 
+#ifdef SIGFOX_EP_CERTIFICATION
 static const AT_command_t CLI_COMMAND_RFP = {
     .syntax = "RFP",
     .type = AT_COMMAND_TYPE_EXTENDED,
@@ -394,6 +442,7 @@ static const AT_command_t CLI_COMMAND_RFP = {
     .write_help = "Execute Sigfox RF and Protocol test mode  (<mode>={A | B | C | D | F | G | J | K | L})",
     .enum_to_str_callback = &_cli_error_enum_to_str_callback,
 };
+#endif
 
 static CLI_context_t cli_ctx = {
     .flags.all = 0,
@@ -504,7 +553,7 @@ static void _at_process_callback(void) {
     cli_ctx.flags.field.at_process = 1;
 }
 
-#ifdef SIGFOX_EP_BIDIRECTIONAL
+#if ((defined SIGFOX_EP_CERTIFICATION) && (defined SIGFOX_EP_BIDIRECTIONAL))
 /*******************************************************************/
 static void _print_dl_payload(sfx_u8 *dl_payload, sfx_u8 dl_payload_size, sfx_s16 rssi_dbm) {
     // Local variables.
@@ -528,7 +577,7 @@ static void _print_dl_payload(sfx_u8 *dl_payload, sfx_u8 dl_payload_size, sfx_s1
 errors:
     return;
 }
-#endif /* SIGFOX_EP_BIDIRECTIONAL */
+#endif /* SIGFOX_EP_CERTIFICATION and SIGFOX_EP_BIDIRECTIONAL */
 
 /*******************************************************************/
 static const char *_cli_error_enum_to_str_callback(unsigned int error_code) {
@@ -537,7 +586,7 @@ static const char *_cli_error_enum_to_str_callback(unsigned int error_code) {
 
 /*******************************************************************/
 static AT_status_t _print_modem_information(uint8_t index, int32_t *error_code) {
-#ifdef SIGFOX_EP_ERROR_CODES
+#if ((defined SIGFOX_EP_VERBOSE) && (defined SIGFOX_EP_ERROR_CODES))
     SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
 #endif /* SIGFOX_EP_ERROR_CODES */
 
@@ -586,6 +635,9 @@ static AT_status_t _print_modem_information(uint8_t index, int32_t *error_code) 
         break;
     case CLI_INFORMATION_INDEX_FIRMWARE_VERSION:
         snprintf(reply, CLI_REPLY_BUFFER_SIZE, "Firmware:%s", CLI_FIRMWARE_VERSION);
+        break;
+    case CLI_INFORMATION_INDEX_SIGFOX_EP_LIB_VERSION:
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "Sigfox_ep_lib:%s", SIGFOX_EP_LIB_VERSION);
         break;
     default:
         *error_code = 0x00; // Parameter position
@@ -656,7 +708,11 @@ static AT_status_t _rc_write_callback(uint32_t argc, char *argv[], CLI_status_t 
 
 #ifdef SIGFOX_EP_APPLICATION_MESSAGES
 #ifndef SIGFOX_EP_TX_POWER_DBM_EIRP
-    cli_ctx.application_message.common_parameters.tx_power_dbm_eirp = CLI_SIGFOX_RC[rc_index].ptr->tx_power_dbm_eirp_max - DEFAULT_ANTENNA_GAIN_DBI;
+#ifdef SIGFOX_EP_PARAMETERS_CHECK
+    cli_ctx.application_message.common_parameters.tx_power_dbm_eirp = CLI_SIGFOX_RC[rc_index].ptr->tx_power_dbm_eirp_max - CLI_DEFAULT_ANTENNA_GAIN_DBI;
+#else
+    cli_ctx.application_message.common_parameters.tx_power_dbm_eirp = CLI_DEFAULT_TX_POWER_DBM - CLI_DEFAULT_ANTENNA_GAIN_DBI;
+#endif
 #endif /* SIGFOX_EP_TX_POWER_DBM_EIRP */
 #ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     cli_ctx.application_message.common_parameters.ul_bit_rate = CLI_SIGFOX_RC[rc_index].default_sigfox_ul_bit_rate;
@@ -664,7 +720,11 @@ static AT_status_t _rc_write_callback(uint32_t argc, char *argv[], CLI_status_t 
 #endif /* SIGFOX_EP_APPLICATION_MESSAGES */
 #ifdef SIGFOX_EP_CONTROL_KEEP_ALIVE_MESSAGE
 #ifndef SIGFOX_EP_TX_POWER_DBM_EIRP
-    cli_ctx.control_message.common_parameters.tx_power_dbm_eirp = CLI_SIGFOX_RC[rc_index].ptr->tx_power_dbm_eirp_max - DEFAULT_ANTENNA_GAIN_DBI;
+#ifdef SIGFOX_EP_PARAMETERS_CHECK
+    cli_ctx.control_message.common_parameters.tx_power_dbm_eirp = CLI_SIGFOX_RC[rc_index].ptr->tx_power_dbm_eirp_max - CLI_DEFAULT_ANTENNA_GAIN_DBI;
+#else
+    cli_ctx.control_message.common_parameters.tx_power_dbm_eirp = CLI_DEFAULT_TX_POWER_DBM - CLI_DEFAULT_ANTENNA_GAIN_DBI;
+#endif
 #endif /* SIGFOX_EP_TX_POWER_DBM_EIRP */
 #ifndef SIGFOX_EP_UL_BIT_RATE_BPS
     cli_ctx.control_message.common_parameters.ul_bit_rate = CLI_SIGFOX_RC[rc_index].default_sigfox_ul_bit_rate;
@@ -1158,6 +1218,7 @@ errors:
     return status;
 }
 
+#ifdef SIGFOX_EP_CERTIFICATION
 /*******************************************************************/
 static AT_status_t _rfp_write_callback(uint32_t argc, char *argv[], CLI_status_t *error_code) {
     // Local variables.
@@ -1252,6 +1313,7 @@ errors:
     SIGFOX_EP_ADDON_RFP_API_close();
     return status;
 }
+#endif
 
 /*** CLI functions ***/
 
@@ -1288,8 +1350,10 @@ CLI_status_t CLI_init(void) {
     AT_check_status(CLI_ERROR_DRIVER_AT);
     at_status = AT_register_command(&CLI_COMMAND_MSG);
     AT_check_status(CLI_ERROR_DRIVER_AT);
+#ifdef SIGFOX_EP_CERTIFICATION
     at_status = AT_register_command(&CLI_COMMAND_RFP);
     AT_check_status(CLI_ERROR_DRIVER_AT);
+#endif
     return CLI_SUCCESS;
 errors:
     return status;

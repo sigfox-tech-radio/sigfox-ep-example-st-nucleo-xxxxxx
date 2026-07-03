@@ -42,7 +42,6 @@
 #include "sigfox_error.h"
 #include "sigfox_types.h"
 #include "manuf/rf_api.h"
-#include "stm32wl3x_ll_pwr.h"
 
 #include "gpio.h"
 #include "mcal.h"
@@ -54,7 +53,7 @@
 #define STM32WL3X_HW_API_INIT_TX_DELAY_MS   50
 
 #define STM32WL3X_HW_API_TX_POWER_DBM_MAX   14
-#define STM32WL3X_HW_API_PA_DRIVE_MODE      PA_DRV_TX_HP
+#define STM32WL3X_HW_API_PA_DRIVE_MODE      STM32WL3X_HW_API_PA_DRIVE_MODE_TX_HP
 
 /*** STM32WL3X HW API local global variables ***/
 
@@ -146,11 +145,11 @@ STM32WL3X_HW_API_status_t STM32WL3X_HW_API_init(STM32WL3X_radio_parameters_t *ra
     case RF_API_MODE_TX:
         // Set SMPS according to PA drive mode.
         switch (STM32WL3X_HW_API_PA_DRIVE_MODE) {
-        case PA_DRV_TX:
-        case PA_DRV_TX_HP:
+        case STM32WL3X_HW_API_PA_DRIVE_MODE_TX:
+        case STM32WL3X_HW_API_PA_DRIVE_MODE_TX_HP:
             smps_voltage = PWR_SMPS_VOLTAGE_1V4;
             break;
-        case PA_DRV_TX_TX_HP:
+        case STM32WL3X_HW_API_PA_DRIVE_MODE_TX_TX_HP:
             smps_voltage = PWR_SMPS_VOLTAGE_2V2;
             break;
         default:
@@ -206,7 +205,7 @@ errors:
 }
 
 /*******************************************************************/
-STM32WL3X_HW_API_status_t STM32WL3X_HW_API_get_tx_power(sfx_s8 expected_tx_power_dbm, sfx_s8 *tx_power_dbm, MRSubG_PA_DRVMode *pa_drive_mode) {
+STM32WL3X_HW_API_status_t STM32WL3X_HW_API_get_tx_power(sfx_s8 expected_tx_power_dbm, sfx_s8 *tx_power_dbm, STM32WL3X_HW_API_pa_drive_mode_t *pa_drive_mode) {
     // Local variables.
 #ifdef SIGFOX_EP_ERROR_CODES
     STM32WL3X_HW_API_status_t status = STM32WL3X_HW_API_SUCCESS;
