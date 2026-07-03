@@ -16,7 +16,7 @@ This repository provides an implementation example of the Sigfox End-Point Libra
 
 | **Reference** | **Radio chip** | `cmake_radio_shield` | **Limitations** | **RSA reports**|
 |:---:|:---:|:---:|:---:|:---:|
-| [STEVAL-FKI868V2](https://www.st.com/en/evaluation-tools/steval-fki868v2.html) | S2LP | `steval-fki868v2` | Band 868 only  | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/steval-fki868v2_RC1_100.pdf), [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/steval-fki868v2_RC1_100.pdf), |
+| [STEVAL-FKI868V2](https://www.st.com/en/evaluation-tools/steval-fki868v2.html) | S2LP | `steval-fki868v2` | Band 868 only  | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/steval-fki868v2_RC1_100.pdf), [RC1_600](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/steval-fki868v2_RC1_600.pdf), |
 | [LR1110MB1DIS](https://www.semtech.fr/products/wireless-rf/lora-edge/lr1110mb1lbks) | LR1110 | `lr1110mb1dis` | None | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1110mb1dis_RC1_100.pdf), [RC1_600](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1110mb1dis_RC1_600.pdf), [RC2](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1110mb1dis_RC2.pdf), |
 | [LR1110MB1DJS](https://www.semtech.fr/products/wireless-rf/lora-edge/lr1110dvk1tcks) *(shield not sold alone)* | LR1110 | `lr1110mb1djs` | None | |
 | [LR1121MB1DIS](https://www.semtech.fr/products/wireless-rf/lora-connect/lr1121dvk1tcks) *(shield not sold alone)* | LR1121 | `lr1121mb1dis` | None | [RC1_100](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1121mb1dis_RC1_100.pdf), [RC1_600](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1121mb1dis_RC1_600.pdf), [RC2](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/wiki/rfp/lr1121mb1dis_RC2.pdf) |
@@ -91,53 +91,29 @@ cmake -DCMAKE_BUILD_TYPE="Release" \
       -DTOOLCHAIN_PATH="<REPLACE BY ROOT TOOLCHAIN PATH PREVIOUSLY INSTALLED>" \
       -DMCU_BOARD="<cmake_mcu_board>" \
       -DRADIO_SHIELD="<cmake_radio_shield>" \
-      -DSIGFOX_EP_RC1_ZONE=ON \
-      -DSIGFOX_EP_RC2_ZONE=ON \
-      -DSIGFOX_EP_RC3_LBT_ZONE=ON \
-      -DSIGFOX_EP_RC3_LDC_ZONE=ON \
-      -DSIGFOX_EP_RC4_ZONE=ON \
-      -DSIGFOX_EP_RC5_ZONE=ON \
-      -DSIGFOX_EP_RC6_ZONE=ON \
-      -DSIGFOX_EP_RC7_ZONE=ON \
-      -DSIGFOX_EP_APPLICATION_MESSAGES=ON \
-      -DSIGFOX_EP_CONTROL_KEEP_ALIVE_MESSAGE=ON \
-      -DSIGFOX_EP_BIDIRECTIONAL=ON \
-      -DSIGFOX_EP_ASYNCHRONOUS=ON \
-      -DSIGFOX_EP_LOW_LEVEL_OPEN_CLOSE=ON \
-      -DSIGFOX_EP_REGULATORY=ON \
-      -DSIGFOX_EP_LATENCY_COMPENSATION=ON \
-      -DSIGFOX_EP_SINGLE_FRAME=OFF \
-      -DSIGFOX_EP_UL_BIT_RATE_BPS=OFF \
-      -DSIGFOX_EP_TX_POWER_DBM_EIRP=OFF \
-      -DSIGFOX_EP_T_IFU_MS=OFF \
-      -DSIGFOX_EP_T_CONF_MS=OFF \
-      -DSIGFOX_EP_UL_PAYLOAD_SIZE=OFF \
-      -DSIGFOX_EP_AES_HW=ON \
-      -DSIGFOX_EP_CRC_HW=OFF \
-      -DSIGFOX_EP_MESSAGE_COUNTER_ROLLOVER=OFF \
-      -DSIGFOX_EP_PARAMETERS_CHECK=ON \
-      -DSIGFOX_EP_CERTIFICATION=ON \
-      -DSIGFOX_EP_PUBLIC_KEY_CAPABLE=ON \
-      -DSIGFOX_EP_VERBOSE=ON \
-      -DSIGFOX_EP_ERROR_CODES=ON \
-      -DSIGFOX_EP_ERROR_STACK=32 \
+      <sigfox-ep-lib flags> \
       -G "Unix Makefiles" ..
 make all
 ```
 
-All binary files produced are available in `build/application/"application Name"/` folder. 
+All binary files produced are available in the `build/application/"application Name"/` folder.
 
 ### How to program Nucleo Board
 
-If nucleo board is still in STLink you can directly click and drop the `.bin` previous produced file in the mounted disk by Nucleo board. 
+If the Nucleo board is configured in STLink mode, you can directly click and drop the previously produced `.bin` file in the disk mounted by the Nucleo board.
 
-### Replace Sigfox credential 
+### Replace Sigfox credentials
 
-By default this project integrate Sigfox test credentials typically used for RF&Protocol test under RSA: 
+By default this project integrates the Sigfox test credentials which are typically used to perform the RF & Protocol tests under RSA software:
 
 ```
 EP ID  : FEDCBA98
-Authentication KEY : 0123456789ABCDEF0123456789ACBDEF
+EP KEY : 0123456789ABCDEF0123456789ACBDEF
 ```
 
-EP ID and Authentication KEY are stored respectively in memory Page 511 at 0x0800FF80 and 0x0800FF84 addresses. It is possible to modify them by directly patching the output ```<application>.bin``` file or by modifying **sigfoxID** and **sigfoxKEY** variables in ```middleware/sigfox/mcu_api/src/mcu_api.c``` file.
+The credentials are stored in a dedicated region of the FLASH memory, which has been reserved in the respective linker scripts:
+
+* **Nucleo-L053R8**: page 511 at 0x0800FF80 address.
+* **Nucleo-WL33CC1**: page 127 at 0x1007F800 address.
+
+It is possible to modify them by directly patching the output `<application>.bin` file or by modifying **sigfoxID** and **sigfoxKEY** variables in the `middleware/sigfox/mcu_api/src/mcu_api.c` file.

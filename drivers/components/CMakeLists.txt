@@ -82,6 +82,7 @@ elseif(RADIO_DRIVER STREQUAL sx126x_driver)
     target_sources(${RADIO_DRIVER}
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_driver/src/sx126x.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_driver/src/sx126x_bpsk.c
         ${CMAKE_CURRENT_SOURCE_DIR}/sx126x_driver/src/sx126x_driver_version.c
     )
     target_include_directories(${RADIO_DRIVER}

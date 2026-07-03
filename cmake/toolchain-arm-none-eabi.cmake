@@ -111,7 +111,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
-set(CMAKE_COMMON_FLAGS "-Os -mthumb -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wall -Wextra -Werror -Wno-unused-parameter -g3")
+set(CMAKE_COMMON_FLAGS "-Os -mthumb -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wall -Wextra -Werror -Wno-unused-parameter -Wno-enum-conversion -g3")
 
 # Default Flag
 set(CMAKE_C_FLAGS "${CMAKE_COMMON_FLAGS} -std=gnu11")

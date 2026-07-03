@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.2](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/releases/tag/v2.2) - 03 Jul 2026
+
+### Changed
+
+* Upgrade **sigfox-ep-lib** to [v4.4](https://github.com/sigfox-tech-radio/sigfox-ep-lib/releases/tag/v4.4).
+* Upgrade **sigfox-ep-addon-rfp** to [v2.2](https://github.com/sigfox-tech-radio/sigfox-ep-addon-rfp/releases/tag/v2.2).
+* Upgrade **sigfox-ep-addon-ta** to [v3.0](https://github.com/sigfox-tech-radio/sigfox-ep-addon-ta/releases/tag/v3.0).
+* Upgrade **sigfox-ep-rf-api-st-s2lp** to [v4.1](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-s2lp/releases/tag/v4.1).
+* Upgrade **sigfox-ep-rf-api-semtech-lr11xx** to [v3.1](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-lr11xx/releases/tag/v3.1) and **LR11xx driver** to [v3.0.0](https://github.com/Lora-net/SWDR001/releases/tag/v3.0.0).
+* Upgrade **sigfox-ep-rf-api-semtech-sx126x** to [v2.1](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-sx126x/releases/tag/v2.1) and **SX126x driver** to [v2.5.0](https://github.com/Lora-net/sx126x_driver/releases/tag/v2.5.0).
+* Upgrade **sigfox-ep-rf-api-st-stm32wl3x** to [v2.0](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-stm32wl3x/releases/tag/v2.0).
+
+### Fixed
+
+* Remove **extra warnings**.
+* Fix **error codes printing** in modem application.
+* Fix **credential storage documentation** in `README`.
+
+### Added
+
+* Print **Sigfox EP library version** in `ATI` command result.
+
 ## [v2.1](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/releases/tag/v2.1) - 14 Feb 2025
 
 ### Added
@@ -31,8 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Upgrade **sigfox-ep-rf-api-semtech-lr11xx** to [v3.0](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-lr11xx/releases/tag/v3.0).
 * Upgrade **sigfox-ep-rf-api-semtech-sx126x** to [v2.0](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-sx126x/releases/tag/v2.0).
 * Upgrade **LR11XX driver** to [v2.5.0](https://github.com/Lora-net/SWDR001/releases/tag/v2.5.0).
-* Rename **lr1110dvk1tbks** shield by **lr1110mb1dis** 
-* Rename **sx1261dvk1bas** shield by **sx1261mb1bas**
+* Rename **lr1110dvk1tbks** shield by **lr1110mb1dis** .
+* Rename **sx1261dvk1bas** shield by **sx1261mb1bas**.
 
 ### Fixed
 
@@ -40,9 +62,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* New **modem** application with at-parser and addon RF&Protocol
-* Support of **lr1110mb1djs** **lr1121mb1dis** **sx1261mb2bas** shields
-* Create HW_API for every shields 
+* New **modem** application with at-parser and addon RF&Protocol.
+* Support of **lr1110mb1djs** **lr1121mb1dis** **sx1261mb2bas** shields.
+* Create HW_API for every shields.
 
 ## [v1.0](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/releases/tag/v1.0) - 19 Jun 2024
 

@@ -459,7 +459,9 @@ SX126X_HW_API_status_t SX126X_HW_API_get_chip_name(SX126X_HW_API_chip_name_t *ch
 #endif /* SIGFOX_EP_PARAMETERS_CHECK */
     // Set chipset.
     (*chipset) = SX126X_HW_API_CHIP_NAME_SX1261;
+#ifdef SIGFOX_EP_PARAMETERS_CHECK
 errors:
+#endif
     SIGFOX_RETURN();
 }
 
@@ -477,7 +479,9 @@ SX126X_HW_API_status_t SX126X_HW_API_get_reg_mode(SX126X_HW_API_reg_mod_t *reg_m
 #endif /* SIGFOX_EP_PARAMETERS_CHECK */
     // Set regulator mode.
     (*reg_mode) = SX126X_HW_API_REG_MODE_DCDC;
+#ifdef SIGFOX_EP_PARAMETERS_CHECK
 errors:
+#endif
     SIGFOX_RETURN();
 }
 
@@ -496,7 +500,9 @@ SX126X_HW_API_status_t SX126X_HW_API_get_xosc_cfg(SX126X_HW_API_xosc_cfg_t *xosc
     xosc_cfg->tcxo_is_radio_controlled = SIGFOX_FALSE;
     xosc_cfg->supply_voltage = SX126X_HW_API_TCXO_CTRL_3_0V;
     xosc_cfg->startup_time_in_tick = 300;
+#ifdef SIGFOX_EP_PARAMETERS_CHECK
 errors:
+#endif
     SIGFOX_RETURN();
 }
 

@@ -41,7 +41,9 @@
 #include "mcal.h"
 #include "usart.h"
 
+/*** AT HW API macros ***/
 
+#define AT_HW_API_USART_BAUD_RATE   115200
 
 /*** AT HW API functions ***/
 
@@ -55,7 +57,7 @@ AT_status_t AT_HW_API_init(AT_HW_API_config_t *hw_api_config) {
     MCAL_status_t mcal_status = MCAL_SUCCESS;
 
     // Init USART interface.
-    mcal_status = USART_init(115200, 0, hw_api_config->rx_irq_callback);
+    mcal_status = USART_init(AT_HW_API_USART_BAUD_RATE, 0, hw_api_config->rx_irq_callback);
     _check_mcal_status();
 errors:
     return status;
