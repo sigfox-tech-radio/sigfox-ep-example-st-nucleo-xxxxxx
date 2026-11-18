@@ -4,39 +4,40 @@
  *******************************************************************
  * \copyright
  *
- * Copyright (c) 2022, UnaBiz SAS
+ * Copyright 2022 UnaBiz SAS
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  1 Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *  2 Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *  3 Neither the name of UnaBiz SAS nor the names of its contributors may be
- *    used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *  1. Redistributions of source code must retain the above copyright notice, this
+ *     list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation and/or
+ *     other materials provided with the distribution.
+ *  3. Neither the name of the copyright holder nor the names of its contributors
+ *     may be used to endorse or promote products derived from this software without
+ *     specific prior written permission.
  *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY
- * THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
- * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *******************************************************************/
 
 #include "cli.h"
 
 #include "at.h"
+#include "at_parser_version.h"
+#include "manuf/mcu_api.h"
+#include "manuf/rf_api.h"
 #include "mcal.h"
 #include "mcu.h"
 #include "nvm.h"
@@ -44,6 +45,7 @@
 #include "sigfox_ep_flags.h"
 #include "sigfox_ep_lib_version.h"
 #ifdef SIGFOX_EP_CERTIFICATION
+#include "sigfox_ep_addon_rfp_version.h"
 #include "sigfox_ep_addon_rfp_api.h"
 #include "sigfox_ep_addon_ta_api.h"
 #endif
@@ -52,13 +54,13 @@
 #include "stddef.h"
 #include "stdio.h"
 #include "string.h"
-#include "manuf/rf_api.h"
 
 /*** CLI local macros ***/
 
-#define CLI_FIRMWARE_VERSION            "v2.2"
+#define CLI_FIRMWARE_VERSION            "v2.3"
 
 #define CLI_REPLY_BUFFER_SIZE           256
+#define CLI_VERSION_BUFFER_SIZE         16
 
 #define CLI_DEFAULT_TX_POWER_DBM        14
 #define CLI_DEFAULT_ANTENNA_GAIN_DBI    2
@@ -69,8 +71,16 @@
 typedef enum {
     CLI_INFORMATION_INDEX_CHIP_ID = 0,
     CLI_INFORMATION_INDEX_FIRMWARE_VERSION,
+    CLI_INFORMATION_INDEX_AT_PARSER_VERSION,
     CLI_INFORMATION_INDEX_SIGFOX_EP_LIB_VERSION,
+#ifdef SIGFOX_EP_CERTIFICATION
+    CLI_INFORMATION_INDEX_SIGFOX_EP_ADDON_RFP_VERSION,
+#endif
+#ifdef SIGFOX_EP_VERBOSE
     CLI_INFORMATION_INDEX_SIGFOX_EP_ID,
+    CLI_INFORMATION_INDEX_MCU_API_VERSION,
+    CLI_INFORMATION_INDEX_RF_API_VERSION,
+#endif
     CLI_INFORMATION_INDEX_LAST
 } CLI_information_index_t;
 
@@ -586,23 +596,29 @@ static const char *_cli_error_enum_to_str_callback(unsigned int error_code) {
 
 /*******************************************************************/
 static AT_status_t _print_modem_information(uint8_t index, int32_t *error_code) {
+    // Local variables.
 #if ((defined SIGFOX_EP_VERBOSE) && (defined SIGFOX_EP_ERROR_CODES))
     SIGFOX_EP_API_status_t sigfox_ep_api_status = SIGFOX_EP_API_SUCCESS;
-#endif /* SIGFOX_EP_ERROR_CODES */
-
-    // Local variables.
+    MCU_API_status_t mcu_api_status = MCU_API_SUCCESS;
+    RF_API_status_t rf_api_status = RF_API_SUCCESS;
+#endif
     AT_status_t status = AT_SUCCESS;
     AT_status_t at_status = AT_SUCCESS;
     MCAL_status_t mcal_status = MCAL_SUCCESS;
-    char reply[CLI_REPLY_BUFFER_SIZE] = {0x00};
     uint8_t mcu_id[MCU_CHIP_ID_SIZE_BYTES] = {0x00};
+    char reply[CLI_REPLY_BUFFER_SIZE] = {0x00};
+#ifdef SIGFOX_EP_VERBOSE
+    char version[CLI_VERSION_BUFFER_SIZE] = "UNKNOWN";
+    char* version_ptr = &(version[0]);
+    uint8_t version_size = 0;
+#endif
     uint8_t idx = 0;
     // Reset error code.
     *error_code = CLI_SUCCESS;
     // Check index.
     switch (index) {
     case CLI_INFORMATION_INDEX_CHIP_ID:
-        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "Chip_id:");
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "CHIP_ID:");
         // Read ID.
         mcal_status = MCU_get_chip_id(mcu_id);
         MCAL_check_status(AT_ERROR_EXTERNAL_COMMAND_CORE_ERROR; *error_code = CLI_ERROR_DRIVER_AT);
@@ -611,9 +627,23 @@ static AT_status_t _print_modem_information(uint8_t index, int32_t *error_code) 
             sniprintf(reply, CLI_REPLY_BUFFER_SIZE, "%s%02X", reply, mcu_id[idx]);
         }
         break;
-    case CLI_INFORMATION_INDEX_SIGFOX_EP_ID:
+    case CLI_INFORMATION_INDEX_FIRMWARE_VERSION:
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "FW:%s", CLI_FIRMWARE_VERSION);
+        break;
+    case CLI_INFORMATION_INDEX_AT_PARSER_VERSION:
+          snprintf(reply, CLI_REPLY_BUFFER_SIZE, "AT_PARSER:%s", SIGFOX_AT_PARSER_VERSION);
+          break;
+    case CLI_INFORMATION_INDEX_SIGFOX_EP_LIB_VERSION:
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "SIGFOX_EP_LIB:%s", SIGFOX_EP_LIB_VERSION);
+        break;
+#ifdef SIGFOX_EP_CERTIFICATION
+    case CLI_INFORMATION_INDEX_SIGFOX_EP_ADDON_RFP_VERSION:
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "SIGFOX_EP_ADDON_RFP:%s", SIGFOX_EP_ADDON_RFP_VERSION);
+        break;
+#endif
 #ifdef SIGFOX_EP_VERBOSE
-        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "Sigfox_ep_id:");
+    case CLI_INFORMATION_INDEX_SIGFOX_EP_ID:
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "SIGFOX_EP_ID:");
 #ifdef SIGFOX_EP_ERROR_CODES
         sigfox_ep_api_status = SIGFOX_EP_API_open(&cli_ctx.lib_config);
         SIGFOX_EP_API_check_status(AT_ERROR_EXTERNAL_COMMAND_CORE_ERROR; *error_code = CLI_ERROR_DRIVER_SIGFOX_EP_LIB);
@@ -631,14 +661,26 @@ static AT_status_t _print_modem_information(uint8_t index, int32_t *error_code) 
             // Read byte.
             sniprintf(reply, CLI_REPLY_BUFFER_SIZE, "%s%02X", reply, mcu_id[idx]);
         }
-#endif /* SIGFOX_EP_VERBOSE */
         break;
-    case CLI_INFORMATION_INDEX_FIRMWARE_VERSION:
-        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "Firmware:%s", CLI_FIRMWARE_VERSION);
+    case CLI_INFORMATION_INDEX_MCU_API_VERSION:
+#ifdef SIGFOX_EP_ERROR_CODES
+        mcu_api_status = MCU_API_get_version((sfx_u8**) &version_ptr, &version_size);
+        MCU_API_check_status(AT_ERROR_EXTERNAL_COMMAND_CORE_ERROR; *error_code = CLI_ERROR_DRIVER_MCU_API);
+#else
+        MCU_API_get_version((sfx_u8**) &version_ptr, &version_size);
+#endif
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "MCU_API:%s", version_ptr);
         break;
-    case CLI_INFORMATION_INDEX_SIGFOX_EP_LIB_VERSION:
-        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "Sigfox_ep_lib:%s", SIGFOX_EP_LIB_VERSION);
+    case CLI_INFORMATION_INDEX_RF_API_VERSION:
+#ifdef SIGFOX_EP_ERROR_CODES
+        rf_api_status = RF_API_get_version((sfx_u8**) &version_ptr, &version_size);
+        RF_API_check_status(AT_ERROR_EXTERNAL_COMMAND_CORE_ERROR; *error_code = CLI_ERROR_DRIVER_RF_API);
+#else
+        RF_API_get_version((sfx_u8**) &version, &version_size);
+#endif
+        snprintf(reply, CLI_REPLY_BUFFER_SIZE, "RF_API:%s", version_ptr);
         break;
+#endif
     default:
         *error_code = 0x00; // Parameter position
         status = AT_ERROR_EXTERNAL_COMMAND_BAD_PARAMETER_VALUE;
