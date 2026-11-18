@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.3](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/releases/tag/v2.3) - 18 Nov 2026
+
+### Changed
+
+* Changed from the Clear BSD License to the standard **BSD 3-Clause License**. See the `LICENSE` file for details.
+* Upgrade **sigfox-ep-lib** to [v4.5](https://github.com/sigfox-tech-radio/sigfox-ep-lib/releases/tag/v4.5).
+* Upgrade **sigfox-ep-addon-rfp** to [v2.3](https://github.com/sigfox-tech-radio/sigfox-ep-addon-rfp/releases/tag/v2.3).
+* Upgrade **sigfox-ep-addon-ta** to [v3.1](https://github.com/sigfox-tech-radio/sigfox-ep-addon-ta/releases/tag/v3.1).
+* Upgrade **sigfox-ep-rf-api-st-s2lp** to [v4.2](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-s2lp/releases/tag/v4.2).
+* Upgrade **sigfox-ep-rf-api-semtech-lr11xx** to [v3.2](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-lr11xx/releases/tag/v3.2)
+* Upgrade **sigfox-ep-rf-api-semtech-sx126x** to [v2.2](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-semtech-sx126x/releases/tag/v2.2)
+* Upgrade **sigfox-ep-rf-api-st-stm32wl3x** to [v2.1](https://github.com/sigfox-tech-radio/sigfox-ep-rf-api-st-stm32wl3x/releases/tag/v2.1).
+
+### Fixed
+
+* Fix **STM32L0xx ADC driver**.
+
+### Added
+
+* Print **all Sigfox components version** in `ATI` command result.
+
 ## [v2.2](https://github.com/sigfox-tech-radio/sigfox-ep-example-st-nucleo-xxxxxx/releases/tag/v2.2) - 03 Jul 2026
 
 ### Changed
